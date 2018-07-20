@@ -82,13 +82,12 @@ public class StatementBuilder {
 		rs.putValue(StatementField.STATEMENT_ID, StatementUtil.computeAndGetAnnotationId(rs, AnnotationType.STATEMENT));
 		return rs;
 	}
-	
-	public Statement buildWithAnnotationHash(AnnotationType type) {
-		Statement rs = new Statement(keyValues);
-		rs.putValue(StatementField.ANNOTATION_ID, StatementUtil.computeAndGetAnnotationId(rs, type));
-		rs.putValue(StatementField.STATEMENT_ID, StatementUtil.computeAndGetAnnotationId(rs, AnnotationType.STATEMENT));
-		return rs;
-	}
+
+    public Statement buildWithAnnotationHash() {
+        Statement rs = build();
+        rs.putValue(StatementField.ANNOTATION_ID, StatementUtil.computeAndGetAnnotationId(rs, AnnotationType.ENTRY));
+        return rs;
+    }
 
 	public StatementBuilder addMap(Map<String, String> map) {
 		keyValues.putAll(map);

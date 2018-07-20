@@ -44,13 +44,13 @@ public class RawStatementTest {
 				.addField(StatementField.GENE_NAME, "apc")
 				.addCompulsaryFields("AAA", "BBB", "CCC", defaultQuality)
    	    	    .addField(StatementField.TARGET_ISOFORMS, "[]")
-				.addSourceInfo("CAVA-VP90999", "BED").buildWithAnnotationHash(AnnotationType.ENTRY);
+				.addSourceInfo("CAVA-VP90999", "BED").buildWithAnnotationHash();
 		Statement rs2 = StatementBuilder.createNew()
 				.addField(StatementField.NEXTPROT_ACCESSION, "NX_P25054")
 				.addField(StatementField.GENE_NAME, "apc")
 				.addCompulsaryFields("AAA", "BBB", "CCC", defaultQuality)
    	    	    .addField(StatementField.TARGET_ISOFORMS, "[]")
-				.addSourceInfo("XPTO", "Caviar").buildWithAnnotationHash(AnnotationType.ENTRY);
+				.addSourceInfo("XPTO", "Caviar").buildWithAnnotationHash();
 
 		assertNotEquals(rs1, rs2); 
 		assertEquals(rs1.getValue(StatementField.ANNOTATION_ID), rs2.getValue(StatementField.ANNOTATION_ID));
