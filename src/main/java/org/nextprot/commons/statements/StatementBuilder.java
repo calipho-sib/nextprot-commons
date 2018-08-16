@@ -11,8 +11,6 @@ import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.nextprot.commons.utils.StringUtils;
 
-import javax.swing.plaf.nimbus.State;
-
 import static org.nextprot.commons.statements.StatementField.*;
 
 public class StatementBuilder {
