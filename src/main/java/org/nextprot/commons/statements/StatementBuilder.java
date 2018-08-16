@@ -11,6 +11,8 @@ import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.nextprot.commons.utils.StringUtils;
 
+import javax.swing.plaf.nimbus.State;
+
 import static org.nextprot.commons.statements.StatementField.*;
 
 public class StatementBuilder {
@@ -19,6 +21,12 @@ public class StatementBuilder {
 
 	public static StatementBuilder createNew() {
 		StatementBuilder sb = new StatementBuilder();
+		return sb;
+	}
+
+	public static StatementBuilder createFromExistingStatement(Statement s) {
+		StatementBuilder sb = new StatementBuilder();
+		sb.addMap(s);
 		return sb;
 	}
 
@@ -82,13 +90,12 @@ public class StatementBuilder {
 		rs.putValue(StatementField.STATEMENT_ID, StatementUtil.computeAndGetAnnotationId(rs, AnnotationType.STATEMENT));
 		return rs;
 	}
-	
-	public Statement buildWithAnnotationHash(AnnotationType type) {
-		Statement rs = new Statement(keyValues);
-		rs.putValue(StatementField.ANNOTATION_ID, StatementUtil.computeAndGetAnnotationId(rs, type));
-		rs.putValue(StatementField.STATEMENT_ID, StatementUtil.computeAndGetAnnotationId(rs, AnnotationType.STATEMENT));
-		return rs;
-	}
+
+    public Statement buildWithAnnotationHash() {
+        Statement rs = build();
+        rs.putValue(StatementField.ANNOTATION_ID, StatementUtil.computeAndGetAnnotationId(rs, AnnotationType.ENTRY));
+        return rs;
+    }
 
 	public StatementBuilder addMap(Map<String, String> map) {
 		keyValues.putAll(map);
