@@ -78,7 +78,7 @@ public class StatementBuilderTest {
 	}
 
 	@Test
-	public void testWithCustomFields() {
+	public void testStatementEquality() {
 
 		Statement rs1 = StatementBuilder.createNew()
 				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
@@ -145,7 +145,19 @@ public class StatementBuilderTest {
 		Assert.assertEquals(vp1Hash, vp2Hash);
 	}
 
-	Statement buildStatementFromJsonString(String jsonString) {
+	@Test
+	public void testWithCustomFields() {
+
+		StatementField dbSnpIdField = new CustomStatementField("DBSNP_ID");
+
+		Statement rs1 = StatementBuilder.createNew()
+				.addField(dbSnpIdField, "rs745905374")
+				.build();
+
+		Assert.assertTrue(rs1.containsKey(PredefinedStatementField.STATEMENT_ID));
+	}
+
+	private Statement buildStatementFromJsonString(String jsonString) {
 
 		JsonObject jo = Json.parse(jsonString).asObject();
 

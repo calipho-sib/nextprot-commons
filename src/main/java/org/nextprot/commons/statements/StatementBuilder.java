@@ -1,14 +1,14 @@
 package org.nextprot.commons.statements;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.nextprot.commons.algo.MD5Algo;
 import org.nextprot.commons.constants.QualityQualifier;
@@ -22,7 +22,7 @@ import static org.nextprot.commons.statements.PredefinedStatementField.*;
  */
 public class StatementBuilder {
 
-	private Map<String, String> keyValues = new TreeMap<>();
+	private Map<StatementField, String> keyValues = new TreeMap<>(Comparator.comparing(StatementField::name));
 
 	public static StatementBuilder createNew() {
 		StatementBuilder sb = new StatementBuilder();
@@ -37,7 +37,7 @@ public class StatementBuilder {
 	}
 
 	public StatementBuilder addField(StatementField statementField, String statementValue) {
-		this.keyValues.put(statementField.name(), statementValue);
+		this.keyValues.put(statementField, statementValue);
 		return this;
 	}
 
@@ -82,7 +82,7 @@ public class StatementBuilder {
 		return this;
 	}
 
-	public StatementBuilder addMap(Map<String, String> map) {
+	public StatementBuilder addMap(Map<StatementField, String> map) {
 		keyValues.putAll(map);
 		return this;
 	}
@@ -160,16 +160,22 @@ public class StatementBuilder {
 
 		// Filter fields which are used to compute unicity
 		Set<StatementField> unicityFields = new HashSet<>();
-		StatementField[] fields = PredefinedStatementField.values();
-		for (StatementField field : fields) {
+		for (StatementField field : statement.keySet()) {
 			// According with
 			// https://calipho.isb-sib.ch/wiki/display/cal/Raw+statements+specifications
 
+			/* TODO: Shouldnt it be:
+			 *   if (field != PredefinedStatementField.STATEMENT_ID && field.isPartOfUnicityKey()) {
+			 *		unicityFields.add(field);
+			 *	 }
+			 */
+			// ENTRY TYPE: only fields that are part of unicity key are considered
 			if (type.equals(AnnotationType.ENTRY)) {
 				if (field.isPartOfUnicityKey()) {
 					unicityFields.add(field);
 				}
 			}
+			// STATEMENT TYPE: all fields are considered to build the unique key
 			else if (type.equals(AnnotationType.STATEMENT)) { // All fields for the statement
 				if (!field.equals(PredefinedStatementField.STATEMENT_ID)) {
 					unicityFields.add(field);
@@ -177,14 +183,12 @@ public class StatementBuilder {
 			}
 		}
 
-		List<String> contentItems = new ArrayList<>();
-		for (StatementField unicityField : unicityFields) {
-			String value = statement.getValue(unicityField);
-			if (value != null) {
-				contentItems.add(value);
-			}
+		if (unicityFields.isEmpty()) {
+			throw new IllegalStateException("could not compute a unique key for statement "+statement);
 		}
 
-		return MD5Algo.computeMD5(String.join("", contentItems));
+		return MD5Algo.computeMD5(unicityFields.stream()
+				.map(statement::getValue)
+				.collect(Collectors.joining("")));
 	}
 }

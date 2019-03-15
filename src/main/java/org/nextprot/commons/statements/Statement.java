@@ -1,35 +1,37 @@
 package org.nextprot.commons.statements;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
  * DO NOT ADD public setters on this class.
  */
-public class Statement extends TreeMap<String, String>{
+public class Statement extends TreeMap<StatementField, String>{
 
-	private static final long serialVersionUID = -4723168061980820149L;
+	private static final long serialVersionUID = 2L;
 	private boolean isProcessed = false;
 	
 	public Statement() {
-		super();
+		super(Comparator.comparing(StatementField::name));
 	}
 
 	// Keep the constructor package protected, so it enforces the use of the Builder
-	Statement(Map<String, String> map) {
-		super(new TreeMap<>(map));
+	Statement(Map<StatementField, String> map) {
+		this();
+		putAll(map);
 	}
 
 	public String getValue(StatementField field) {
-		return get(field.name());
+		return get(field);
 	}
 
 	public String getDebugInfo() {
-		return get(PredefinedStatementField.DEBUG_INFO.name());
+		return get(PredefinedStatementField.DEBUG_INFO);
 	}
 
 	String putValue(StatementField field, String value) {
-		return put(field.name(), value);
+		return put(field, value);
 	}
 
 	public String getSubjectStatementIds() {
@@ -69,8 +71,8 @@ public class Statement extends TreeMap<String, String>{
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		for (String s : this.keySet()) {
-			sb.append("\t\"" + s + "\": \"" + this.get(s).replace("\"", "''") + "\",\n");
+		for (StatementField sf : this.keySet()) {
+			sb.append("\t\"" + sf.name() + "\": \"" + this.get(sf.name()).replace("\"", "''") + "\",\n");
 		}
 		sb.append("}");
 		return sb.toString();
