@@ -5,6 +5,11 @@ public class CustomStatementField implements StatementField {
 	private final String name;
 	private final boolean isPartOfUnicityKey;
 
+	public CustomStatementField(String name) {
+
+		this(name, true);
+	}
+
 	public CustomStatementField(String name, boolean isPartOfUnicityKey) {
 
 		this.name = name;
