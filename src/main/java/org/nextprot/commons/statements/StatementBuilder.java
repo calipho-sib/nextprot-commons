@@ -17,6 +17,9 @@ import org.nextprot.commons.utils.StringUtils;
 
 import static org.nextprot.commons.statements.PredefinedStatementField.*;
 
+/**
+ * A StatementID is computed based on the fields when build() is invoked
+ */
 public class StatementBuilder {
 
 	private Map<String, String> keyValues = new TreeMap<>();
