@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.AnnotationType;
 
-public class RawStatementTest {
+public class StatementBuilderTest {
 	
 	QualityQualifier defaultQuality = QualityQualifier.GOLD;
 	
