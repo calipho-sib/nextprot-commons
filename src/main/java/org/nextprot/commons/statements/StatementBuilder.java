@@ -138,14 +138,14 @@ public class StatementBuilder {
 
 	}
 
-	public Statement build() {
+	public Statement buildAndGenerateUniqueID() {
 		Statement rs = new Statement(keyValues);
 		rs.putValue(GenericStatementField.STATEMENT_ID, computeUniqueKey(rs, AnnotationType.STATEMENT));
 		return rs;
 	}
 
-	public Statement buildWithAnnotationHash() {
-		Statement rs = build();
+	public Statement buildAndGenerateUniqueIDs() {
+		Statement rs = buildAndGenerateUniqueID();
 		rs.putValue(GenericStatementField.ANNOTATION_ID, computeUniqueKey(rs, AnnotationType.ENTRY));
 		return rs;
 	}

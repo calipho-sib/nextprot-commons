@@ -10,7 +10,6 @@ import java.util.TreeMap;
 public class Statement extends TreeMap<StatementField, String> {
 
 	private static final long serialVersionUID = 2L;
-	private boolean isProcessed = false;
 
 	public Statement() {
 		super(Comparator.comparing(StatementField::getName));
@@ -20,6 +19,15 @@ public class Statement extends TreeMap<StatementField, String> {
 	Statement(Map<StatementField, String> map) {
 		this();
 		putAll(map);
+	}
+
+	public String getValueOrNull(String field) {
+
+		if (!NextProtSource.isStatementFieldExist(field)) {
+			return null;
+		}
+
+		return get(NextProtSource.getStatementField(field));
 	}
 
 	public String getValue(StatementField field) {
@@ -60,14 +68,6 @@ public class Statement extends TreeMap<StatementField, String> {
 		return (getValue(GenericStatementField.SUBJECT_STATEMENT_IDS) != null);
 	}
 
-	public boolean isProcessed() {
-		return isProcessed;
-	}
-
-	public void processed() {
-		this.isProcessed = true;
-	}
-
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
@@ -77,5 +77,4 @@ public class Statement extends TreeMap<StatementField, String> {
 		sb.append("}");
 		return sb.toString();
 	}
-
 }
