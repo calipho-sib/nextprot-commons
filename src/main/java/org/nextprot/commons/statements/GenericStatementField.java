@@ -1,6 +1,6 @@
 package org.nextprot.commons.statements;
 
-public enum PredefinedStatementField implements StatementField {
+public enum GenericStatementField implements StatementField {
 
 	//Generated automatically from the builder when all fields are set	
 	STATEMENT_ID, 
@@ -90,12 +90,17 @@ public enum PredefinedStatementField implements StatementField {
 
 	private final boolean isUnicityField;
 
-	PredefinedStatementField(boolean isUnicityField) {
+	GenericStatementField(boolean isUnicityField) {
 		this.isUnicityField = isUnicityField;
 	}
 	
-	PredefinedStatementField() {
+	GenericStatementField() {
 		this(false);
+	}
+
+	@Override
+	public String getName() {
+		return name();
 	}
 
 	@Override

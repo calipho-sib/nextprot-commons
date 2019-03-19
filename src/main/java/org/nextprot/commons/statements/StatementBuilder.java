@@ -15,14 +15,14 @@ import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.nextprot.commons.utils.StringUtils;
 
-import static org.nextprot.commons.statements.PredefinedStatementField.*;
+import static org.nextprot.commons.statements.GenericStatementField.*;
 
 /**
  * A StatementID is computed based on the fields when build() is invoked
  */
 public class StatementBuilder {
 
-	private Map<StatementField, String> keyValues = new TreeMap<>(Comparator.comparing(StatementField::name));
+	private Map<StatementField, String> keyValues = new TreeMap<>(Comparator.comparing(StatementField::getName));
 
 	public static StatementBuilder createNew() {
 		StatementBuilder sb = new StatementBuilder();
@@ -66,7 +66,7 @@ public class StatementBuilder {
 		addField(SUBJECT_STATEMENT_IDS, subjectStatemendIds);
 		
 		if(!subjectAnnotationIds.isEmpty()){
-			addField(PredefinedStatementField.SUBJECT_ANNOTATION_IDS, subjectAnnotationIds);
+			addField(GenericStatementField.SUBJECT_ANNOTATION_IDS, subjectAnnotationIds);
 		}
 
 		return this;
@@ -103,7 +103,7 @@ public class StatementBuilder {
 	}
 
 	public StatementBuilder addQuality(QualityQualifier quality) {
-		addField(PredefinedStatementField.EVIDENCE_QUALITY, quality.name());
+		addField(GenericStatementField.EVIDENCE_QUALITY, quality.name());
 		return this;
 	}
 
@@ -140,13 +140,13 @@ public class StatementBuilder {
 
 	public Statement build() {
 		Statement rs = new Statement(keyValues);
-		rs.putValue(PredefinedStatementField.STATEMENT_ID, computeUniqueKey(rs, AnnotationType.STATEMENT));
+		rs.putValue(GenericStatementField.STATEMENT_ID, computeUniqueKey(rs, AnnotationType.STATEMENT));
 		return rs;
 	}
 
 	public Statement buildWithAnnotationHash() {
 		Statement rs = build();
-		rs.putValue(PredefinedStatementField.ANNOTATION_ID, computeUniqueKey(rs, AnnotationType.ENTRY));
+		rs.putValue(GenericStatementField.ANNOTATION_ID, computeUniqueKey(rs, AnnotationType.ENTRY));
 		return rs;
 	}
 
@@ -177,7 +177,7 @@ public class StatementBuilder {
 			}
 			// STATEMENT TYPE: all fields are considered to build the unique key
 			else if (type.equals(AnnotationType.STATEMENT)) { // All fields for the statement
-				if (!field.equals(PredefinedStatementField.STATEMENT_ID)) {
+				if (!field.equals(GenericStatementField.STATEMENT_ID)) {
 					unicityFields.add(field);
 				}
 			}

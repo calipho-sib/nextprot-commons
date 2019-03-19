@@ -7,13 +7,13 @@ import java.util.TreeMap;
 /**
  * DO NOT ADD public setters on this class.
  */
-public class Statement extends TreeMap<StatementField, String>{
+public class Statement extends TreeMap<StatementField, String> {
 
 	private static final long serialVersionUID = 2L;
 	private boolean isProcessed = false;
-	
+
 	public Statement() {
-		super(Comparator.comparing(StatementField::name));
+		super(Comparator.comparing(StatementField::getName));
 	}
 
 	// Keep the constructor package protected, so it enforces the use of the Builder
@@ -27,7 +27,7 @@ public class Statement extends TreeMap<StatementField, String>{
 	}
 
 	public String getDebugInfo() {
-		return get(PredefinedStatementField.DEBUG_INFO);
+		return get(GenericStatementField.DEBUG_INFO);
 	}
 
 	String putValue(StatementField field, String value) {
@@ -35,29 +35,29 @@ public class Statement extends TreeMap<StatementField, String>{
 	}
 
 	public String getSubjectStatementIds() {
-		return getValue(PredefinedStatementField.SUBJECT_STATEMENT_IDS);
+		return getValue(GenericStatementField.SUBJECT_STATEMENT_IDS);
 	}
 	
 	public String[] getSubjectStatementIdsArray() {
-		String subjects = getValue(PredefinedStatementField.SUBJECT_STATEMENT_IDS);
+		String subjects = getValue(GenericStatementField.SUBJECT_STATEMENT_IDS);
 		if(subjects == null) return null;
 		else return subjects.split(",");
 	}
 	
 	public String getStatementId() {
-		return this.getValue(PredefinedStatementField.STATEMENT_ID);
+		return this.getValue(GenericStatementField.STATEMENT_ID);
 	}
 	
 	public String getAnnotationId() {
-		return this.getValue(PredefinedStatementField.ANNOTATION_ID);
+		return this.getValue(GenericStatementField.ANNOTATION_ID);
 	}
 	
 	public String getObjectStatementId() {
-		return getValue(PredefinedStatementField.OBJECT_STATEMENT_IDS);
+		return getValue(GenericStatementField.OBJECT_STATEMENT_IDS);
 	}
 	
 	public boolean hasModifiedSubject() {
-		return (getValue(PredefinedStatementField.SUBJECT_STATEMENT_IDS) != null);
+		return (getValue(GenericStatementField.SUBJECT_STATEMENT_IDS) != null);
 	}
 
 	public boolean isProcessed() {
@@ -72,7 +72,7 @@ public class Statement extends TreeMap<StatementField, String>{
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		for (StatementField sf : this.keySet()) {
-			sb.append("\t\"" + sf.name() + "\": \"" + this.get(sf.name()).replace("\"", "''") + "\",\n");
+			sb.append("\t\"" + sf.getName() + "\": \"" + this.get(sf.getName()).replace("\"", "''") + "\",\n");
 		}
 		sb.append("}");
 		return sb.toString();
