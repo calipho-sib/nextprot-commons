@@ -5,7 +5,6 @@ import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
