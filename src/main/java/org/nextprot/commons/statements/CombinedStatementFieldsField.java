@@ -7,7 +7,7 @@ import java.util.Set;
  * A field that is the combination of other fields
  *
  * The main use-case is when we need to add more informations via a supplementary column in the nxflat db
- * that correspond to a combo of multiple fields where the value will be in the form of a map indexed by field name
+ * that correspond to a combo of multiple fields where the value will be in the form of a map indexed by field getName
  */
 public class CombinedStatementFieldsField implements StatementField {
 
@@ -21,7 +21,7 @@ public class CombinedStatementFieldsField implements StatementField {
 	}
 
 	@Override
-	public String name() {
+	public String getName() {
 		return name;
 	}
 

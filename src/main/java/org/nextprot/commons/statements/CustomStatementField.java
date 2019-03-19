@@ -1,9 +1,10 @@
 package org.nextprot.commons.statements;
 
+
 public class CustomStatementField implements StatementField {
 
-	private final String name;
-	private final boolean isPartOfUnicityKey;
+	private String name;
+	private boolean isPartOfUnicityKey;
 
 	public CustomStatementField(String name) {
 
@@ -17,12 +18,18 @@ public class CustomStatementField implements StatementField {
 	}
 
 	@Override
-	public String name() {
+	public String getName() {
 		return name;
 	}
 
 	@Override
 	public boolean isPartOfUnicityKey() {
 		return isPartOfUnicityKey;
+	}
+
+	@Override
+	public String toString() {
+
+		return name;
 	}
 }

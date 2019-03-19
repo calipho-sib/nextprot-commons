@@ -2,6 +2,6 @@ package org.nextprot.commons.statements;
 
 public interface StatementField {
 
-	String name();
+	String getName();
 	boolean isPartOfUnicityKey();
 }
