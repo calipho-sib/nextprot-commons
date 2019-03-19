@@ -137,7 +137,8 @@ public class StatementBuilderTest {
 				"  \"VARIANT_VARIATION_AMINO_ACID\" : \"L\"\n" +
 				"}";
 
-		Statement sub1 = buildStatementFromJsonString(subjectOne);
+		Statement sub1 = StatementBuilder.createNew().addMap(buildStatementFromJsonString(subjectOne)).build();
+
 		Statement sub2 = buildStatementFromJsonString(subjectTwo);
 
 		Statement vp1 = StatementBuilder.createNew().addField(GenericStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub1, sub2)).build();
@@ -205,10 +206,6 @@ public class StatementBuilderTest {
 		});
 		mapper.registerModule(module);
 
-		StatementBuilder sb = StatementBuilder.createNew();
-
-		Statement stmt = mapper.readValue(content, new TypeReference<Statement>() { });
-
-		return sb.addMap(stmt).build();
+		return mapper.readValue(content, new TypeReference<Statement>() { });
 	}
 }
