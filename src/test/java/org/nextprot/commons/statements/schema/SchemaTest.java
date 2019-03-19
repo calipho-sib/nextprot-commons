@@ -1,8 +1,9 @@
-package org.nextprot.commons.statements;
+package org.nextprot.commons.statements.schema;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.nextprot.commons.statements.StatementField;
 
 public class SchemaTest {
 

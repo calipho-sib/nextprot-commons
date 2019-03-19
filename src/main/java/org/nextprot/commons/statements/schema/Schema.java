@@ -1,4 +1,6 @@
-package org.nextprot.commons.statements;
+package org.nextprot.commons.statements.schema;
+
+import org.nextprot.commons.statements.StatementField;
 
 import java.util.Collection;
 import java.util.Collections;

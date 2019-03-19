@@ -1,6 +1,8 @@
 package org.nextprot.commons.statements;
 
-import java.util.Collection;
+import org.nextprot.commons.statements.schema.GenericSchemaSupplier;
+import org.nextprot.commons.statements.schema.Schema;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -17,10 +19,14 @@ public enum NextProtSource {
 	static {
 		ALL_FIELDS = new HashMap<>();
 		for (NextProtSource source : NextProtSource.values()) {
-			for (StatementField field : source.getSchema().getStatementFields()) {
+			for (StatementField field : source.getSchema().getFields()) {
 
 				if (!ALL_FIELDS.containsKey(field.getName())) {
 					ALL_FIELDS.put(field.getName(), field);
+				}
+				// should not have multiple fields with the same name
+				else if (ALL_FIELDS.get(field.getName()).getClass() != field.getClass()) {
+					throw new IllegalStateException("conflict with field name "+field.getName());
 				}
 			}
 		}
@@ -48,34 +54,24 @@ public enum NextProtSource {
 		return schema;
 	}
 
-	public static boolean isFieldExist(String field) {
+	/**
+	 * @return true if the given field is found in one of the schema
+	 */
+	public static boolean isStatementFieldExist(String field) {
 
 		return ALL_FIELDS.containsKey(field);
 	}
 
-	public static StatementField valueOfField(String field) {
+	/**
+	 * @return the StatementField corresponding to the given field name
+	 */
+	public static StatementField getStatementField(String field) {
 
-		if (!isFieldExist(field)) {
+		if (!isStatementFieldExist(field)) {
 			throw new IllegalStateException("field " + field + " is not found in any neXtProt sources");
 		}
 
 		return ALL_FIELDS.get(field);
-	}
-
-	static class GenericSchemaSupplier implements Supplier<Schema> {
-
-		@Override
-		public Schema get() {
-
-			Schema schema = new Schema();
-
-			for (StatementField field : GenericStatementField.values()) {
-
-				schema.registerField(field);
-			}
-
-			return schema;
-		}
 	}
 
 	static class GnomADSchemaSupplier implements Supplier<Schema> {
@@ -99,31 +95,4 @@ public enum NextProtSource {
 		}
 	}
 
-	static class Schema {
-
-		private final Map<String, StatementField> statementFields = new HashMap<>();
-
-		public final void registerField(StatementField field) {
-
-			statementFields.put(field.getName(), field);
-		}
-
-		public final boolean hasField(String field) {
-
-			return (statementFields.containsKey(field));
-		}
-
-		public Collection<StatementField> getStatementFields() {
-			return statementFields.values();
-		}
-
-		// used to deserialize statement keys from json
-		public StatementField valueOf(String field) {
-
-			if (hasField(field)) {
-				return statementFields.get(field);
-			}
-			throw new IllegalStateException("field "+ field + " is not valid");
-		}
-	}
 }
