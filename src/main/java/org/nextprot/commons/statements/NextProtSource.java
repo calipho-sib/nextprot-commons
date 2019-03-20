@@ -3,6 +3,7 @@ package org.nextprot.commons.statements;
 import org.nextprot.commons.statements.schema.GenericSchemaSupplier;
 import org.nextprot.commons.statements.schema.Schema;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -86,13 +87,18 @@ public enum NextProtSource {
 				schema.registerField(field);
 			}
 
-			schema.registerField(new CustomStatementField("CANONICAL", false));
-			schema.registerField(new CustomStatementField("ALLELE_COUNT", false));
-			schema.registerField(new CustomStatementField("ALLELE_SAMPLED", false));
-			schema.registerField(new CustomStatementField("DBSNP_ID"));
+			StatementField cField = new CustomStatementField("CANONICAL", false);
+			StatementField acField = new CustomStatementField("ALLELE_COUNT", false);
+			StatementField asField = new CustomStatementField("ALLELE_SAMPLED", false);
+			StatementField dbsnpField = new CustomStatementField("DBSNP_ID");
+
+			schema.registerField(cField);
+			schema.registerField(acField);
+			schema.registerField(asField);
+			schema.registerField(dbsnpField);
+			schema.registerField(new CompositeField("PROPERTIES", Arrays.asList(dbsnpField, cField, acField, asField)));
 
 			return schema;
 		}
 	}
-
 }
