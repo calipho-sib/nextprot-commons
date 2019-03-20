@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import org.nextprot.commons.algo.MD5Algo;
 import org.nextprot.commons.constants.QualityQualifier;
-import org.nextprot.commons.statements.constants.AnnotationType;
+import org.nextprot.commons.statements.constants.UniqueKey;
 import org.nextprot.commons.utils.StringUtils;
 
 import static org.nextprot.commons.statements.GenericStatementField.*;
@@ -138,53 +138,49 @@ public class StatementBuilder {
 
 	}
 
-	public Statement buildAndGenerateUniqueID() {
+	public Statement build() {
 		Statement rs = new Statement(keyValues);
-		rs.putValue(GenericStatementField.STATEMENT_ID, computeUniqueKey(rs, AnnotationType.STATEMENT));
+		rs.putValue(GenericStatementField.STATEMENT_ID, computeUniqueKey(rs, UniqueKey.STATEMENT));
 		return rs;
 	}
 
-	public Statement buildAndGenerateUniqueIDs() {
-		Statement rs = buildAndGenerateUniqueID();
-		rs.putValue(GenericStatementField.ANNOTATION_ID, computeUniqueKey(rs, AnnotationType.ENTRY));
+	public Statement buildWithAnnotationHash() {
+		Statement rs = build();
+		rs.putValue(GenericStatementField.ANNOTATION_ID, computeUniqueKey(rs, UniqueKey.ENTRY));
 		return rs;
 	}
 
 	/**
-	 * This method compute a MD5 unique key based on the combination of specified statement fields
+	 * This method compute a MD5 unique key based on the combination of selected statement fields
+	 *
 	 * @param statement the statement to compute unique key on
-	 * @param type see with pam
-	 * @return a unique key
+	 * @param uniqueKey the type of unique key to create
+	 * @return a unique key as string
+	 * @implSpec at https://calipho.isb-sib.ch/wiki/display/cal/Raw+statements+specifications
 	 */
-	public static String computeUniqueKey(Statement statement, AnnotationType type) {
+	public static String computeUniqueKey(Statement statement, UniqueKey uniqueKey) {
 
-		// Filter fields which are used to compute unicity
+		// Filter fields which are used to compute unicity key
 		Set<StatementField> unicityFields = new HashSet<>();
-		for (StatementField field : statement.keySet()) {
-			// According with
-			// https://calipho.isb-sib.ch/wiki/display/cal/Raw+statements+specifications
 
-			/* TODO: Shouldnt it be:
-			 *   if (field != PredefinedStatementField.STATEMENT_ID && field.isPartOfUnicityKey()) {
-			 *		unicityFields.add(field);
-			 *	 }
-			 */
+		for (StatementField field : statement.keySet()) {
+
 			// ENTRY TYPE: only fields that are part of unicity key are considered
-			if (type.equals(AnnotationType.ENTRY)) {
-				if (field.isPartOfUnicityKey()) {
+			if (uniqueKey.equals(UniqueKey.ENTRY)) {
+				if (field.isPartOfAnnotationUnicityKey()) {
 					unicityFields.add(field);
 				}
 			}
 			// STATEMENT TYPE: all fields are considered to build the unique key
-			else if (type.equals(AnnotationType.STATEMENT)) { // All fields for the statement
-				if (!field.equals(GenericStatementField.STATEMENT_ID)) {
+			else if (uniqueKey.equals(UniqueKey.STATEMENT)) { // All fields for the statement
+				if (!field.equals(GenericStatementField.STATEMENT_ID) && !field.equals(GenericStatementField.ANNOTATION_ID)) {
 					unicityFields.add(field);
 				}
 			}
 		}
 
 		if (unicityFields.isEmpty()) {
-			throw new IllegalStateException("could not compute a unique key for statement "+statement);
+			throw new IllegalStateException("could not compute a unique key for statement "+statement + " (type="+ uniqueKey +")");
 		}
 
 		return MD5Algo.computeMD5(unicityFields.stream()

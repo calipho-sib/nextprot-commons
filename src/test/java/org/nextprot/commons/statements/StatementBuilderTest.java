@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.commons.constants.QualityQualifier;
-import org.nextprot.commons.statements.constants.AnnotationType;
+import org.nextprot.commons.statements.constants.UniqueKey;
 
 public class StatementBuilderTest {
 	
@@ -24,20 +24,20 @@ public class StatementBuilderTest {
 	
 	@Test
 	public void testRawStatementEquals() {
-		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).buildAndGenerateUniqueID();
-		Statement rs2 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).buildAndGenerateUniqueID();
+		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
+		Statement rs2 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
 		assertEquals(rs1, rs2);
 	}
 
 	@Test
 	public void testRawStatementInsertionInSets() {
 		Set<Statement> set1 = new HashSet<>();
-		set1.add(StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).buildAndGenerateUniqueID());
-		set1.add(StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality ).buildAndGenerateUniqueID());
+		set1.add(StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build());
+		set1.add(StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality ).build());
 		
 		assertEquals(set1.size(), 1);
 		
-		set1.add(StatementBuilder.createNew().addCompulsoryFields("DDD", "BBB", "CCC", defaultQuality).buildAndGenerateUniqueID());
+		set1.add(StatementBuilder.createNew().addCompulsoryFields("DDD", "BBB", "CCC", defaultQuality).build());
 		assertEquals(set1.size(), 2);
 
 	}
@@ -50,23 +50,23 @@ public class StatementBuilderTest {
 				.addField(GenericStatementField.GENE_NAME, "apc")
 				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
    	    	    .addField(GenericStatementField.TARGET_ISOFORMS, "[]")
-				.addSourceInfo("CAVA-VP90999", "BED").buildAndGenerateUniqueIDs();
+				.addSourceInfo("CAVA-VP90999", "BED").buildWithAnnotationHash();
 		Statement rs2 = StatementBuilder.createNew()
 				.addField(GenericStatementField.NEXTPROT_ACCESSION, "NX_P25054")
 				.addField(GenericStatementField.GENE_NAME, "apc")
 				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
    	    	    .addField(GenericStatementField.TARGET_ISOFORMS, "[]")
-				.addSourceInfo("XPTO", "Caviar").buildAndGenerateUniqueIDs();
+				.addSourceInfo("XPTO", "Caviar").buildWithAnnotationHash();
 
 		assertNotEquals(rs1, rs2); 
-		assertEquals(rs1.getValue(GenericStatementField.ANNOTATION_ID), rs2.getValue(GenericStatementField.ANNOTATION_ID));
+		assertEquals(rs1.get(GenericStatementField.ANNOTATION_ID), rs2.get(GenericStatementField.ANNOTATION_ID));
 	}
 
 	@Test
 	public void testRawStatement2() {
 
-		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).buildAndGenerateUniqueID();
-		Statement rs2 = StatementBuilder.createNew().addMap(rs1).buildAndGenerateUniqueID();
+		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
+		Statement rs2 = StatementBuilder.createNew().addMap(rs1).build();
 
 		assertEquals(rs1, rs2);
 	}
@@ -74,19 +74,19 @@ public class StatementBuilderTest {
 	@Test
 	public void testDebugInfo() {
 
-		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).addDebugInfo("Oh yeah").buildAndGenerateUniqueID();
-		Statement rs2 = StatementBuilder.createNew().addMap(rs1).addDebugInfo("oh oh").buildAndGenerateUniqueID();
+		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).addDebugInfo("Oh yeah").build();
+		Statement rs2 = StatementBuilder.createNew().addMap(rs1).addDebugInfo("oh oh").build();
 
-		assertEquals(rs1.getValue(GenericStatementField.DEBUG_INFO), "Oh yeah");
-		assertEquals(rs2.getValue(GenericStatementField.DEBUG_INFO), "oh oh");
+		assertEquals(rs1.get(GenericStatementField.DEBUG_INFO), "Oh yeah");
+		assertEquals(rs2.get(GenericStatementField.DEBUG_INFO), "oh oh");
 	}
 
 	@Test
 	public void testStatementEquality() {
 
 		Statement rs1 = StatementBuilder.createNew()
-				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).buildAndGenerateUniqueID();
-		Statement rs2 = StatementBuilder.createNew().addMap(rs1).buildAndGenerateUniqueID();
+				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
+		Statement rs2 = StatementBuilder.createNew().addMap(rs1).build();
 
 		assertEquals(rs1, rs2);
 	}
@@ -137,15 +137,15 @@ public class StatementBuilderTest {
 				"  \"VARIANT_VARIATION_AMINO_ACID\" : \"L\"\n" +
 				"}";
 
-		Statement sub1 = StatementBuilder.createNew().addMap(buildStatementFromJsonString(subjectOne)).buildAndGenerateUniqueID();
+		Statement sub1 = StatementBuilder.createNew().addMap(buildStatementFromJsonString(subjectOne)).build();
 
 		Statement sub2 = buildStatementFromJsonString(subjectTwo);
 
-		Statement vp1 = StatementBuilder.createNew().addField(GenericStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub1, sub2)).buildAndGenerateUniqueID();
-		Statement vp2 = StatementBuilder.createNew().addField(GenericStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub2, sub1)).buildAndGenerateUniqueID();
+		Statement vp1 = StatementBuilder.createNew().addField(GenericStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub1, sub2)).build();
+		Statement vp2 = StatementBuilder.createNew().addField(GenericStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub2, sub1)).build();
 
-		String vp1Hash = StatementBuilder.computeUniqueKey(vp1, AnnotationType.ENTRY);
-		String vp2Hash = StatementBuilder.computeUniqueKey(vp2, AnnotationType.ENTRY);
+		String vp1Hash = StatementBuilder.computeUniqueKey(vp1, UniqueKey.ENTRY);
+		String vp2Hash = StatementBuilder.computeUniqueKey(vp2, UniqueKey.ENTRY);
 
 		Assert.assertEquals(vp1Hash, vp2Hash);
 	}
@@ -155,7 +155,7 @@ public class StatementBuilderTest {
 
 		Statement rs1 = StatementBuilder.createNew()
 				.addField(new CustomStatementField("DBSNP_ID"), "rs745905374")
-				.buildAndGenerateUniqueID();
+				.build();
 
 		Assert.assertTrue(rs1.containsKey(GenericStatementField.STATEMENT_ID));
 	}
