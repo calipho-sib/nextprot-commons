@@ -23,7 +23,7 @@ public class CustomStatementField implements StatementField {
 	}
 
 	@Override
-	public boolean isPartOfUnicityKey() {
+	public boolean isPartOfAnnotationUnicityKey() {
 		return isPartOfUnicityKey;
 	}
 

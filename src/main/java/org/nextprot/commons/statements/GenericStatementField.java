@@ -104,7 +104,7 @@ public enum GenericStatementField implements StatementField {
 	}
 
 	@Override
-	public boolean isPartOfUnicityKey() {
+	public boolean isPartOfAnnotationUnicityKey() {
 		return isUnicityField;
 	}
 }
