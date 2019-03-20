@@ -1,10 +1,26 @@
 package org.nextprot.commons.statements;
 
+import org.nextprot.commons.utils.StringUtils;
+
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ *
+ *
+ * Mechanism of mapping to nxflat db
+ *
+ * Statement (Set of Field -> Value)
+ * F1   -> V1
+ * F2   -> V2
+ * ...
+ * Fi   -> Vi
+ * ...
+ * Fn   -> Vn
+ * Fn+1 -> {Fj:Vj, Fh:Vh,...} // a composite field that can be a column type (string or json) in nxflat
+ *
  * DO NOT ADD public setters on this class.
  */
 public class Statement extends TreeMap<StatementField, String> {
@@ -27,10 +43,23 @@ public class Statement extends TreeMap<StatementField, String> {
 			return null;
 		}
 
-		return get(NextProtSource.getStatementField(field));
+		return getValue(NextProtSource.getStatementField(field));
 	}
 
 	public String getValue(StatementField field) {
+
+		// TODO: not oop
+		if (field instanceof CompositeField) {
+
+			Map<String, String> map = new HashMap<>();
+
+			for (StatementField cf : ((CompositeField) field).getFields()) {
+				map.put(cf.getName(), get(cf));
+			}
+
+			return StringUtils.serializeAsJsonStringOrNull(map);
+		}
+
 		return get(field);
 	}
 
@@ -43,29 +72,29 @@ public class Statement extends TreeMap<StatementField, String> {
 	}
 
 	public String getSubjectStatementIds() {
-		return getValue(GenericStatementField.SUBJECT_STATEMENT_IDS);
+		return get(GenericStatementField.SUBJECT_STATEMENT_IDS);
 	}
 	
 	public String[] getSubjectStatementIdsArray() {
-		String subjects = getValue(GenericStatementField.SUBJECT_STATEMENT_IDS);
+		String subjects = get(GenericStatementField.SUBJECT_STATEMENT_IDS);
 		if(subjects == null) return null;
 		else return subjects.split(",");
 	}
 	
 	public String getStatementId() {
-		return this.getValue(GenericStatementField.STATEMENT_ID);
+		return this.get(GenericStatementField.STATEMENT_ID);
 	}
 	
 	public String getAnnotationId() {
-		return this.getValue(GenericStatementField.ANNOTATION_ID);
+		return this.get(GenericStatementField.ANNOTATION_ID);
 	}
 	
 	public String getObjectStatementId() {
-		return getValue(GenericStatementField.OBJECT_STATEMENT_IDS);
+		return get(GenericStatementField.OBJECT_STATEMENT_IDS);
 	}
 	
 	public boolean hasModifiedSubject() {
-		return (getValue(GenericStatementField.SUBJECT_STATEMENT_IDS) != null);
+		return (get(GenericStatementField.SUBJECT_STATEMENT_IDS) != null);
 	}
 
 	public String toString(){
