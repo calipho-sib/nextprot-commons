@@ -2,6 +2,7 @@ package org.nextprot.commons.statements;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 import org.nextprot.commons.algo.MD5Algo;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
+import org.nextprot.commons.statements.schema.Schema;
 import org.nextprot.commons.utils.StringUtils;
 
 import static org.nextprot.commons.statements.GenericStatementField.*;
@@ -22,11 +24,16 @@ import static org.nextprot.commons.statements.GenericStatementField.*;
  */
 public class StatementBuilder {
 
-	private Map<StatementField, String> keyValues = new TreeMap<>(Comparator.comparing(StatementField::getName));
+	private Schema schema = new Schema();
+	private final Map<StatementField, String> keyValues;
+
+	private StatementBuilder() {
+
+		keyValues = new TreeMap<>(Comparator.comparing(StatementField::getName));
+	}
 
 	public static StatementBuilder createNew() {
-		StatementBuilder sb = new StatementBuilder();
-		return sb;
+		return new StatementBuilder();
 	}
 
 	// Note: Used in bed
@@ -34,6 +41,11 @@ public class StatementBuilder {
 		StatementBuilder sb = new StatementBuilder();
 		sb.addMap(s);
 		return sb;
+	}
+
+	public StatementBuilder withSchema(Schema schema) {
+		this.schema = schema;
+		return this;
 	}
 
 	public StatementBuilder addField(StatementField statementField, String statementValue) {
@@ -139,15 +151,30 @@ public class StatementBuilder {
 	}
 
 	public Statement build() {
-		Statement rs = new Statement(keyValues);
-		rs.putValue(GenericStatementField.STATEMENT_ID, computeUniqueKey(rs, UniqueKey.STATEMENT));
-		return rs;
+		Statement statement = new Statement(keyValues);
+
+		schema.getFields().stream()
+				.filter(statementField -> statementField instanceof CompositeField) // TODO: not oop
+				.map(statementField -> (CompositeField) statementField)
+				.forEach(compositeField -> statement.putValue(compositeField, getCompositeValuesAsJsonString(compositeField)));
+
+		statement.putValue(GenericStatementField.STATEMENT_ID, computeUniqueKey(statement, UniqueKey.STATEMENT));
+
+		return statement;
 	}
 
 	public Statement buildWithAnnotationHash() {
 		Statement rs = build();
 		rs.putValue(GenericStatementField.ANNOTATION_ID, computeUniqueKey(rs, UniqueKey.ENTRY));
 		return rs;
+	}
+
+	private String getCompositeValuesAsJsonString(CompositeField compositeField) {
+		Map<String, String> map = new HashMap<>();
+		for (StatementField field : compositeField.getFields()) {
+			map.put(field.getName(), keyValues.get(field));
+		}
+		return StringUtils.serializeAsJsonStringOrNull(map);
 	}
 
 	/**
@@ -158,7 +185,7 @@ public class StatementBuilder {
 	 * @return a unique key as string
 	 * @implSpec at https://calipho.isb-sib.ch/wiki/display/cal/Raw+statements+specifications
 	 */
-	public static String computeUniqueKey(Statement statement, UniqueKey uniqueKey) {
+	static String computeUniqueKey(Statement statement, UniqueKey uniqueKey) {
 
 		// Filter fields which are used to compute unicity key
 		Set<StatementField> unicityFields = new HashSet<>();

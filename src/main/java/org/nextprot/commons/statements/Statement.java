@@ -48,18 +48,6 @@ public class Statement extends TreeMap<StatementField, String> {
 
 	public String getValue(StatementField field) {
 
-		// TODO: not oop
-		if (field instanceof CompositeField) {
-
-			Map<String, String> map = new HashMap<>();
-
-			for (StatementField cf : ((CompositeField) field).getFields()) {
-				map.put(cf.getName(), get(cf));
-			}
-
-			return StringUtils.serializeAsJsonStringOrNull(map);
-		}
-
 		return get(field);
 	}
 

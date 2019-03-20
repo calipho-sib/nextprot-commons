@@ -163,7 +163,52 @@ public class StatementBuilderTest {
 	@Test
 	public void testGnomADStatements() throws IOException {
 
-		String stmtJson = "{\n" +
+		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+				.build();
+
+		Assert.assertEquals("1", stmt.getValueOrNull("ALLELE_COUNT"));
+		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
+		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
+		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
+		Assert.assertNull(stmt.getValueOrNull("PROPERTIES"));
+		Assert.assertNull(stmt.getValueOrNull("ROUDOUDOU"));
+	}
+
+	@Test
+	public void testGnomADStatementsWithSchema() throws IOException {
+
+		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+				.withSchema(NextProtSource.GnomAD.getSchema())
+				.build();
+
+		Assert.assertEquals("1", stmt.getValueOrNull("ALLELE_COUNT"));
+		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
+		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
+		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
+		Assert.assertNotNull(stmt.getValueOrNull("PROPERTIES"));
+		Assert.assertEquals("{\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"ALLELE_COUNT\":\"1\",\"DBSNP_ID\":\"rs745905374\"}", stmt.getValueOrNull("PROPERTIES"));
+		Assert.assertNull(stmt.getValueOrNull("ROUDOUDOU"));
+	}
+
+	@Test
+	public void testGnomADStatementsUniqueEntryKeys() throws IOException {
+
+		Statement stmt1 = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+				.buildWithAnnotationHash();
+
+		Statement stmt2 = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+				.withSchema(NextProtSource.GnomAD.getSchema())
+				.buildWithAnnotationHash();
+
+		String stmt1EntryKey = StatementBuilder.computeUniqueKey(stmt1, UniqueKey.ENTRY);
+		String stmt2EntryKey = StatementBuilder.computeUniqueKey(stmt2, UniqueKey.ENTRY);
+
+		Assert.assertEquals(stmt1EntryKey, stmt2EntryKey);
+	}
+
+	private String getGnomADStatementAsJSON() {
+
+		return "{\n" +
 				"\"ANNOTATION_NAME\":\"POTEH-p.Trp34Ter\",\n" +
 				"\"ANNOTATION_CATEGORY\":\"Variant\",\n" +
 				"\"LOCATION_BEGIN\":\"34\",\n" +
@@ -181,14 +226,6 @@ public class StatementBuilderTest {
 				"\"ALLELE_SAMPLED\":\"217610\",\n" +
 				"\"DBSNP_ID\":\"rs745905374\"\n" +
 				"}";
-
-		Statement stmt = buildStatementFromJsonString(stmtJson);
-
-		Assert.assertEquals("1", stmt.getValueOrNull("ALLELE_COUNT"));
-		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
-		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
-		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
-		Assert.assertNull(stmt.getValueOrNull("ROUDOUDOU"));
 	}
 
 	private Statement buildStatementFromJsonString(String content) throws IOException {
