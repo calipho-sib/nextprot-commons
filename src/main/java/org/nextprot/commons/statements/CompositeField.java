@@ -35,6 +35,12 @@ public class CompositeField implements StatementField {
 	@Override
 	public boolean isPartOfAnnotationUnicityKey() {
 
-		return fields.stream().anyMatch(StatementField::isPartOfAnnotationUnicityKey);
+		return false;
+	}
+
+	@Override
+	public String toString() {
+
+		return name;
 	}
 }
