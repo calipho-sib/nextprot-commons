@@ -10,7 +10,7 @@ public class SchemaTest {
 	@Test
 	public void testRegisterField() {
 
-		Schema schema = new Schema();
+		SchemaImpl schema = new SchemaImpl();
 		schema.registerField(Mockito.mock(StatementField.class));
 		Assert.assertEquals(1, schema.size());
 	}
@@ -18,7 +18,7 @@ public class SchemaTest {
 	@Test
 	public void hasField() {
 
-		Schema schema = new Schema();
+		SchemaImpl schema = new SchemaImpl();
 		StatementField field = Mockito.mock(StatementField.class);
 		Mockito.when(field.getName()).thenReturn("roudoudou");
 		schema.registerField(field);
@@ -28,7 +28,7 @@ public class SchemaTest {
 	@Test
 	public void getStatementFields() {
 
-		Schema schema = new Schema();
+		SchemaImpl schema = new SchemaImpl();
 		StatementField field = Mockito.mock(StatementField.class);
 		Mockito.when(field.getName()).thenReturn("roudoudou");
 		schema.registerField(field);
@@ -39,7 +39,7 @@ public class SchemaTest {
 	@Test
 	public void getStatementField() {
 
-		Schema schema = new Schema();
+		SchemaImpl schema = new SchemaImpl();
 		StatementField field = Mockito.mock(StatementField.class);
 		Mockito.when(field.getName()).thenReturn("roudoudou");
 		schema.registerField(field);

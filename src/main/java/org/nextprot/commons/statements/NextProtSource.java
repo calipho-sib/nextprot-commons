@@ -2,6 +2,7 @@ package org.nextprot.commons.statements;
 
 import org.nextprot.commons.statements.schema.GenericSchemaSupplier;
 import org.nextprot.commons.statements.schema.Schema;
+import org.nextprot.commons.statements.schema.SchemaImpl;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -80,17 +81,17 @@ public enum NextProtSource {
 		@Override
 		public Schema get() {
 
-			Schema schema = new Schema();
+			SchemaImpl schema = new SchemaImpl();
 
 			for (StatementField field : GenericStatementField.values()) {
 
 				schema.registerField(field);
 			}
 
-			StatementField cField = new CustomStatementField("CANONICAL", false);
-			StatementField acField = new CustomStatementField("ALLELE_COUNT", false);
-			StatementField asField = new CustomStatementField("ALLELE_SAMPLED", false);
-			StatementField dbsnpField = new CustomStatementField("DBSNP_ID");
+			StatementField cField = new CustomStatementField("CANONICAL");
+			StatementField acField = new CustomStatementField("ALLELE_COUNT");
+			StatementField asField = new CustomStatementField("ALLELE_SAMPLED");
+			StatementField dbsnpField = new CustomStatementField("DBSNP_ID", true);
 
 			schema.registerField(cField);
 			schema.registerField(acField);

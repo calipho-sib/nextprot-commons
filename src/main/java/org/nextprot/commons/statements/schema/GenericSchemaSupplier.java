@@ -10,7 +10,7 @@ public class GenericSchemaSupplier implements Supplier<Schema> {
 	@Override
 	public Schema get() {
 
-		Schema schema = new Schema();
+		SchemaImpl schema = new SchemaImpl();
 
 		for (StatementField field : GenericStatementField.values()) {
 
