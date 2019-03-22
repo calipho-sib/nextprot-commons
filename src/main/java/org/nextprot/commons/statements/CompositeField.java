@@ -1,8 +1,12 @@
 package org.nextprot.commons.statements;
 
+import org.nextprot.commons.utils.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A field that is the combination of other fields
@@ -26,7 +30,6 @@ public class CompositeField implements StatementField {
 		return name;
 	}
 
-
 	public List<StatementField> getFields() {
 
 		return Collections.unmodifiableList(fields);
@@ -36,6 +39,12 @@ public class CompositeField implements StatementField {
 	public boolean isPartOfAnnotationUnicityKey() {
 
 		return false;
+	}
+
+	@Override
+	public String valueAsString(Object value) {
+
+		return StringUtils.serializeAsJsonStringOrNull(value);
 	}
 
 	@Override

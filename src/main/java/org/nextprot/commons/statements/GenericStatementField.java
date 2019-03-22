@@ -91,20 +91,24 @@ public enum GenericStatementField implements StatementField {
 	private final boolean isUnicityField;
 
 	GenericStatementField(boolean isUnicityField) {
+
 		this.isUnicityField = isUnicityField;
 	}
 	
 	GenericStatementField() {
+
 		this(false);
 	}
 
 	@Override
 	public String getName() {
+
 		return name();
 	}
 
 	@Override
 	public boolean isPartOfAnnotationUnicityKey() {
+
 		return isUnicityField;
 	}
 }

@@ -8,7 +8,7 @@ public class CustomStatementField implements StatementField {
 
 	public CustomStatementField(String name) {
 
-		this(name, true);
+		this(name, false);
 	}
 
 	public CustomStatementField(String name, boolean isPartOfUnicityKey) {
@@ -19,11 +19,13 @@ public class CustomStatementField implements StatementField {
 
 	@Override
 	public String getName() {
+
 		return name;
 	}
 
 	@Override
 	public boolean isPartOfAnnotationUnicityKey() {
+
 		return isPartOfUnicityKey;
 	}
 
