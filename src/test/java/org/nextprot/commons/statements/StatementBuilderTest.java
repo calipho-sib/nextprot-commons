@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -17,10 +18,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
+import org.nextprot.commons.statements.schema.GenericSchema;
+import org.nextprot.commons.statements.schema.Schema;
+import org.nextprot.commons.statements.schema.SchemaImpl;
 
 public class StatementBuilderTest {
 	
-	QualityQualifier defaultQuality = QualityQualifier.GOLD;
+	private QualityQualifier defaultQuality = QualityQualifier.GOLD;
 	
 	@Test
 	public void testRawStatementEquals() {
@@ -186,7 +190,7 @@ public class StatementBuilderTest {
 		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
 		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
 		Assert.assertNotNull(stmt.getValueOrNull("PROPERTIES"));
-		Assert.assertEquals("{\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"ALLELE_COUNT\":\"1\",\"DBSNP_ID\":\"rs745905374\"}", stmt.getValueOrNull("PROPERTIES"));
+		Assert.assertEquals("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"DBSNP_ID\":\"rs745905374\"}", stmt.getValueOrNull("PROPERTIES"));
 		Assert.assertNull(stmt.getValueOrNull("ROUDOUDOU"));
 	}
 
@@ -204,6 +208,25 @@ public class StatementBuilderTest {
 		String stmt2EntryKey = StatementBuilder.computeUniqueKey(stmt2, UniqueKey.ENTRY);
 
 		Assert.assertEquals(stmt1EntryKey, stmt2EntryKey);
+	}
+
+	@Test
+	public void testDefaultSchema() throws IOException {
+
+		String json = "{\n" +
+				"\"name\":\"roudoudou\",\n" +
+				"\"age\":\"23\",\n" +
+				"\"location\":\"geneva\"\n" +
+				"}";
+
+		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(json))
+				.build();
+
+		Schema defaultSchema = stmt.getSchema();
+		Assert.assertEquals(Arrays.asList("age", "location", "name"), defaultSchema.getFields().stream()
+				.map(StatementField::getName)
+				.filter(statementField -> !new GenericSchema().hasField(statementField))
+				.collect(Collectors.toList()));
 	}
 
 	private String getGnomADStatementAsJSON() {
@@ -227,8 +250,12 @@ public class StatementBuilderTest {
 				"\"DBSNP_ID\":\"rs745905374\"\n" +
 				"}";
 	}
-
 	private Statement buildStatementFromJsonString(String content) throws IOException {
+
+		return buildStatementFromJsonString(content, new SchemaImpl(new GenericSchema()));
+	}
+
+	private Statement buildStatementFromJsonString(String content, Schema schema) throws IOException {
 
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -237,10 +264,9 @@ public class StatementBuilderTest {
 			@Override
 			public StatementField deserializeKey(String key, DeserializationContext ctxt) {
 
-				if (NextProtSource.isStatementFieldExist(key)) {
-					return NextProtSource.getStatementField(key);
+				if (schema.hasField(key)) {
+					return schema.getField(key);
 				}
-				System.err.println("field not defined in any schema: skipping field "+key);
 				return new CustomStatementField(key);
 			}
 		});

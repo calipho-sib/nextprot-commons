@@ -1,15 +1,14 @@
 package org.nextprot.commons.statements;
 
-import org.nextprot.commons.utils.StringUtils;
+
+import org.nextprot.commons.statements.schema.Schema;
 
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
- *
- *
  * Mechanism of mapping to nxflat db
  *
  * Statement (Set of Field -> Value)
@@ -27,6 +26,8 @@ public class Statement extends TreeMap<StatementField, String> {
 
 	private static final long serialVersionUID = 2L;
 
+	private Schema schema;
+
 	public Statement() {
 		super(Comparator.comparing(StatementField::getName));
 	}
@@ -39,16 +40,40 @@ public class Statement extends TreeMap<StatementField, String> {
 
 	public String getValueOrNull(String field) {
 
-		if (!NextProtSource.isStatementFieldExist(field)) {
+		if (!schema.hasField(field)) {
 			return null;
 		}
 
-		return getValue(NextProtSource.getStatementField(field));
+		return getValue(schema.getField(field));
 	}
 
+	/**
+	 * @return the value associated with the given field or if the field type is a composite
+	 * returns a map of field/value in json
+	 */
 	public String getValue(StatementField field) {
 
-		return get(field);
+		String value = get(field);
+
+		if (value == null && field instanceof CompositeField) {
+			CompositeField compositeField = (CompositeField) field;
+			return compositeField.valueAsString(extractCompositeValuesFrom(compositeField.getFields()));
+		}
+
+		return value;
+	}
+
+	private Map<String, String> extractCompositeValuesFrom(List<StatementField> compositeFields) {
+
+		Map<String, String> map = new TreeMap<>();
+
+		for (StatementField field : compositeFields) {
+			if (containsKey(field)) {
+				map.put(field.getName(), get(field));
+			}
+		}
+
+		return map;
 	}
 
 	public String getDebugInfo() {
@@ -57,6 +82,14 @@ public class Statement extends TreeMap<StatementField, String> {
 
 	String putValue(StatementField field, String value) {
 		return put(field, value);
+	}
+
+	void setSchema(Schema schema) {
+		this.schema = schema;
+	}
+
+	public Schema getSchema() {
+		return schema;
 	}
 
 	public String getSubjectStatementIds() {
@@ -89,7 +122,7 @@ public class Statement extends TreeMap<StatementField, String> {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		for (StatementField sf : this.keySet()) {
-			sb.append("\t\"" + sf.getName() + "\": \"" + this.get(sf.getName()).replace("\"", "''") + "\",\n");
+			sb.append("\t\"" + sf.getName() + "\": \"" + this.get(sf).replace("\"", "''") + "\",\n");
 		}
 		sb.append("}");
 		return sb.toString();

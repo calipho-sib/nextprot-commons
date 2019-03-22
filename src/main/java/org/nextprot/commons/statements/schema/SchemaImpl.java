@@ -4,12 +4,18 @@ import org.nextprot.commons.statements.StatementField;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class SchemaImpl implements Schema {
 
-	private final Map<String, StatementField> statementFields = new HashMap<>();
+	private final Map<String, StatementField> statementFields = new TreeMap<>();
+
+	public SchemaImpl() {}
+
+	public SchemaImpl(Schema schema) {
+		schema.getFields().forEach(this::registerField);
+	}
 
 	public final void registerField(StatementField field) {
 

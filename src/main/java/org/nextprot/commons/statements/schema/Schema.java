@@ -6,8 +6,8 @@ import java.util.Collection;
 
 public interface Schema {
 
+	StatementField getField(String field);
 	boolean hasField(String field);
 	Collection<StatementField> getFields();
-	StatementField getField(String field);
 	int size();
 }

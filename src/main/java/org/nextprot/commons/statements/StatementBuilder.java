@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.nextprot.commons.algo.MD5Algo;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
+import org.nextprot.commons.statements.schema.GenericSchema;
 import org.nextprot.commons.statements.schema.Schema;
 import org.nextprot.commons.statements.schema.SchemaImpl;
 import org.nextprot.commons.utils.StringUtils;
@@ -176,11 +177,13 @@ public class StatementBuilder {
 
 	private Schema buildSchema(Map<StatementField, String> keyValues) {
 
-		SchemaImpl schema = new SchemaImpl();
+		SchemaImpl schema = new SchemaImpl(new GenericSchema());
 
 		for (StatementField field : keyValues.keySet()) {
 
-			schema.registerField(field);
+			if (!schema.hasField(field.getName())) {
+				schema.registerField(field);
+			}
 		}
 
 		return schema;
