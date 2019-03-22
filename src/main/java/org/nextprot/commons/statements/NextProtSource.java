@@ -1,38 +1,19 @@
 package org.nextprot.commons.statements;
 
-import org.nextprot.commons.statements.schema.GenericSchemaSupplier;
+import org.nextprot.commons.statements.schema.GenericSchema;
 import org.nextprot.commons.statements.schema.Schema;
 import org.nextprot.commons.statements.schema.SchemaImpl;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 import java.util.function.Supplier;
 
 public enum NextProtSource {
 
-	BioEditor("neXtProt", "http://kant.sib.swiss:9001/bioeditor", new GenericSchemaSupplier()),
-	GlyConnect("GlyConnect", "http://kant.sib.swiss:9001/glyconnect", new GenericSchemaSupplier()),
-	GnomAD("gnomAD", "http://kant.sib.swiss:9001/gnomad", new GnomADSchemaSupplier())
+	BioEditor("neXtProt", "http://kant.sib.swiss:9001/bioeditor", GenericSchema::new),
+	GlyConnect("GlyConnect", "http://kant.sib.swiss:9001/glyconnect", GenericSchema::new),
+	GnomAD("gnomAD", "http://kant.sib.swiss:9001/gnomad", GnomADSchema::new)
 	;
-
-	private static Map<String, StatementField> ALL_FIELDS;
-
-	static {
-		ALL_FIELDS = new HashMap<>();
-		for (NextProtSource source : NextProtSource.values()) {
-			for (StatementField field : source.getSchema().getFields()) {
-
-				if (!ALL_FIELDS.containsKey(field.getName())) {
-					ALL_FIELDS.put(field.getName(), field);
-				}
-				// should not have multiple fields with the same name
-				else if (ALL_FIELDS.get(field.getName()).getClass() != field.getClass()) {
-					throw new IllegalStateException("conflict with field name "+field.getName());
-				}
-			}
-		}
-	}
 
 	private String sourceName;
 	private String statementsUrl;
@@ -56,37 +37,13 @@ public enum NextProtSource {
 		return schema;
 	}
 
-	/**
-	 * @return true if the given field is found in one of the schema
-	 */
-	public static boolean isStatementFieldExist(String field) {
+	static class GnomADSchema implements Schema {
 
-		return ALL_FIELDS.containsKey(field);
-	}
+		private final SchemaImpl schema;
 
-	/**
-	 * @return the StatementField corresponding to the given field name
-	 */
-	public static StatementField getStatementField(String field) {
+		public GnomADSchema() {
 
-		if (!isStatementFieldExist(field)) {
-			throw new IllegalStateException("field " + field + " is not found in any neXtProt sources");
-		}
-
-		return ALL_FIELDS.get(field);
-	}
-
-	static class GnomADSchemaSupplier implements Supplier<Schema> {
-
-		@Override
-		public Schema get() {
-
-			SchemaImpl schema = new SchemaImpl();
-
-			for (StatementField field : GenericStatementField.values()) {
-
-				schema.registerField(field);
-			}
+			this.schema = new SchemaImpl(new GenericSchema());
 
 			StatementField cField = new CustomStatementField("CANONICAL");
 			StatementField acField = new CustomStatementField("ALLELE_COUNT");
@@ -98,8 +55,30 @@ public enum NextProtSource {
 			schema.registerField(asField);
 			schema.registerField(dbsnpField);
 			schema.registerField(new CompositeField("PROPERTIES", Arrays.asList(dbsnpField, cField, acField, asField)));
+		}
 
-			return schema;
+		@Override
+		public boolean hasField(String field) {
+
+			return schema.hasField(field);
+		}
+
+		@Override
+		public Collection<StatementField> getFields() {
+
+			return schema.getFields();
+		}
+
+		@Override
+		public StatementField getField(String field) {
+
+			return schema.getField(field);
+		}
+
+		@Override
+		public int size() {
+
+			return schema.size();
 		}
 	}
 }
