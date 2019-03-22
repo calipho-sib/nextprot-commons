@@ -53,14 +53,12 @@ public class Statement extends TreeMap<StatementField, String> {
 	 */
 	public String getValue(StatementField field) {
 
-		String value = get(field);
-
-		if (value == null && field instanceof CompositeField) {
+		if (field instanceof CompositeField) {
 			CompositeField compositeField = (CompositeField) field;
 			return compositeField.valueAsString(extractCompositeValuesFrom(compositeField.getFields()));
 		}
 
-		return value;
+		return get(field);
 	}
 
 	private Map<String, String> extractCompositeValuesFrom(List<StatementField> compositeFields) {
