@@ -2,10 +2,10 @@ package org.nextprot.commons.statements;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -15,6 +15,7 @@ import org.nextprot.commons.algo.MD5Algo;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
 import org.nextprot.commons.statements.schema.Schema;
+import org.nextprot.commons.statements.schema.SchemaImpl;
 import org.nextprot.commons.utils.StringUtils;
 
 import static org.nextprot.commons.statements.GenericStatementField.*;
@@ -24,10 +25,10 @@ import static org.nextprot.commons.statements.GenericStatementField.*;
  */
 public class StatementBuilder {
 
-	private Schema schema = new Schema();
+	private Schema schema;
 	private final Map<StatementField, String> keyValues;
 
-	private StatementBuilder() {
+	public StatementBuilder() {
 
 		keyValues = new TreeMap<>(Comparator.comparing(StatementField::getName));
 	}
@@ -39,6 +40,9 @@ public class StatementBuilder {
 	// Note: Used in bed
 	public static StatementBuilder createFromExistingStatement(Statement s) {
 		StatementBuilder sb = new StatementBuilder();
+		if (s.getSchema() != null) {
+			sb.withSchema(s.getSchema());
+		}
 		sb.addMap(s);
 		return sb;
 	}
@@ -150,31 +154,36 @@ public class StatementBuilder {
 
 	}
 
-	public Statement build() {
+	public Statement build(boolean generateAnnotationHash) {
 		Statement statement = new Statement(keyValues);
 
-		schema.getFields().stream()
-				.filter(statementField -> statementField instanceof CompositeField) // TODO: not oop
-				.map(statementField -> (CompositeField) statementField)
-				.forEach(compositeField -> statement.putValue(compositeField, getCompositeValuesAsJsonString(compositeField)));
-
 		statement.putValue(GenericStatementField.STATEMENT_ID, computeUniqueKey(statement, UniqueKey.STATEMENT));
+		if (generateAnnotationHash) {
+			statement.putValue(GenericStatementField.ANNOTATION_ID, computeUniqueKey(statement, UniqueKey.ENTRY));
+		}
+		statement.setSchema((schema == null) ? buildSchema(statement) : schema);
 
 		return statement;
 	}
 
-	public Statement buildWithAnnotationHash() {
-		Statement rs = build();
-		rs.putValue(GenericStatementField.ANNOTATION_ID, computeUniqueKey(rs, UniqueKey.ENTRY));
-		return rs;
+	public Statement build() {
+		return build(false);
 	}
 
-	private String getCompositeValuesAsJsonString(CompositeField compositeField) {
-		Map<String, String> map = new HashMap<>();
-		for (StatementField field : compositeField.getFields()) {
-			map.put(field.getName(), keyValues.get(field));
+	public Statement buildWithAnnotationHash() {
+		return build(true);
+	}
+
+	private Schema buildSchema(Map<StatementField, String> keyValues) {
+
+		SchemaImpl schema = new SchemaImpl();
+
+		for (StatementField field : keyValues.keySet()) {
+
+			schema.registerField(field);
 		}
-		return StringUtils.serializeAsJsonStringOrNull(map);
+
+		return schema;
 	}
 
 	/**
@@ -212,6 +221,7 @@ public class StatementBuilder {
 
 		return MD5Algo.computeMD5(unicityFields.stream()
 				.map(statement::getValue)
+				.filter(Objects::nonNull)
 				.collect(Collectors.joining("")));
 	}
 }
