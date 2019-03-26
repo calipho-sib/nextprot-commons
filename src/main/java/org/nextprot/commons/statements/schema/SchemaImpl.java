@@ -25,6 +25,13 @@ public class SchemaImpl implements Schema {
 		statementFields.put(field.getName(), field);
 	}
 
+	public final void registerFields(StatementField... fields) {
+
+		for (StatementField field : fields) {
+			registerField(field);
+		}
+	}
+
 	public int size() {
 		return statementFields.size();
 	}
@@ -53,7 +60,7 @@ public class SchemaImpl implements Schema {
 		else if (fields.size() == 1) {
 			return fields.get(0);
 		}
-		throw new IllegalStateException("the field "+field+ " belongs to multiple composite fields "+fields);
+		throw new IllegalStateException("invalid schema: the field "+field.getName()+ " belongs to multiple composite fields "+fields);
 	}
 
 	public StatementField getField(String field) {

@@ -52,11 +52,7 @@ public enum NextProtSource {
 
 			this.schema = new SchemaImpl(new GenericSchema());
 
-			schema.registerField(canonicalField);
-			schema.registerField(alleleCountField);
-			schema.registerField(alleleSampledField);
-			schema.registerField(dbsnpIdField);
-			schema.registerField(propertiesField);
+			schema.registerFields(canonicalField, alleleCountField, alleleSampledField, dbsnpIdField, propertiesField);
 		}
 
 		@Override
