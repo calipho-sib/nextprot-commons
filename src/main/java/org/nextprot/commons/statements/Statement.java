@@ -102,7 +102,7 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		}
 
 		SimpleModule module = new SimpleModule();
-		module.addKeyDeserializer(StatementField.class, new StatementFieldDeserializer(schema));
+		module.addKeyDeserializer(StatementField.class, schema.keyDeserializer());
 
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
@@ -173,26 +173,5 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		}
 		sb.append("}");
 		return sb.toString();
-	}
-
-	/**
-	 * Instanciate StatementField from key string
-	 */
-	private static class StatementFieldDeserializer extends KeyDeserializer {
-
-		private final Schema schema;
-
-		public StatementFieldDeserializer(Schema schema) {
-			this.schema = schema;
-		}
-
-		@Override
-		public StatementField deserializeKey(String key, DeserializationContext ctxt) {
-
-			if (schema.hasField(key)) {
-				return schema.getField(key);
-			}
-			return new CustomStatementField(key);
-		}
 	}
 }
