@@ -229,6 +229,29 @@ public class StatementBuilderTest {
 				.collect(Collectors.toList()));
 	}
 
+	@Test
+	public void testGetCompositeFieldValue() throws IOException {
+
+		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSONFromDB()))
+				.withSchema(NextProtSource.GnomAD.getSchema())
+				.build();
+
+		Assert.assertEquals("1", stmt.getValue(NextProtSource.GnomAD.getSchema().getField("ALLELE_COUNT")));
+		Assert.assertEquals("YES", stmt.getValue(NextProtSource.GnomAD.getSchema().getField("CANONICAL")));
+		Assert.assertEquals("217610", stmt.getValue(NextProtSource.GnomAD.getSchema().getField("ALLELE_SAMPLED")));
+		Assert.assertEquals("rs745905374", stmt.getValue(NextProtSource.GnomAD.getSchema().getField("DBSNP_ID")));
+	}
+
+	@Test
+	public void testCannotFindFieldFromCompositeFieldValue() throws IOException {
+
+		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSONFromDBNoCanonicalField()))
+				.withSchema(NextProtSource.GnomAD.getSchema())
+				.build();
+
+		Assert.assertNull(stmt.getValue(NextProtSource.GnomAD.getSchema().getField("CANONICAL")));
+	}
+
 	private String getGnomADStatementAsJSON() {
 
 		return "{\n" +
@@ -250,6 +273,47 @@ public class StatementBuilderTest {
 				"\"DBSNP_ID\":\"rs745905374\"\n" +
 				"}";
 	}
+
+	private String getGnomADStatementAsJSONFromDB() {
+
+		return "{\n" +
+				"\"ANNOTATION_CATEGORY\": \"Variant\",\n" +
+				"\"ANNOTATION_NAME\": \"POTEH-p.Trp34Ter\",\n" +
+				"\"ASSIGNED_BY\": \"neXtProt\",\n" +
+				"\"EVIDENCE_CODE\": \"ECO:0000269\",\n" +
+				"\"EVIDENCE_QUALITY\": \"GOLD\",\n" +
+				"\"GENE_NAME\": \"POTEH\",\n" +
+				"\"LOCATION_BEGIN\": \"34\",\n" +
+				"\"LOCATION_END\": \"34\",\n" +
+				"\"NEXTPROT_ACCESSION\": \"NX_Q6S545\",\n" +
+				"\"PROPERTIES\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"CANONICAL\\\":\\\"YES\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
+				"\"SOURCE\": \"gnomAD\",\n" +
+				"\"STATEMENT_ID\": \"792d509b2d452da2cf4a74faa2773c15\",\n" +
+				"\"VARIANT_ORIGINAL_AMINO_ACID\": \"W\",\n" +
+				"\"VARIANT_VARIATION_AMINO_ACID\": \"*\"\n" +
+				"}";
+	}
+
+	private String getGnomADStatementAsJSONFromDBNoCanonicalField() {
+
+		return "{\n" +
+				"\"ANNOTATION_CATEGORY\": \"Variant\",\n" +
+				"\"ANNOTATION_NAME\": \"POTEH-p.Trp34Ter\",\n" +
+				"\"ASSIGNED_BY\": \"neXtProt\",\n" +
+				"\"EVIDENCE_CODE\": \"ECO:0000269\",\n" +
+				"\"EVIDENCE_QUALITY\": \"GOLD\",\n" +
+				"\"GENE_NAME\": \"POTEH\",\n" +
+				"\"LOCATION_BEGIN\": \"34\",\n" +
+				"\"LOCATION_END\": \"34\",\n" +
+				"\"NEXTPROT_ACCESSION\": \"NX_Q6S545\",\n" +
+				"\"PROPERTIES\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
+				"\"SOURCE\": \"gnomAD\",\n" +
+				"\"STATEMENT_ID\": \"792d509b2d452da2cf4a74faa2773c15\",\n" +
+				"\"VARIANT_ORIGINAL_AMINO_ACID\": \"W\",\n" +
+				"\"VARIANT_VARIATION_AMINO_ACID\": \"*\"\n" +
+				"}";
+	}
+
 	private Statement buildStatementFromJsonString(String content) throws IOException {
 
 		return buildStatementFromJsonString(content, new SchemaImpl(new GenericSchema()));

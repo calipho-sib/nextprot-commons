@@ -1,8 +1,14 @@
 package org.nextprot.commons.statements;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.KeyDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.nextprot.commons.statements.schema.Schema;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +28,7 @@ import java.util.TreeMap;
  *
  * DO NOT ADD public setters on this class.
  */
-public class Statement extends TreeMap<StatementField, String> {
+public class Statement extends TreeMap<StatementField, String> implements Map<StatementField, String> {
 
 	private static final long serialVersionUID = 2L;
 
@@ -58,7 +64,49 @@ public class Statement extends TreeMap<StatementField, String> {
 			return compositeField.valueAsString(extractCompositeValuesFrom(compositeField.getFields()));
 		}
 
+		if (!containsKey(field)) {
+			// search the field in a composite fields
+			CompositeField compositeField = schema.searchCompositeFieldOrNull(field);
+			if (compositeField != null) {
+				Map<StatementField, String> map = readMapFromCompositeField(compositeField);
+				if (map.containsKey(field)) {
+					return map.get(field);
+				}
+			}
+		}
+
 		return get(field);
+	}
+
+	private Map<StatementField, String> readMapFromCompositeField(CompositeField compositeField) {
+
+		String jsonContent = get(compositeField);
+
+		try {
+			return deserialiseJsonString(jsonContent, schema);
+		} catch (IOException e) {
+			throw new IllegalStateException("cannot deserialize json for field "+ compositeField.getName()+": "+jsonContent);
+		}
+	}
+
+	public static <T extends Map<StatementField, String>> T deserialiseJsonString(String content, Schema schema) throws IOException {
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		SimpleModule module = new SimpleModule();
+		module.addKeyDeserializer(StatementField.class, new KeyDeserializer() {
+			@Override
+			public StatementField deserializeKey(String key, DeserializationContext ctxt) {
+
+				if (schema.hasField(key)) {
+					return schema.getField(key);
+				}
+				return new CustomStatementField(key);
+			}
+		});
+		mapper.registerModule(module);
+
+		return mapper.readValue(content, new TypeReference<T>() { });
 	}
 
 	private Map<String, String> extractCompositeValuesFrom(List<StatementField> compositeFields) {
