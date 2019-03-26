@@ -41,20 +41,22 @@ public enum NextProtSource {
 
 		private final SchemaImpl schema;
 
+		private final StatementField canonicalField = new CustomStatementField("CANONICAL");
+		private final StatementField alleleCountField = new CustomStatementField("ALLELE_COUNT");
+		private final StatementField alleleSampledField = new CustomStatementField("ALLELE_SAMPLED");
+		private final StatementField dbsnpIdField = new CustomStatementField("DBSNP_ID", true);
+		private final StatementField propertiesField = new CompositeField("PROPERTIES",
+				Arrays.asList(dbsnpIdField, canonicalField, alleleCountField, alleleSampledField));
+
 		public GnomADSchema() {
 
 			this.schema = new SchemaImpl(new GenericSchema());
 
-			StatementField cField = new CustomStatementField("CANONICAL");
-			StatementField acField = new CustomStatementField("ALLELE_COUNT");
-			StatementField asField = new CustomStatementField("ALLELE_SAMPLED");
-			StatementField dbsnpField = new CustomStatementField("DBSNP_ID", true);
-
-			schema.registerField(cField);
-			schema.registerField(acField);
-			schema.registerField(asField);
-			schema.registerField(dbsnpField);
-			schema.registerField(new CompositeField("PROPERTIES", Arrays.asList(dbsnpField, cField, acField, asField)));
+			schema.registerField(canonicalField);
+			schema.registerField(alleleCountField);
+			schema.registerField(alleleSampledField);
+			schema.registerField(dbsnpIdField);
+			schema.registerField(propertiesField);
 		}
 
 		@Override
@@ -67,6 +69,12 @@ public enum NextProtSource {
 		public Collection<StatementField> getFields() {
 
 			return schema.getFields();
+		}
+
+		@Override
+		public CompositeField searchCompositeFieldOrNull(StatementField field) {
+
+			return schema.searchCompositeFieldOrNull(field);
 		}
 
 		@Override

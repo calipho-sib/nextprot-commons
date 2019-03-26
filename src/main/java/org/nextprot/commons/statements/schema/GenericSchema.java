@@ -1,10 +1,10 @@
 package org.nextprot.commons.statements.schema;
 
+import org.nextprot.commons.statements.CompositeField;
 import org.nextprot.commons.statements.GenericStatementField;
 import org.nextprot.commons.statements.StatementField;
 
 import java.util.Collection;
-import java.util.function.Supplier;
 
 public class GenericSchema implements Schema {
 
@@ -30,6 +30,12 @@ public class GenericSchema implements Schema {
 	public Collection<StatementField> getFields() {
 
 		return schema.getFields();
+	}
+
+	@Override
+	public CompositeField searchCompositeFieldOrNull(StatementField field) {
+
+		return schema.searchCompositeFieldOrNull(field);
 	}
 
 	@Override

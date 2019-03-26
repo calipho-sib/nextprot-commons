@@ -1,11 +1,14 @@
 package org.nextprot.commons.statements.schema;
 
+import org.nextprot.commons.statements.CompositeField;
 import org.nextprot.commons.statements.StatementField;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class SchemaImpl implements Schema {
 
@@ -33,6 +36,24 @@ public class SchemaImpl implements Schema {
 
 	public Collection<StatementField> getFields() {
 		return Collections.unmodifiableCollection(statementFields.values());
+	}
+
+	@Override
+	public CompositeField searchCompositeFieldOrNull(StatementField field) {
+
+		List<CompositeField> fields = statementFields.values().stream()
+				.filter(statementField -> statementField instanceof CompositeField)
+				.map(statementField -> (CompositeField) statementField)
+				.filter(statementField -> statementField.getFields().contains(field))
+				.collect(Collectors.toList());
+
+		if (fields.isEmpty()) {
+			return null;
+		}
+		else if (fields.size() == 1) {
+			return fields.get(0);
+		}
+		throw new IllegalStateException("the field "+field+ " belongs to multiple composite fields "+fields);
 	}
 
 	public StatementField getField(String field) {
