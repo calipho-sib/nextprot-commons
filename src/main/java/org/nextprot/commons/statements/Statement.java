@@ -1,16 +1,10 @@
 package org.nextprot.commons.statements;
 
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.KeyDeserializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.nextprot.commons.statements.schema.Schema;
 
 import java.io.IOException;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -89,25 +83,10 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		String jsonContent = get(compositeField);
 
 		try {
-			return deserialiseJsonString(jsonContent);
+			return schema.jsonReader().readMap(jsonContent);
 		} catch (IOException e) {
 			throw new IllegalStateException("cannot deserialize json for field "+ compositeField.getName()+": "+jsonContent);
 		}
-	}
-
-	private Map<StatementField, String> deserialiseJsonString(String content) throws IOException {
-
-		if (content == null) {
-			return new HashMap<>();
-		}
-
-		SimpleModule module = new SimpleModule();
-		module.addKeyDeserializer(StatementField.class, schema.keyDeserializer());
-
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(module);
-
-		return mapper.readValue(content, new TypeReference<Map<StatementField, String>>() { });
 	}
 
 	private Map<String, String> extractCompositeValuesFrom(List<StatementField> compositeFields) {

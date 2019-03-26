@@ -27,10 +27,10 @@ public interface Schema {
 	/** @return the composite field that contain the given field or null if absent */
 	CompositeField searchCompositeFieldOrNull(StatementField field);
 
-	/** @return a new instance of KeyDeserializer that create StatementFields from String */
-	default KeyDeserializer keyDeserializer() {
+	/** @return a new instance of JsonReader that create Statements from json String */
+	default JsonReader jsonReader() {
 
-		return new Deserializer(this);
+		return new JsonReader(this);
 	}
 
 	/** @return the sql to create the table schema for nxflat.{tableName} */
@@ -61,26 +61,5 @@ public interface Schema {
 		sb.append("\n");
 
 		return sb.toString();
-	}
-
-	/**
-	 * Instanciate StatementField from key string
-	 */
-	class Deserializer extends KeyDeserializer {
-
-		private final Schema schema;
-
-		public Deserializer(Schema schema) {
-			this.schema = schema;
-		}
-
-		@Override
-		public StatementField deserializeKey(String key, DeserializationContext ctxt) {
-
-			if (schema.hasField(key)) {
-				return schema.getField(key);
-			}
-			return new CustomStatementField(key);
-		}
 	}
 }

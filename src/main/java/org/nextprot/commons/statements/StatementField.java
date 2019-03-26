@@ -1,10 +1,6 @@
 package org.nextprot.commons.statements;
 
 
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.KeyDeserializer;
-import org.nextprot.commons.statements.schema.Schema;
-
 public interface StatementField {
 
 	/** @return the field name */

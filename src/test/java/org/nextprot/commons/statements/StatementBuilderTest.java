@@ -349,7 +349,9 @@ public class StatementBuilderTest {
 
 	private Statement buildStatementFromJsonString(String content) throws IOException {
 
-		return buildStatementFromJsonString(content, new SchemaImpl(new GenericSchema()));
+		return new SchemaImpl(new GenericSchema()).jsonReader().readStatement(content);
+
+		//return buildStatementFromJsonString(content, new SchemaImpl(new GenericSchema()));
 	}
 
 	private Statement buildStatementFromJsonString(String content, Schema schema) throws IOException {
