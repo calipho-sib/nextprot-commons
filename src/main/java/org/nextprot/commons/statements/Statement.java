@@ -10,6 +10,7 @@ import org.nextprot.commons.statements.schema.Schema;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -42,6 +43,11 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 	Statement(Map<StatementField, String> map) {
 		this();
 		putAll(map);
+	}
+
+	public boolean containsField(String field) {
+
+		return getValueOrNull(field) != null;
 	}
 
 	public String getValueOrNull(String field) {
@@ -90,6 +96,10 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 	}
 
 	private Map<StatementField, String> deserialiseJsonString(String content) throws IOException {
+
+		if (content == null) {
+			return new HashMap<>();
+		}
 
 		SimpleModule module = new SimpleModule();
 		module.addKeyDeserializer(StatementField.class, new StatementFieldDeserializer(schema));
