@@ -30,6 +30,12 @@ public class CustomStatementField implements StatementField {
 	}
 
 	@Override
+	public boolean isCreatableDBColumn() {
+
+		return false;
+	}
+
+	@Override
 	public String toString() {
 
 		return name;

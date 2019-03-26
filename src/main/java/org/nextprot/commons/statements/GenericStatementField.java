@@ -111,4 +111,10 @@ public enum GenericStatementField implements StatementField {
 
 		return isUnicityField;
 	}
+
+	@Override
+	public boolean isCreatableDBColumn() {
+
+		return true;
+	}
 }

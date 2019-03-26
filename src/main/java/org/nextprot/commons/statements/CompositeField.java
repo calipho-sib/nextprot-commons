@@ -16,14 +16,21 @@ public class CompositeField implements StatementField {
 
 	private final String name;
 	private final List<StatementField> fields;
+	private final boolean creatableDBColumn;
 
 	public CompositeField(String name, List<StatementField> fields) {
+
+		this(name, fields, true);
+	}
+
+	public CompositeField(String name, List<StatementField> fields, boolean creatableDBColumn) {
 
 		if (fields.size() < 2) {
 			throw new IllegalArgumentException("Missing fields for composite field "+ name+", fields="+fields);
 		}
 		this.name = name;
 		this.fields = new ArrayList<>(fields);
+		this.creatableDBColumn = creatableDBColumn;
 	}
 
 	@Override
@@ -40,6 +47,12 @@ public class CompositeField implements StatementField {
 	public boolean isPartOfAnnotationUnicityKey() {
 
 		return false;
+	}
+
+	@Override
+	public boolean isCreatableDBColumn() {
+
+		return creatableDBColumn;
 	}
 
 	@Override
