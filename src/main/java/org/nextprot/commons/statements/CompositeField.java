@@ -19,6 +19,9 @@ public class CompositeField implements StatementField {
 
 	public CompositeField(String name, List<StatementField> fields) {
 
+		if (fields.size() < 2) {
+			throw new IllegalArgumentException("Missing fields for composite field "+ name+", fields="+fields);
+		}
 		this.name = name;
 		this.fields = new ArrayList<>(fields);
 	}

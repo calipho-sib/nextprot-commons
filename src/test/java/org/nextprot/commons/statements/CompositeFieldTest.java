@@ -2,9 +2,12 @@ package org.nextprot.commons.statements;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -12,6 +15,18 @@ import java.util.TreeMap;
 import static org.junit.Assert.*;
 
 public class CompositeFieldTest {
+
+	@Test(expected = IllegalArgumentException.class)
+	public void shouldBeComposedOfFields() {
+
+		new CompositeField("infos", Collections.emptyList());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void shouldBeComposedOfMultipleFields() {
+
+		new CompositeField("infos", Collections.singletonList(Mockito.mock(StatementField.class)));
+	}
 
 	@Test
 	public void testCompositeFieldValueAsString() {
