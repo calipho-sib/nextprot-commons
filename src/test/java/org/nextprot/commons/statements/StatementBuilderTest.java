@@ -252,6 +252,39 @@ public class StatementBuilderTest {
 		Assert.assertNull(stmt.getValue(NextProtSource.GnomAD.getSchema().getField("CANONICAL")));
 	}
 
+	@Test
+	public void testRemoveEnumField() throws IOException {
+
+		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+				.withSchema(NextProtSource.GnomAD.getSchema())
+				.removeField(new CustomStatementField("ANNOTATION_NAME"))
+				.build();
+
+		Assert.assertTrue(!stmt.containsField("ANNOTATION_NAME"));
+	}
+
+	@Test
+	public void testRemoveCustomField() throws IOException {
+
+		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+				.withSchema(NextProtSource.GnomAD.getSchema())
+				.removeField(new CustomStatementField("ALLELE_SAMPLED"))
+				.build();
+
+		Assert.assertTrue(!stmt.containsField("ALLELE_SAMPLED"));
+	}
+
+	@Test
+	public void testResetField() throws IOException {
+
+		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+				.withSchema(NextProtSource.GnomAD.getSchema())
+				.addField(new CustomStatementField("ANNOTATION_NAME"), "roudoudou")
+				.build();
+
+		Assert.assertEquals("roudoudou", stmt.getValueOrNull("ANNOTATION_NAME"));
+	}
+
 	private String getGnomADStatementAsJSON() {
 
 		return "{\n" +

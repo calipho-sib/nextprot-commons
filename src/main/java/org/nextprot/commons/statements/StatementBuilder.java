@@ -48,6 +48,11 @@ public class StatementBuilder {
 		return sb;
 	}
 
+	public StatementBuilder removeField(StatementField statementField) {
+		this.keyValues.remove(statementField);
+		return this;
+	}
+
 	public StatementBuilder withSchema(Schema schema) {
 		this.schema = schema;
 		return this;
