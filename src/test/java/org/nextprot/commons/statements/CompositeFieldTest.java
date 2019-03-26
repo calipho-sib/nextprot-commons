@@ -2,17 +2,13 @@ package org.nextprot.commons.statements;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static org.junit.Assert.*;
 
 public class CompositeFieldTest {
 
@@ -52,6 +48,6 @@ public class CompositeFieldTest {
 		StatementField nameField = new CustomStatementField("name");
 		CompositeField propField = new CompositeField("infos", Arrays.asList(idField, nameField));
 
-		Assert.assertTrue(propField.isCreatableDBColumn());
+		Assert.assertTrue(propField.isNXFlatTableColumn());
 	}
 }

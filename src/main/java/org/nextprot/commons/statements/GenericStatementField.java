@@ -113,7 +113,7 @@ public enum GenericStatementField implements StatementField {
 	}
 
 	@Override
-	public boolean isCreatableDBColumn() {
+	public boolean isNXFlatTableColumn() {
 
 		return true;
 	}

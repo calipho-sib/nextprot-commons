@@ -30,7 +30,7 @@ public class CustomStatementField implements StatementField {
 	}
 
 	@Override
-	public boolean isCreatableDBColumn() {
+	public boolean isNXFlatTableColumn() {
 
 		return false;
 	}

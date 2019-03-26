@@ -50,7 +50,7 @@ public class CompositeField implements StatementField {
 	}
 
 	@Override
-	public boolean isCreatableDBColumn() {
+	public boolean isNXFlatTableColumn() {
 
 		return creatableDBColumn;
 	}
