@@ -83,30 +83,21 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		String jsonContent = get(compositeField);
 
 		try {
-			return deserialiseJsonString(jsonContent, schema);
+			return deserialiseJsonString(jsonContent);
 		} catch (IOException e) {
 			throw new IllegalStateException("cannot deserialize json for field "+ compositeField.getName()+": "+jsonContent);
 		}
 	}
 
-	public static <T extends Map<StatementField, String>> T deserialiseJsonString(String content, Schema schema) throws IOException {
-
-		ObjectMapper mapper = new ObjectMapper();
+	private Map<StatementField, String> deserialiseJsonString(String content) throws IOException {
 
 		SimpleModule module = new SimpleModule();
-		module.addKeyDeserializer(StatementField.class, new KeyDeserializer() {
-			@Override
-			public StatementField deserializeKey(String key, DeserializationContext ctxt) {
+		module.addKeyDeserializer(StatementField.class, new StatementFieldDeserializer(schema));
 
-				if (schema.hasField(key)) {
-					return schema.getField(key);
-				}
-				return new CustomStatementField(key);
-			}
-		});
+		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
 
-		return mapper.readValue(content, new TypeReference<T>() { });
+		return mapper.readValue(content, new TypeReference<Map<StatementField, String>>() { });
 	}
 
 	private Map<String, String> extractCompositeValuesFrom(List<StatementField> compositeFields) {
@@ -172,5 +163,26 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		}
 		sb.append("}");
 		return sb.toString();
+	}
+
+	/**
+	 * Instanciate StatementField from key string
+	 */
+	private static class StatementFieldDeserializer extends KeyDeserializer {
+
+		private final Schema schema;
+
+		public StatementFieldDeserializer(Schema schema) {
+			this.schema = schema;
+		}
+
+		@Override
+		public StatementField deserializeKey(String key, DeserializationContext ctxt) {
+
+			if (schema.hasField(key)) {
+				return schema.getField(key);
+			}
+			return new CustomStatementField(key);
+		}
 	}
 }

@@ -4,9 +4,7 @@ import org.nextprot.commons.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A field that is the combination of other fields
