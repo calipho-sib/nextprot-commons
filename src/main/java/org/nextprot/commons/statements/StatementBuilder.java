@@ -27,6 +27,8 @@ public class StatementBuilder {
 
 	private Schema schema;
 	private final Map<StatementField, String> keyValues;
+	private boolean withStatementHash;
+	private boolean withAnnotationHash;
 
 	public StatementBuilder() {
 
@@ -45,6 +47,16 @@ public class StatementBuilder {
 		}
 		sb.addMap(s);
 		return sb;
+	}
+
+	public StatementBuilder withStatementHash() {
+		withStatementHash = true;
+		return this;
+	}
+
+	public StatementBuilder withAnnotationHash() {
+		withAnnotationHash = true;
+		return this;
 	}
 
 	public StatementBuilder removeField(StatementField statementField) {
@@ -164,11 +176,13 @@ public class StatementBuilder {
 
 	}
 
-	public Statement build(boolean generateAnnotationHash) {
+	public Statement build() {
 		Statement statement = new Statement(keyValues);
 
-		statement.putValue(NXFlatTableStatementField.STATEMENT_ID, computeUniqueKey(statement, UniqueKey.STATEMENT));
-		if (generateAnnotationHash) {
+		if (withStatementHash) {
+			statement.putValue(NXFlatTableStatementField.STATEMENT_ID, computeUniqueKey(statement, UniqueKey.STATEMENT));
+		}
+		if (withAnnotationHash) {
 			statement.putValue(NXFlatTableStatementField.ANNOTATION_ID, computeUniqueKey(statement, UniqueKey.ENTRY));
 		}
 		statement.setSchema((schema == null) ? buildSchema(statement) : schema);
@@ -176,12 +190,12 @@ public class StatementBuilder {
 		return statement;
 	}
 
-	public Statement build() {
-		return build(false);
+	public Statement generateHashAndBuild() {
+		return withStatementHash().build();
 	}
 
-	public Statement buildWithAnnotationHash() {
-		return build(true);
+	public Statement generateAllHashesAndBuild() {
+		return withStatementHash().withAnnotationHash().build();
 	}
 
 	/** Build the schema based on the statement content */
