@@ -2,7 +2,7 @@ package org.nextprot.commons.statements.schema;
 
 import org.nextprot.commons.statements.CompositeField;
 import org.nextprot.commons.statements.CustomStatementField;
-import org.nextprot.commons.statements.GenericStatementField;
+import org.nextprot.commons.statements.NXFlatTableStatementField;
 import org.nextprot.commons.statements.StatementField;
 
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * A statement schema that maps the table schema of nxflat
  *
  * it consists of generic fields (as string columns)
- * + a specific composite field composed of extra fields (as a json column)
+ * and a specific composite field composed of extra fields (as a json column of type map)
  */
 public class NXFlatTableSchema implements Schema {
 
@@ -27,7 +27,7 @@ public class NXFlatTableSchema implements Schema {
 
 		this.schema = new MutableSchema();
 
-		for (StatementField field : GenericStatementField.values()) {
+		for (StatementField field : NXFlatTableStatementField.values()) {
 
 			schema.registerField(field);
 		}
@@ -104,7 +104,7 @@ public class NXFlatTableSchema implements Schema {
 	}
 
 	/** @return the sql to create the table schema for nxflat.{tableName} */
-	public String getCreateTableAsSQL(String tableName) {
+	public String generateCreateTableInSQL(String tableName) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("DROP TABLE IF EXISTS nxflat.").append(tableName).append(";\n");
@@ -119,13 +119,13 @@ public class NXFlatTableSchema implements Schema {
 		sb.append("CREATE INDEX ").append(tableName, 0, 10)
 				.append("_ENTRY_AC_IDX ON nxflat.").append(tableName)
 				.append(" ( ")
-				.append(GenericStatementField.ENTRY_ACCESSION.name())
+				.append(NXFlatTableStatementField.ENTRY_ACCESSION.name())
 				.append(" );\n");
 
 		sb.append("CREATE INDEX ").append(tableName, 0, 10)
 				.append("_ANNOT_ID_IDX ON nxflat.").append(tableName)
 				.append(" ( ")
-				.append(GenericStatementField.ANNOTATION_ID.name())
+				.append(NXFlatTableStatementField.ANNOTATION_ID.name())
 				.append(" );\n");
 		sb.append("\n");
 

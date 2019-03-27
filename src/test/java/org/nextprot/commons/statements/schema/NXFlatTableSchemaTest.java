@@ -43,7 +43,7 @@ public class NXFlatTableSchemaTest {
 	public void testCreateGenericTableNoExtras() {
 
 		String sql = new NXFlatTableSchema()
-				.getCreateTableAsSQL(StatementTableNames.ENTRY_TABLE);
+				.generateCreateTableInSQL(StatementTableNames.ENTRY_TABLE);
 
 		Assert.assertEquals("DROP TABLE IF EXISTS nxflat.ENTRY_MAPPED_STATEMENTS;\n" +
 				"CREATE TABLE nxflat.ENTRY_MAPPED_STATEMENTS (\n" +
@@ -106,7 +106,7 @@ public class NXFlatTableSchemaTest {
 
 		String sql = NXFlatTableSchema.withExtraFields(Arrays.asList(
 				"CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED", "DBSNP_ID"))
-				.getCreateTableAsSQL(StatementTableNames.ENTRY_TABLE);
+				.generateCreateTableInSQL(StatementTableNames.ENTRY_TABLE);
 
 		Assert.assertEquals("DROP TABLE IF EXISTS nxflat.ENTRY_MAPPED_STATEMENTS;\n" +
 				"CREATE TABLE nxflat.ENTRY_MAPPED_STATEMENTS (\n" +

@@ -103,7 +103,7 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 	}
 
 	public String getDebugInfo() {
-		return get(GenericStatementField.DEBUG_INFO);
+		return get(NXFlatTableStatementField.DEBUG_INFO);
 	}
 
 	String putValue(StatementField field, String value) {
@@ -119,29 +119,29 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 	}
 
 	public String getSubjectStatementIds() {
-		return get(GenericStatementField.SUBJECT_STATEMENT_IDS);
+		return get(NXFlatTableStatementField.SUBJECT_STATEMENT_IDS);
 	}
 	
 	public String[] getSubjectStatementIdsArray() {
-		String subjects = get(GenericStatementField.SUBJECT_STATEMENT_IDS);
+		String subjects = get(NXFlatTableStatementField.SUBJECT_STATEMENT_IDS);
 		if(subjects == null) return null;
 		else return subjects.split(",");
 	}
 	
 	public String getStatementId() {
-		return this.get(GenericStatementField.STATEMENT_ID);
+		return this.get(NXFlatTableStatementField.STATEMENT_ID);
 	}
 	
 	public String getAnnotationId() {
-		return this.get(GenericStatementField.ANNOTATION_ID);
+		return this.get(NXFlatTableStatementField.ANNOTATION_ID);
 	}
 	
 	public String getObjectStatementId() {
-		return get(GenericStatementField.OBJECT_STATEMENT_IDS);
+		return get(NXFlatTableStatementField.OBJECT_STATEMENT_IDS);
 	}
 	
 	public boolean hasModifiedSubject() {
-		return (get(GenericStatementField.SUBJECT_STATEMENT_IDS) != null);
+		return (get(NXFlatTableStatementField.SUBJECT_STATEMENT_IDS) != null);
 	}
 
 	public String toString(){

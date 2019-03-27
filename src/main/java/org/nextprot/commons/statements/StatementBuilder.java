@@ -18,7 +18,7 @@ import org.nextprot.commons.statements.schema.Schema;
 import org.nextprot.commons.statements.schema.MutableSchema;
 import org.nextprot.commons.utils.StringUtils;
 
-import static org.nextprot.commons.statements.GenericStatementField.*;
+import static org.nextprot.commons.statements.NXFlatTableStatementField.*;
 
 /**
  * A StatementID is computed based on the fields when build() is invoked
@@ -87,7 +87,7 @@ public class StatementBuilder {
 		addField(SUBJECT_STATEMENT_IDS, subjectStatemendIds);
 		
 		if(!subjectAnnotationIds.isEmpty()){
-			addField(GenericStatementField.SUBJECT_ANNOTATION_IDS, subjectAnnotationIds);
+			addField(NXFlatTableStatementField.SUBJECT_ANNOTATION_IDS, subjectAnnotationIds);
 		}
 
 		return this;
@@ -124,7 +124,7 @@ public class StatementBuilder {
 	}
 
 	public StatementBuilder addQuality(QualityQualifier quality) {
-		addField(GenericStatementField.EVIDENCE_QUALITY, quality.name());
+		addField(NXFlatTableStatementField.EVIDENCE_QUALITY, quality.name());
 		return this;
 	}
 
@@ -162,9 +162,9 @@ public class StatementBuilder {
 	public Statement build(boolean generateAnnotationHash) {
 		Statement statement = new Statement(keyValues);
 
-		statement.putValue(GenericStatementField.STATEMENT_ID, computeUniqueKey(statement, UniqueKey.STATEMENT));
+		statement.putValue(NXFlatTableStatementField.STATEMENT_ID, computeUniqueKey(statement, UniqueKey.STATEMENT));
 		if (generateAnnotationHash) {
-			statement.putValue(GenericStatementField.ANNOTATION_ID, computeUniqueKey(statement, UniqueKey.ENTRY));
+			statement.putValue(NXFlatTableStatementField.ANNOTATION_ID, computeUniqueKey(statement, UniqueKey.ENTRY));
 		}
 		statement.setSchema((schema == null) ? buildSchema(statement) : schema);
 
@@ -217,7 +217,7 @@ public class StatementBuilder {
 			}
 			// STATEMENT TYPE: all fields are considered to build the unique key
 			else if (uniqueKey.equals(UniqueKey.STATEMENT)) { // All fields for the statement
-				if (!field.equals(GenericStatementField.STATEMENT_ID) && !field.equals(GenericStatementField.ANNOTATION_ID)) {
+				if (!field.equals(NXFlatTableStatementField.STATEMENT_ID) && !field.equals(NXFlatTableStatementField.ANNOTATION_ID)) {
 					unicityFields.add(field);
 				}
 			}

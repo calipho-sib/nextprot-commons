@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.nextprot.commons.statements.GenericStatementField.*;
+import static org.nextprot.commons.statements.NXFlatTableStatementField.*;
 
 public class JsonReaderTest {
 

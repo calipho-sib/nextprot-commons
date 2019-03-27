@@ -15,7 +15,6 @@ import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
 import org.nextprot.commons.statements.schema.NXFlatTableSchema;
 import org.nextprot.commons.statements.schema.Schema;
-import org.nextprot.commons.statements.schema.MutableSchema;
 
 public class StatementBuilderTest {
 	
@@ -45,20 +44,20 @@ public class StatementBuilderTest {
 	public void testAnnotHashUnicity() {
 
 		Statement rs1 = StatementBuilder.createNew()
-				.addField(GenericStatementField.NEXTPROT_ACCESSION, "NX_P25054")
-				.addField(GenericStatementField.GENE_NAME, "apc")
+				.addField(NXFlatTableStatementField.NEXTPROT_ACCESSION, "NX_P25054")
+				.addField(NXFlatTableStatementField.GENE_NAME, "apc")
 				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
-   	    	    .addField(GenericStatementField.TARGET_ISOFORMS, "[]")
+   	    	    .addField(NXFlatTableStatementField.TARGET_ISOFORMS, "[]")
 				.addSourceInfo("CAVA-VP90999", "BED").buildWithAnnotationHash();
 		Statement rs2 = StatementBuilder.createNew()
-				.addField(GenericStatementField.NEXTPROT_ACCESSION, "NX_P25054")
-				.addField(GenericStatementField.GENE_NAME, "apc")
+				.addField(NXFlatTableStatementField.NEXTPROT_ACCESSION, "NX_P25054")
+				.addField(NXFlatTableStatementField.GENE_NAME, "apc")
 				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
-   	    	    .addField(GenericStatementField.TARGET_ISOFORMS, "[]")
+   	    	    .addField(NXFlatTableStatementField.TARGET_ISOFORMS, "[]")
 				.addSourceInfo("XPTO", "Caviar").buildWithAnnotationHash();
 
 		assertNotEquals(rs1, rs2); 
-		assertEquals(rs1.get(GenericStatementField.ANNOTATION_ID), rs2.get(GenericStatementField.ANNOTATION_ID));
+		assertEquals(rs1.get(NXFlatTableStatementField.ANNOTATION_ID), rs2.get(NXFlatTableStatementField.ANNOTATION_ID));
 	}
 
 	@Test
@@ -76,8 +75,8 @@ public class StatementBuilderTest {
 		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).addDebugInfo("Oh yeah").build();
 		Statement rs2 = StatementBuilder.createNew().addMap(rs1).addDebugInfo("oh oh").build();
 
-		assertEquals(rs1.get(GenericStatementField.DEBUG_INFO), "Oh yeah");
-		assertEquals(rs2.get(GenericStatementField.DEBUG_INFO), "oh oh");
+		assertEquals(rs1.get(NXFlatTableStatementField.DEBUG_INFO), "Oh yeah");
+		assertEquals(rs2.get(NXFlatTableStatementField.DEBUG_INFO), "oh oh");
 	}
 
 	@Test
@@ -140,8 +139,8 @@ public class StatementBuilderTest {
 
 		Statement sub2 = buildStatementFromJsonString(subjectTwo);
 
-		Statement vp1 = StatementBuilder.createNew().addField(GenericStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub1, sub2)).build();
-		Statement vp2 = StatementBuilder.createNew().addField(GenericStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub2, sub1)).build();
+		Statement vp1 = StatementBuilder.createNew().addField(NXFlatTableStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub1, sub2)).build();
+		Statement vp2 = StatementBuilder.createNew().addField(NXFlatTableStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub2, sub1)).build();
 
 		String vp1Hash = StatementBuilder.computeUniqueKey(vp1, UniqueKey.ENTRY);
 		String vp2Hash = StatementBuilder.computeUniqueKey(vp2, UniqueKey.ENTRY);
@@ -156,7 +155,7 @@ public class StatementBuilderTest {
 				.addField(new CustomStatementField("DBSNP_ID"), "rs745905374")
 				.build();
 
-		Assert.assertTrue(rs1.containsKey(GenericStatementField.STATEMENT_ID));
+		Assert.assertTrue(rs1.containsKey(NXFlatTableStatementField.STATEMENT_ID));
 	}
 
 	@Test

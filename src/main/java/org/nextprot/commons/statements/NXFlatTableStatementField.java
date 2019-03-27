@@ -1,6 +1,6 @@
 package org.nextprot.commons.statements;
 
-public enum GenericStatementField implements StatementField {
+public enum NXFlatTableStatementField implements StatementField {
 
 	//Generated automatically from the builder when all fields are set	
 	STATEMENT_ID, 
@@ -91,12 +91,12 @@ public enum GenericStatementField implements StatementField {
 
 	private final boolean isUnicityField;
 
-	GenericStatementField(boolean isUnicityField) {
+	NXFlatTableStatementField(boolean isUnicityField) {
 
 		this.isUnicityField = isUnicityField;
 	}
 	
-	GenericStatementField() {
+	NXFlatTableStatementField() {
 
 		this(false);
 	}
