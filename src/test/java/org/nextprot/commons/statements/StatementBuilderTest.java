@@ -13,7 +13,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
-import org.nextprot.commons.statements.schema.GenericSchema;
+import org.nextprot.commons.statements.schema.NxFlatTableSchema;
 import org.nextprot.commons.statements.schema.Schema;
 import org.nextprot.commons.statements.schema.MutableSchema;
 
@@ -184,8 +184,8 @@ public class StatementBuilderTest {
 		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
 		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
 		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
-		Assert.assertNotNull(stmt.getValueOrNull("PROPERTIES"));
-		Assert.assertEquals("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"DBSNP_ID\":\"rs745905374\"}", stmt.getValueOrNull("PROPERTIES"));
+		Assert.assertNotNull(stmt.getValueOrNull("EXTRAS"));
+		Assert.assertEquals("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"DBSNP_ID\":\"rs745905374\"}", stmt.getValueOrNull("EXTRAS"));
 		Assert.assertNull(stmt.getValueOrNull("ROUDOUDOU"));
 	}
 
@@ -220,7 +220,7 @@ public class StatementBuilderTest {
 		Schema defaultSchema = stmt.getSchema();
 		Assert.assertEquals(Arrays.asList("age", "location", "name"), defaultSchema.getFields().stream()
 				.map(StatementField::getName)
-				.filter(statementField -> !new GenericSchema().hasField(statementField))
+				.filter(statementField -> !new NxFlatTableSchema().hasField(statementField))
 				.collect(Collectors.toList()));
 	}
 
@@ -314,7 +314,7 @@ public class StatementBuilderTest {
 				"\"LOCATION_BEGIN\": \"34\",\n" +
 				"\"LOCATION_END\": \"34\",\n" +
 				"\"NEXTPROT_ACCESSION\": \"NX_Q6S545\",\n" +
-				"\"PROPERTIES\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"CANONICAL\\\":\\\"YES\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
+				"\"EXTRAS\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"CANONICAL\\\":\\\"YES\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
 				"\"SOURCE\": \"gnomAD\",\n" +
 				"\"STATEMENT_ID\": \"792d509b2d452da2cf4a74faa2773c15\",\n" +
 				"\"VARIANT_ORIGINAL_AMINO_ACID\": \"W\",\n" +
@@ -344,6 +344,6 @@ public class StatementBuilderTest {
 
 	private Statement buildStatementFromJsonString(String content) throws IOException {
 
-		return new MutableSchema(new GenericSchema()).jsonReader().readStatement(content);
+		return new MutableSchema(new NxFlatTableSchema()).jsonReader().readStatement(content);
 	}
 }
