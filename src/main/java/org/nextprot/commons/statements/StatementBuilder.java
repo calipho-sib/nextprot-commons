@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import org.nextprot.commons.algo.MD5Algo;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
-import org.nextprot.commons.statements.schema.GenericSchema;
 import org.nextprot.commons.statements.schema.Schema;
 import org.nextprot.commons.statements.schema.MutableSchema;
 import org.nextprot.commons.utils.StringUtils;
@@ -180,9 +179,10 @@ public class StatementBuilder {
 		return build(true);
 	}
 
+	/** Build the schema based on the statement content */
 	private Schema buildSchema(Map<StatementField, String> keyValues) {
 
-		MutableSchema schema = new MutableSchema(new GenericSchema());
+		MutableSchema schema = new MutableSchema();
 
 		for (StatementField field : keyValues.keySet()) {
 
