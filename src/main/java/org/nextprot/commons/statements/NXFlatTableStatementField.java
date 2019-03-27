@@ -1,6 +1,11 @@
 package org.nextprot.commons.statements;
 
-public enum NXFlatTableStatementField implements StatementField {
+import org.nextprot.commons.utils.EnumConstantDictionary;
+import org.nextprot.commons.utils.EnumDictionarySupplier;
+
+import java.util.Map;
+
+public enum NXFlatTableStatementField implements StatementField, EnumDictionarySupplier<NXFlatTableStatementField> {
 
 	//Generated automatically from the builder when all fields are set	
 	STATEMENT_ID, 
@@ -89,6 +94,17 @@ public enum NXFlatTableStatementField implements StatementField {
 	//DEBUG_INFO
 	DEBUG_INFO;
 
+	private static EnumConstantDictionary<NXFlatTableStatementField> dictionaryOfConstants =
+			new EnumConstantDictionary<NXFlatTableStatementField>(NXFlatTableStatementField.class, values()) {
+				@Override
+				protected void updateDictionaryOfConstants(Map<String, NXFlatTableStatementField> dictionary) {
+
+					for (NXFlatTableStatementField db : values()) {
+						dictionary.put(db.getName(), db);
+					}
+				}
+			};
+
 	private final boolean isUnicityField;
 
 	NXFlatTableStatementField(boolean isUnicityField) {
@@ -117,5 +133,16 @@ public enum NXFlatTableStatementField implements StatementField {
 	public boolean isNXFlatTableColumn() {
 
 		return true;
+	}
+
+	public static boolean hasKey(String name) {
+
+		return dictionaryOfConstants.haskey(name);
+	}
+
+	@Override
+	public EnumConstantDictionary<NXFlatTableStatementField> getEnumConstantDictionary() {
+
+		return dictionaryOfConstants;
 	}
 }
