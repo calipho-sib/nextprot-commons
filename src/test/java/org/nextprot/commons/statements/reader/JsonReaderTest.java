@@ -1,9 +1,10 @@
-package org.nextprot.commons.statements.schema;
+package org.nextprot.commons.statements.reader;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.schema.NXFlatTableSchema;
 
 import java.io.IOException;
 import java.util.List;

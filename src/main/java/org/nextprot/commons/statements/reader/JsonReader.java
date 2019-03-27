@@ -1,4 +1,4 @@
-package org.nextprot.commons.statements.schema;
+package org.nextprot.commons.statements.reader;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.nextprot.commons.statements.CustomStatementField;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.schema.Schema;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
