@@ -20,9 +20,9 @@ public class JsonReaderTest {
 		Map<StatementField, String> map = reader.readMap(getStatement());
 
 		Assert.assertEquals(13, map.size());
-		Assert.assertEquals("Variant", map.get(ANNOTATION_CATEGORY));
+		Assert.assertEquals("variant", map.get(ANNOTATION_CATEGORY));
 		Assert.assertEquals("POTEH-p.Trp34Ter", map.get(ANNOTATION_NAME));
-		Assert.assertEquals("neXtProt", map.get(ASSIGNED_BY));
+		Assert.assertEquals("NextProt", map.get(ASSIGNED_BY));
 		Assert.assertEquals("ECO:0000269", map.get(EVIDENCE_CODE));
 		Assert.assertEquals("GOLD", map.get(EVIDENCE_QUALITY));
 		Assert.assertEquals("POTEH", map.get(GENE_NAME));

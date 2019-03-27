@@ -11,7 +11,6 @@ import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
