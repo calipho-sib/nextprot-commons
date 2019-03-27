@@ -9,11 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.KeyDeserializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.commons.constants.QualityQualifier;
@@ -350,27 +345,5 @@ public class StatementBuilderTest {
 	private Statement buildStatementFromJsonString(String content) throws IOException {
 
 		return new SchemaImpl(new GenericSchema()).jsonReader().readStatement(content);
-
-		//return buildStatementFromJsonString(content, new SchemaImpl(new GenericSchema()));
-	}
-
-	private Statement buildStatementFromJsonString(String content, Schema schema) throws IOException {
-
-		ObjectMapper mapper = new ObjectMapper();
-
-		SimpleModule module = new SimpleModule();
-		module.addKeyDeserializer(StatementField.class, new KeyDeserializer() {
-			@Override
-			public StatementField deserializeKey(String key, DeserializationContext ctxt) {
-
-				if (schema.hasField(key)) {
-					return schema.getField(key);
-				}
-				return new CustomStatementField(key);
-			}
-		});
-		mapper.registerModule(module);
-
-		return mapper.readValue(content, new TypeReference<Statement>() { });
 	}
 }
