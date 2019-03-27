@@ -2,10 +2,12 @@ package org.nextprot.commons.statements.schema;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.commons.statements.CompositeField;
 import org.nextprot.commons.statements.CustomStatementField;
 import org.nextprot.commons.statements.constants.StatementTableNames;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 public class NXFlatTableSchemaTest {
 
@@ -29,14 +31,30 @@ public class NXFlatTableSchemaTest {
 		Assert.assertTrue(schema.hasExtrasField());
 		Assert.assertNotNull(schema.getExtrasField());
 		Assert.assertTrue(schema.getExtrasField().hasField(new CustomStatementField("f1")));
+		Assert.assertFalse(schema.getField("f1").isPartOfAnnotationUnicityKey());
 		Assert.assertTrue(schema.getExtrasField().hasField(new CustomStatementField("f2")));
+		Assert.assertFalse(schema.getField("f2").isPartOfAnnotationUnicityKey());
 	}
 
 	@Test
-	public void withExtraFields1() {
+	public void testWithExtraFields2() {
 
-		NXFlatTableSchema schema = new NXFlatTableSchema();
-		Assert.assertNull(schema.getExtrasField());
+		NXFlatTableSchema schema = NXFlatTableSchema.withExtraFields(Arrays.asList("f1", "f2"),
+				Collections.singletonList("f3"));
+		Assert.assertEquals(54, schema.size());
+
+		Assert.assertTrue(schema.hasField("f1"));
+		Assert.assertTrue(schema.hasField("f2"));
+		Assert.assertTrue(schema.hasField("f3"));
+		Assert.assertTrue(schema.hasField("EXTRAS"));
+		Assert.assertTrue(schema.hasExtrasField());
+		Assert.assertNotNull(schema.getExtrasField());
+		Assert.assertTrue(schema.getExtrasField().hasField(new CustomStatementField("f1")));
+		Assert.assertFalse(schema.getField("f1").isPartOfAnnotationUnicityKey());
+		Assert.assertTrue(schema.getExtrasField().hasField(new CustomStatementField("f2")));
+		Assert.assertFalse(schema.getField("f2").isPartOfAnnotationUnicityKey());
+		Assert.assertTrue(schema.getExtrasField().hasField(new CustomStatementField("f3", true)));
+		Assert.assertTrue(schema.getField("f3").isPartOfAnnotationUnicityKey());
 	}
 
 	@Test

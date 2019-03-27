@@ -18,7 +18,9 @@ import java.util.stream.Collectors;
  * A statement schema that maps the table schema of nxflat
  *
  * It consists of generic fields (as string columns)
- * and a specific composite field composed of extra fields (as a json column of type map)
+ * and a specific composite field composed of extra fields (as a json column of type map).
+ *
+ * Also note that each field can contribute to the unicity of the entry key
  */
 public class NXFlatTableSchema implements Schema {
 
@@ -36,20 +38,31 @@ public class NXFlatTableSchema implements Schema {
 		}
 	}
 
-	private NXFlatTableSchema(Set<String> extraFields) {
+	private NXFlatTableSchema(Set<String> standardFields, Set<String> fieldsContributingToUnicityKey) {
 
 		this();
 
-		if (extraFields.isEmpty()) {
+		if (standardFields.isEmpty() && fieldsContributingToUnicityKey.isEmpty()) {
 			throw new IllegalArgumentException("missing extra fields");
 		}
 
-		registerExtraFields(extraFields);
+		List<StatementField> newFields = new ArrayList<>();
+		registerExtraFields(standardFields, false, newFields);
+		registerExtraFields(fieldsContributingToUnicityKey, true, newFields);
+
+		schema.registerField(new CompositeField(EXTRA_FIELDS, newFields));
+
 	}
 
 	public static NXFlatTableSchema withExtraFields(List<String> extraFields) {
 
-		return new NXFlatTableSchema(new HashSet<>(extraFields));
+		return new NXFlatTableSchema(new HashSet<>(extraFields), new HashSet<>());
+	}
+
+	public static NXFlatTableSchema withExtraFields(List<String> standardFields,
+	                                                List<String> fieldsContributingToUnicityKey) {
+
+		return new NXFlatTableSchema(new HashSet<>(standardFields), new HashSet<>(fieldsContributingToUnicityKey));
 	}
 
 	public static NXFlatTableSchema fromResultSetMetaData(ResultSetMetaData rsmd) throws SQLException {
@@ -73,14 +86,12 @@ public class NXFlatTableSchema implements Schema {
 		return NXFlatTableSchema.withExtraFields(extraFields);
 	}
 
-	private void registerExtraFields(Set<String> extraFields) {
+	private void registerExtraFields(Set<String> extraFields, boolean partOfUnicityKey, List<StatementField> customFields) {
 
-		List<StatementField> newFields = extraFields.stream()
-				.map(CustomStatementField::new)
+		customFields.addAll(extraFields.stream()
+				.map(fieldName -> new CustomStatementField(fieldName, partOfUnicityKey))
 				.peek(schema::registerField)
-				.collect(Collectors.toList());
-
-		schema.registerField(new CompositeField(EXTRA_FIELDS, newFields));
+				.collect(Collectors.toList()));
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import org.nextprot.commons.statements.schema.NXFlatTableSchema;
 import org.nextprot.commons.statements.schema.Schema;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.Supplier;
 
 public enum NextProtSource {
@@ -11,7 +12,7 @@ public enum NextProtSource {
 	BioEditor("neXtProt", "http://kant.sib.swiss:9001/bioeditor", NXFlatTableSchema::new),
 	GlyConnect("GlyConnect", "http://kant.sib.swiss:9001/glyconnect", NXFlatTableSchema::new),
 	GnomAD("gnomAD", "http://kant.sib.swiss:9001/gnomad", () -> NXFlatTableSchema.withExtraFields(Arrays.asList(
-			"CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED", "DBSNP_ID")))
+			"CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"), Collections.singletonList("DBSNP_ID")))
 	;
 
 	private String sourceName;
