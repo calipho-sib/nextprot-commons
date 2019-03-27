@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -176,7 +177,7 @@ public class StatementBuilderTest {
 	public void testGnomADStatementsWithSchema() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.withSchema(NextProtSource.GnomAD.getSchema())
+				.withSchema(newGnomADSchema())
 				.generateHashAndBuild();
 
 		Assert.assertEquals("1", stmt.getValueOrNull("ALLELE_COUNT"));
@@ -195,7 +196,7 @@ public class StatementBuilderTest {
 				.generateAllHashesAndBuild();
 
 		Statement stmt2 = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.withSchema(NextProtSource.GnomAD.getSchema())
+				.withSchema(newGnomADSchema())
 				.generateAllHashesAndBuild();
 
 		String stmt1EntryKey = StatementBuilder.computeUniqueKey(stmt1, UniqueKey.ENTRY);
@@ -227,30 +228,30 @@ public class StatementBuilderTest {
 	public void testGetCompositeFieldValue() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSONFromDB()))
-				.withSchema(NextProtSource.GnomAD.getSchema())
+				.withSchema(newGnomADSchema())
 				.generateHashAndBuild();
 
-		Assert.assertEquals("1", stmt.getValue(NextProtSource.GnomAD.getSchema().getField("ALLELE_COUNT")));
-		Assert.assertEquals("YES", stmt.getValue(NextProtSource.GnomAD.getSchema().getField("CANONICAL")));
-		Assert.assertEquals("217610", stmt.getValue(NextProtSource.GnomAD.getSchema().getField("ALLELE_SAMPLED")));
-		Assert.assertEquals("rs745905374", stmt.getValue(NextProtSource.GnomAD.getSchema().getField("DBSNP_ID")));
+		Assert.assertEquals("1", stmt.getValue(newGnomADSchema().getField("ALLELE_COUNT")));
+		Assert.assertEquals("YES", stmt.getValue(newGnomADSchema().getField("CANONICAL")));
+		Assert.assertEquals("217610", stmt.getValue(newGnomADSchema().getField("ALLELE_SAMPLED")));
+		Assert.assertEquals("rs745905374", stmt.getValue(newGnomADSchema().getField("DBSNP_ID")));
 	}
 
 	@Test
 	public void testCannotFindFieldFromCompositeFieldValue() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSONFromDBNoCanonicalField()))
-				.withSchema(NextProtSource.GnomAD.getSchema())
+				.withSchema(newGnomADSchema())
 				.generateHashAndBuild();
 
-		Assert.assertNull(stmt.getValue(NextProtSource.GnomAD.getSchema().getField("CANONICAL")));
+		Assert.assertNull(stmt.getValue(newGnomADSchema().getField("CANONICAL")));
 	}
 
 	@Test
 	public void testRemoveEnumField() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.withSchema(NextProtSource.GnomAD.getSchema())
+				.withSchema(newGnomADSchema())
 				.removeField(new CustomStatementField("ANNOTATION_NAME"))
 				.generateHashAndBuild();
 
@@ -261,7 +262,7 @@ public class StatementBuilderTest {
 	public void testRemoveCustomField() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.withSchema(NextProtSource.GnomAD.getSchema())
+				.withSchema(newGnomADSchema())
 				.removeField(new CustomStatementField("ALLELE_SAMPLED"))
 				.generateHashAndBuild();
 
@@ -272,7 +273,7 @@ public class StatementBuilderTest {
 	public void testResetField() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.withSchema(NextProtSource.GnomAD.getSchema())
+				.withSchema(newGnomADSchema())
 				.addField(new CustomStatementField("ANNOTATION_NAME"), "roudoudou")
 				.generateHashAndBuild();
 
@@ -344,5 +345,11 @@ public class StatementBuilderTest {
 	private Statement buildStatementFromJsonString(String content) throws IOException {
 
 		return new NXFlatTableSchema().jsonReader().readStatement(content);
+	}
+
+	private Schema newGnomADSchema() {
+
+		return NXFlatTableSchema.withExtraFields(Arrays.asList(
+				"CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"), Collections.singletonList("DBSNP_ID"));
 	}
 }
