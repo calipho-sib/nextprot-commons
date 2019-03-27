@@ -7,14 +7,12 @@ import org.nextprot.commons.statements.constants.StatementTableNames;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
-
-public class NxFlatTableSchemaTest {
+public class NXFlatTableSchemaTest {
 
 	@Test
 	public void testConstr() {
 
-		NxFlatTableSchema schema = new NxFlatTableSchema();
+		NXFlatTableSchema schema = new NXFlatTableSchema();
 		Assert.assertEquals(50, schema.size());
 		Assert.assertNull(schema.getExtrasField());
 	}
@@ -22,7 +20,7 @@ public class NxFlatTableSchemaTest {
 	@Test
 	public void testWithExtraFields() {
 
-		NxFlatTableSchema schema = NxFlatTableSchema.withExtraFields(Arrays.asList("f1", "f2"));
+		NXFlatTableSchema schema = NXFlatTableSchema.withExtraFields(Arrays.asList("f1", "f2"));
 		Assert.assertEquals(53, schema.size());
 
 		Assert.assertTrue(schema.hasField("f1"));
@@ -37,14 +35,14 @@ public class NxFlatTableSchemaTest {
 	@Test
 	public void withExtraFields1() {
 
-		NxFlatTableSchema schema = new NxFlatTableSchema();
+		NXFlatTableSchema schema = new NXFlatTableSchema();
 		Assert.assertNull(schema.getExtrasField());
 	}
 
 	@Test
 	public void testCreateGenericTableNoExtras() {
 
-		String sql = new NxFlatTableSchema()
+		String sql = new NXFlatTableSchema()
 				.getCreateTableAsSQL(StatementTableNames.ENTRY_TABLE);
 
 		Assert.assertEquals("DROP TABLE IF EXISTS nxflat.ENTRY_MAPPED_STATEMENTS;\n" +
@@ -106,7 +104,7 @@ public class NxFlatTableSchemaTest {
 	@Test
 	public void testCreateGenericTableWithExtras() {
 
-		String sql = NxFlatTableSchema.withExtraFields(Arrays.asList(
+		String sql = NXFlatTableSchema.withExtraFields(Arrays.asList(
 				"CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED", "DBSNP_ID"))
 				.getCreateTableAsSQL(StatementTableNames.ENTRY_TABLE);
 

@@ -13,7 +13,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
-import org.nextprot.commons.statements.schema.NxFlatTableSchema;
+import org.nextprot.commons.statements.schema.NXFlatTableSchema;
 import org.nextprot.commons.statements.schema.Schema;
 import org.nextprot.commons.statements.schema.MutableSchema;
 
@@ -220,7 +220,7 @@ public class StatementBuilderTest {
 		Schema defaultSchema = stmt.getSchema();
 		Assert.assertEquals(Arrays.asList("age", "location", "name"), defaultSchema.getFields().stream()
 				.map(StatementField::getName)
-				.filter(statementField -> !new NxFlatTableSchema().hasField(statementField))
+				.filter(statementField -> !new NXFlatTableSchema().hasField(statementField))
 				.collect(Collectors.toList()));
 	}
 
@@ -344,6 +344,6 @@ public class StatementBuilderTest {
 
 	private Statement buildStatementFromJsonString(String content) throws IOException {
 
-		return new MutableSchema(new NxFlatTableSchema()).jsonReader().readStatement(content);
+		return new NXFlatTableSchema().jsonReader().readStatement(content);
 	}
 }

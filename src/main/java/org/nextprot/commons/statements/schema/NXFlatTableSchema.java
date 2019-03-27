@@ -5,7 +5,6 @@ import org.nextprot.commons.statements.CustomStatementField;
 import org.nextprot.commons.statements.GenericStatementField;
 import org.nextprot.commons.statements.StatementField;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -18,13 +17,13 @@ import java.util.stream.Collectors;
  * it consists of generic fields (as string columns)
  * + a specific composite field composed of extra fields (as a json column)
  */
-public class NxFlatTableSchema implements Schema {
+public class NXFlatTableSchema implements Schema {
 
 	private static final String EXTRA_FIELDS = "EXTRAS";
 
 	private final MutableSchema schema;
 
-	public NxFlatTableSchema() {
+	public NXFlatTableSchema() {
 
 		this.schema = new MutableSchema();
 
@@ -34,7 +33,7 @@ public class NxFlatTableSchema implements Schema {
 		}
 	}
 
-	private NxFlatTableSchema(Set<String> extraFields) {
+	private NXFlatTableSchema(Set<String> extraFields) {
 
 		this();
 
@@ -45,9 +44,9 @@ public class NxFlatTableSchema implements Schema {
 		registerExtraFields(extraFields);
 	}
 
-	public static NxFlatTableSchema withExtraFields(List<String> extraFields) {
+	public static NXFlatTableSchema withExtraFields(List<String> extraFields) {
 
-		return new NxFlatTableSchema(new HashSet<>(extraFields));
+		return new NXFlatTableSchema(new HashSet<>(extraFields));
 	}
 
 	private void registerExtraFields(Set<String> extraFields) {
