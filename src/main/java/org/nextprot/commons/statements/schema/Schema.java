@@ -1,9 +1,6 @@
 package org.nextprot.commons.statements.schema;
 
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.KeyDeserializer;
 import org.nextprot.commons.statements.CompositeField;
-import org.nextprot.commons.statements.CustomStatementField;
 import org.nextprot.commons.statements.GenericStatementField;
 import org.nextprot.commons.statements.StatementField;
 
