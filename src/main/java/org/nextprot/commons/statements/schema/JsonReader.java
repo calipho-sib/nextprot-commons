@@ -10,7 +10,10 @@ import org.nextprot.commons.statements.CustomStatementField;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,11 @@ public class JsonReader {
 	}
 
 	public List<Statement> readStatements(String content) throws IOException {
+
+		return readStatements(new ByteArrayInputStream(content.getBytes(Charset.forName("UTF-8"))));
+	}
+
+	public List<Statement> readStatements(InputStream content) throws IOException {
 
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
