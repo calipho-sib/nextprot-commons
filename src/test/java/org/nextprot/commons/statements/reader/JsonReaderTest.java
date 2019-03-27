@@ -42,6 +42,8 @@ public class JsonReaderTest {
 		JsonReader reader = new JsonReader(new NXFlatTableSchema());
 		Statement statement = reader.readStatement(getStatement());
 
+		Assert.assertNotNull(statement.getSchema());
+
 		Assert.assertEquals(13, statement.size());
 		Assert.assertEquals("variant", statement.getValue(ANNOTATION_CATEGORY));
 		Assert.assertEquals("POTEH-p.Trp34Ter", statement.getValue(ANNOTATION_NAME));
@@ -68,6 +70,8 @@ public class JsonReaderTest {
 
 		Statement statement = statements.get(0);
 
+		Assert.assertNotNull(statement.getSchema());
+
 		Assert.assertEquals(17, statement.size());
 		Assert.assertEquals("variant", statement.getValue(ANNOTATION_CATEGORY));
 		Assert.assertEquals("SCN9A-iso3-p.Phe1449Val", statement.getValue(ANNOTATION_NAME));
@@ -88,6 +92,8 @@ public class JsonReaderTest {
 		Assert.assertEquals("V", statement.getValue(VARIANT_VARIATION_AMINO_ACID));
 
 		statement = statements.get(1);
+
+		Assert.assertNotNull(statement.getSchema());
 
 		Assert.assertEquals(24, statement.size());
 	}

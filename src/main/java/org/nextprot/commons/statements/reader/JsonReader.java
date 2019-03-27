@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.nextprot.commons.statements.CustomStatementField;
 import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.schema.Schema;
 
@@ -18,6 +19,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class JsonReader {
 
@@ -46,7 +48,8 @@ public class JsonReader {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
 
-		return mapper.readValue(content, new TypeReference<Statement>() { });
+		return StatementBuilder.createFromExistingStatement(mapper.readValue(content, new TypeReference<Statement>() { }))
+				.build();
 	}
 
 	public List<Statement> readStatements(String content) throws IOException {
@@ -60,7 +63,10 @@ public class JsonReader {
 		mapper.registerModule(module);
 		mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
 
-		return mapper.readValue(content, new TypeReference<List<Statement>>() { });
+		List<Statement> statements = mapper.readValue(content, new TypeReference<List<Statement>>() { });
+		return statements.stream()
+				.map(statement -> StatementBuilder.createFromExistingStatement(statement).build())
+				.collect(Collectors.toList());
 	}
 
 	/**
