@@ -80,6 +80,7 @@ public enum GenericStatementField implements StatementField {
 	
 	//EVIDENCE
 	ASSIGNED_BY,
+	//TODO: TYPO TO FIX: ADD A name() method for backward compatibility
 	ASSIGMENT_METHOD,
 	RESOURCE_TYPE,
 	
