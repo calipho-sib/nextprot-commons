@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public class SchemaImpl implements Schema {
+public class MutableSchema implements Schema {
 
 	private final Map<String, StatementField> statementFields = new TreeMap<>();
 
-	public SchemaImpl() {}
+	public MutableSchema() {}
 
-	public SchemaImpl(Schema schema) {
+	public MutableSchema(Schema schema) {
 		schema.getFields().forEach(this::registerField);
 	}
 
@@ -32,15 +32,18 @@ public class SchemaImpl implements Schema {
 		}
 	}
 
+	@Override
 	public int size() {
 		return statementFields.size();
 	}
 
+	@Override
 	public final boolean hasField(String field) {
 
 		return statementFields.containsKey(field);
 	}
 
+	@Override
 	public Collection<StatementField> getFields() {
 		return Collections.unmodifiableCollection(statementFields.values());
 	}
@@ -63,6 +66,7 @@ public class SchemaImpl implements Schema {
 		throw new IllegalStateException("invalid schema: the field "+field.getName()+ " belongs to multiple composite fields "+fields);
 	}
 
+	@Override
 	public StatementField getField(String field) {
 
 		if (hasField(field)) {

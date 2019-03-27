@@ -15,7 +15,7 @@ public class SchemaTest {
 	@Test
 	public void testRegisterField() {
 
-		SchemaImpl schema = new SchemaImpl();
+		MutableSchema schema = new MutableSchema();
 		StatementField field = mockField("roudoudou");
 		schema.registerField(field);
 		Assert.assertTrue(schema.hasField("roudoudou"));
@@ -25,7 +25,7 @@ public class SchemaTest {
 	@Test
 	public void testGetStatementFields() {
 
-		SchemaImpl schema = new SchemaImpl();
+		MutableSchema schema = new MutableSchema();
 		StatementField field = mockField("roudoudou");
 		schema.registerField(field);
 		Collection<StatementField> fields = schema.getFields();
@@ -36,7 +36,7 @@ public class SchemaTest {
 	@Test
 	public void testGetStatementField() {
 
-		SchemaImpl schema = new SchemaImpl();
+		MutableSchema schema = new MutableSchema();
 		StatementField field = mockField("roudoudou");
 		schema.registerField(field);
 		Assert.assertTrue(schema.hasField("roudoudou"));
@@ -50,7 +50,7 @@ public class SchemaTest {
 		StatementField f2 = mockField("f2");
 		StatementField f3 = new CompositeField("f3", Arrays.asList(f1, f2));
 
-		SchemaImpl schema = new SchemaImpl();
+		MutableSchema schema = new MutableSchema();
 		schema.registerFields(f1, f2, f3);
 
 		CompositeField cf = schema.searchCompositeFieldOrNull(f1);
@@ -67,7 +67,7 @@ public class SchemaTest {
 		StatementField f4 = new CompositeField("f4", Arrays.asList(f1, f2));
 		StatementField f5 = new CompositeField("f5", Arrays.asList(f3, f1));
 
-		SchemaImpl schema = new SchemaImpl();
+		MutableSchema schema = new MutableSchema();
 		schema.registerFields(f1, f2, f3, f4, f5);
 
 		schema.searchCompositeFieldOrNull(f1);
@@ -79,7 +79,7 @@ public class SchemaTest {
 		StatementField f1 = mockField("f1");
 		StatementField f2 = mockField("f2");
 
-		SchemaImpl schema = new SchemaImpl();
+		MutableSchema schema = new MutableSchema();
 		schema.registerFields(f1, f2);
 
 		CompositeField cf = schema.searchCompositeFieldOrNull(f1);

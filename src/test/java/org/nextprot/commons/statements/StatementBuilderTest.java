@@ -15,7 +15,7 @@ import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
 import org.nextprot.commons.statements.schema.GenericSchema;
 import org.nextprot.commons.statements.schema.Schema;
-import org.nextprot.commons.statements.schema.SchemaImpl;
+import org.nextprot.commons.statements.schema.MutableSchema;
 
 public class StatementBuilderTest {
 	
@@ -344,6 +344,6 @@ public class StatementBuilderTest {
 
 	private Statement buildStatementFromJsonString(String content) throws IOException {
 
-		return new SchemaImpl(new GenericSchema()).jsonReader().readStatement(content);
+		return new MutableSchema(new GenericSchema()).jsonReader().readStatement(content);
 	}
 }

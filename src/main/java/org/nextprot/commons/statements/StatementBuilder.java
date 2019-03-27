@@ -16,7 +16,7 @@ import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
 import org.nextprot.commons.statements.schema.GenericSchema;
 import org.nextprot.commons.statements.schema.Schema;
-import org.nextprot.commons.statements.schema.SchemaImpl;
+import org.nextprot.commons.statements.schema.MutableSchema;
 import org.nextprot.commons.utils.StringUtils;
 
 import static org.nextprot.commons.statements.GenericStatementField.*;
@@ -182,7 +182,7 @@ public class StatementBuilder {
 
 	private Schema buildSchema(Map<StatementField, String> keyValues) {
 
-		SchemaImpl schema = new SchemaImpl(new GenericSchema());
+		MutableSchema schema = new MutableSchema(new GenericSchema());
 
 		for (StatementField field : keyValues.keySet()) {
 

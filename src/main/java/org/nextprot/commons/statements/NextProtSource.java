@@ -2,7 +2,7 @@ package org.nextprot.commons.statements;
 
 import org.nextprot.commons.statements.schema.GenericSchema;
 import org.nextprot.commons.statements.schema.Schema;
-import org.nextprot.commons.statements.schema.SchemaImpl;
+import org.nextprot.commons.statements.schema.MutableSchema;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,7 +39,7 @@ public enum NextProtSource {
 
 	static class GnomADSchema implements Schema {
 
-		private final SchemaImpl schema;
+		private final MutableSchema schema;
 
 		private final StatementField canonicalField = new CustomStatementField("CANONICAL");
 		private final StatementField alleleCountField = new CustomStatementField("ALLELE_COUNT");
@@ -50,7 +50,7 @@ public enum NextProtSource {
 
 		public GnomADSchema() {
 
-			this.schema = new SchemaImpl(new GenericSchema());
+			this.schema = new MutableSchema(new GenericSchema());
 
 			schema.registerFields(canonicalField, alleleCountField, alleleSampledField, dbsnpIdField, propertiesField);
 		}

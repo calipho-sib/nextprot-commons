@@ -4,20 +4,24 @@ import org.nextprot.commons.statements.CompositeField;
 import org.nextprot.commons.statements.GenericStatementField;
 import org.nextprot.commons.statements.StatementField;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class GenericSchema implements Schema {
 
-	private final SchemaImpl schema;
+	private final MutableSchema schema;
 
-	public GenericSchema() {
+	public GenericSchema(/*List<String> extraFields*/) {
 
-		this.schema = new SchemaImpl();
+		this.schema = new MutableSchema();
 
 		for (StatementField field : GenericStatementField.values()) {
 
 			schema.registerField(field);
 		}
+
+		//schema.registerField(new CompositeField("EXTRAS", new ArrayList<>()));
 	}
 
 	@Override
