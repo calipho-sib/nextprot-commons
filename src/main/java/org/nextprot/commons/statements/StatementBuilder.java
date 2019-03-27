@@ -62,6 +62,11 @@ public class StatementBuilder {
 		return this;
 	}
 
+	public StatementBuilder addTargetIsoformsField(TargetIsoformSet targetIsoforms) {
+		addField(TARGET_ISOFORMS, targetIsoforms.serializeToJsonString());
+		return this;
+	}
+
 	public StatementBuilder addSubjects(Collection<Statement> statements) {
 
 		Set<String> sortedStatementIds = new TreeSet<>();
