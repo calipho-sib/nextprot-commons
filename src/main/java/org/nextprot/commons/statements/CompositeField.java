@@ -43,6 +43,11 @@ public class CompositeField implements StatementField {
 		return Collections.unmodifiableList(fields);
 	}
 
+	public boolean hasField(StatementField field) {
+
+		return fields.contains(field);
+	}
+
 	@Override
 	public boolean isPartOfAnnotationUnicityKey() {
 
