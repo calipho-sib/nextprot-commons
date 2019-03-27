@@ -5,6 +5,9 @@ import org.nextprot.commons.statements.CustomStatementField;
 import org.nextprot.commons.statements.NXFlatTableStatementField;
 import org.nextprot.commons.statements.StatementField;
 
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * A statement schema that maps the table schema of nxflat
  *
- * it consists of generic fields (as string columns)
+ * It consists of generic fields (as string columns)
  * and a specific composite field composed of extra fields (as a json column of type map)
  */
 public class NXFlatTableSchema implements Schema {
@@ -47,6 +50,27 @@ public class NXFlatTableSchema implements Schema {
 	public static NXFlatTableSchema withExtraFields(List<String> extraFields) {
 
 		return new NXFlatTableSchema(new HashSet<>(extraFields));
+	}
+
+	public static NXFlatTableSchema fromResultSetMetaData(ResultSetMetaData rsmd) throws SQLException {
+
+		int columnCount = rsmd.getColumnCount();
+
+		List<String> extraFields = new ArrayList<>();
+
+		for (int i = 1; i <= columnCount; i++) {
+			String columnName = rsmd.getColumnName(i);
+
+			if (!NXFlatTableStatementField.hasKey(columnName)) {
+				extraFields.add(columnName);
+			}
+		}
+
+		if (extraFields.isEmpty()) {
+			return new NXFlatTableSchema();
+		}
+
+		return NXFlatTableSchema.withExtraFields(extraFields);
 	}
 
 	private void registerExtraFields(Set<String> extraFields) {
