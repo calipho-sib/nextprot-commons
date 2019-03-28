@@ -17,16 +17,11 @@ public class TargetIsoformDeserializationTest {
 		tis.add(tisp2);
 		tis.add(tisp3);
 
-
 		String jsonString = tis.serializeToJsonString();
 
-		System.out.println(jsonString);
 		TargetIsoformSet tis2 = TargetIsoformSet.deSerializeFromJsonString(jsonString);
 
-
 		Assert.assertEquals(tis, tis2);
-
-
 	}
 
 	@Test
@@ -40,7 +35,7 @@ public class TargetIsoformDeserializationTest {
 
 		Assert.assertEquals(tis1.size(), 3);
 		Assert.assertEquals(tis2.size(), 3);
-		Assert.assertTrue(tis2.iterator().next().getBegin().equals(5));
+		Assert.assertEquals(5, (int) tis2.iterator().next().getBegin());
 		Assert.assertNull(tis1.iterator().next().getBegin());
 		Assert.assertNull(tis2.iterator().next().getSpecificity());
 		Assert.assertEquals(tis1.iterator().next().getSpecificity(), "UNKNOWN");

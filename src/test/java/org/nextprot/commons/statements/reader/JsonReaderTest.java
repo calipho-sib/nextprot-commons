@@ -3,14 +3,14 @@ package org.nextprot.commons.statements.reader;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.schema.NXFlatTableSchema;
+import org.nextprot.commons.statements.specs.StatementField;
+import org.nextprot.commons.statements.specs.NXFlatTableSchema;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.nextprot.commons.statements.CoreStatementField.*;
+import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 public class JsonReaderTest {
 

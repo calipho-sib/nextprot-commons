@@ -1,5 +1,7 @@
 package org.nextprot.commons.statements;
 
+import org.nextprot.commons.statements.specs.StatementField;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;

@@ -14,8 +14,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
-import org.nextprot.commons.statements.schema.NXFlatTableSchema;
-import org.nextprot.commons.statements.schema.StatementSpecifications;
+import org.nextprot.commons.statements.specs.CoreStatementField;
+import org.nextprot.commons.statements.specs.CustomStatementField;
+import org.nextprot.commons.statements.specs.NXFlatTableSchema;
+import org.nextprot.commons.statements.specs.StatementField;
+import org.nextprot.commons.statements.specs.StatementSpecifications;
 
 public class StatementBuilderTest {
 	

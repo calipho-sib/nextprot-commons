@@ -1,10 +1,8 @@
-package org.nextprot.commons.statements.schema;
+package org.nextprot.commons.statements.specs;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.nextprot.commons.statements.CompositeField;
-import org.nextprot.commons.statements.StatementField;
 
 import java.util.Arrays;
 import java.util.Collection;

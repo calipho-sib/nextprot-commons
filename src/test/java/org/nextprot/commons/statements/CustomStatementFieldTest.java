@@ -2,6 +2,7 @@ package org.nextprot.commons.statements;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.commons.statements.specs.CustomStatementField;
 
 public class CustomStatementFieldTest {
 

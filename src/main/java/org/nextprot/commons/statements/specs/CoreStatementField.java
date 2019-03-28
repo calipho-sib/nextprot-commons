@@ -1,4 +1,4 @@
-package org.nextprot.commons.statements;
+package org.nextprot.commons.statements.specs;
 
 import org.nextprot.commons.utils.EnumConstantDictionary;
 import org.nextprot.commons.utils.EnumDictionarySupplier;

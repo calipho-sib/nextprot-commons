@@ -1,7 +1,5 @@
-package org.nextprot.commons.statements.schema;
+package org.nextprot.commons.statements.specs;
 
-import org.nextprot.commons.statements.CompositeField;
-import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.reader.JsonReader;
 
 import java.util.Collection;

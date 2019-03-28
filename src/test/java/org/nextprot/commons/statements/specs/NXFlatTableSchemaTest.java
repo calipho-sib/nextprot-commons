@@ -1,9 +1,7 @@
-package org.nextprot.commons.statements.schema;
+package org.nextprot.commons.statements.specs;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.commons.statements.CompositeField;
-import org.nextprot.commons.statements.CustomStatementField;
 import org.nextprot.commons.statements.constants.StatementTableNames;
 
 import java.util.Arrays;

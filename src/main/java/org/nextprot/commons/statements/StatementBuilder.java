@@ -14,11 +14,13 @@ import java.util.stream.Collectors;
 import org.nextprot.commons.algo.MD5Algo;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
-import org.nextprot.commons.statements.schema.StatementSpecifications;
-import org.nextprot.commons.statements.schema.MutableStatementSpecifications;
+import org.nextprot.commons.statements.specs.CoreStatementField;
+import org.nextprot.commons.statements.specs.StatementField;
+import org.nextprot.commons.statements.specs.StatementSpecifications;
+import org.nextprot.commons.statements.specs.MutableStatementSpecifications;
 import org.nextprot.commons.utils.StringUtils;
 
-import static org.nextprot.commons.statements.CoreStatementField.*;
+import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 /**
  * A StatementID is computed based on the fields when build() is invoked

@@ -1,7 +1,10 @@
 package org.nextprot.commons.statements;
 
 
-import org.nextprot.commons.statements.schema.StatementSpecifications;
+import org.nextprot.commons.statements.specs.CompositeField;
+import org.nextprot.commons.statements.specs.CoreStatementField;
+import org.nextprot.commons.statements.specs.StatementField;
+import org.nextprot.commons.statements.specs.StatementSpecifications;
 
 import java.io.IOException;
 import java.util.Comparator;

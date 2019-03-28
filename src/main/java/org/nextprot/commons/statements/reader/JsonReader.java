@@ -6,11 +6,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.nextprot.commons.statements.CustomStatementField;
+import org.nextprot.commons.statements.specs.CustomStatementField;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
-import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.schema.StatementSpecifications;
+import org.nextprot.commons.statements.specs.StatementField;
+import org.nextprot.commons.statements.specs.StatementSpecifications;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
