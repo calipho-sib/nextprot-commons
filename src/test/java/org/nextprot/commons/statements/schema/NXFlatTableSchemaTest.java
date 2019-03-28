@@ -22,7 +22,7 @@ public class NXFlatTableSchemaTest {
 	@Test
 	public void testWithExtraFields() {
 
-		NXFlatTableSchema schema = NXFlatTableSchema.withExtraFields(Arrays.asList("f1", "f2"));
+		NXFlatTableSchema schema = NXFlatTableSchema.withExtraColumn(Arrays.asList("f1", "f2"));
 		Assert.assertEquals(52, schema.size());
 
 		Assert.assertTrue(schema.hasField("f1"));
@@ -39,7 +39,7 @@ public class NXFlatTableSchemaTest {
 	@Test
 	public void testWithExtraFields2() {
 
-		NXFlatTableSchema schema = NXFlatTableSchema.withExtraFields(Arrays.asList("f1", "f2"),
+		NXFlatTableSchema schema = NXFlatTableSchema.withExtraColumn(Arrays.asList("f1", "f2"),
 				Collections.singletonList("f3"));
 		Assert.assertEquals(53, schema.size());
 
@@ -121,7 +121,7 @@ public class NXFlatTableSchemaTest {
 	@Test
 	public void testCreateGenericTableWithExtras() {
 
-		String sql = NXFlatTableSchema.withExtraFields(Arrays.asList(
+		String sql = NXFlatTableSchema.withExtraColumn(Arrays.asList(
 				"CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED", "DBSNP_ID"))
 				.generateCreateTableInSQL(StatementTableNames.ENTRY_TABLE);
 

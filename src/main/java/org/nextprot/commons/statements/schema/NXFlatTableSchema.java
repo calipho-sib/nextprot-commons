@@ -2,7 +2,7 @@ package org.nextprot.commons.statements.schema;
 
 import org.nextprot.commons.statements.CompositeField;
 import org.nextprot.commons.statements.CustomStatementField;
-import org.nextprot.commons.statements.NXFlatTableStatementField;
+import org.nextprot.commons.statements.CoreStatementField;
 import org.nextprot.commons.statements.StatementField;
 
 import java.sql.ResultSetMetaData;
@@ -15,26 +15,24 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * A statement schema that maps the table schema of nxflat
+ * The NXFlat DB schema based on statement specifications.
  *
- * It consists of generic fields (as string columns)
- * and a specific composite field composed of extra fields (as a json column of type map).
- *
- * Also note that each field can contribute to the unicity of the entry key
+ * It consists of mandatory columns (string types)
+ * and an extra column composed of more fields (as a json column of type map).
  */
-public class NXFlatTableSchema implements Schema {
+public class NXFlatTableSchema implements StatementSpecifications {
 
-	private static final String EXTRA_FIELDS = "EXTRAS";
+	private static final String EXTRAS = "EXTRAS";
 
-	private final MutableSchema schema;
+	private final MutableStatementSpecifications statementSpecifications;
 
 	public NXFlatTableSchema() {
 
-		this.schema = new MutableSchema();
+		this.statementSpecifications = new MutableStatementSpecifications();
 
-		for (StatementField field : NXFlatTableStatementField.values()) {
+		for (StatementField field : CoreStatementField.values()) {
 
-			schema.registerField(field);
+			statementSpecifications.specifyField(field);
 		}
 	}
 
@@ -47,19 +45,22 @@ public class NXFlatTableSchema implements Schema {
 		}
 
 		List<StatementField> newFields = new ArrayList<>();
-		registerExtraFields(standardFields, false, newFields);
-		registerExtraFields(fieldsContributingToUnicityKey, true, newFields);
+		specifyExtraFields(standardFields, false, newFields);
+		specifyExtraFields(fieldsContributingToUnicityKey, true, newFields);
 
-		schema.registerField(new CompositeField(EXTRA_FIELDS, newFields));
+		statementSpecifications.specifyField(new CompositeField(EXTRAS, newFields));
 
 	}
 
-	public static NXFlatTableSchema withExtraFields(List<String> extraFields) {
+	/**
+	 * Add an supplementary column of mixed type
+	 */
+	public static NXFlatTableSchema withExtraColumn(List<String> extraFields) {
 
 		return new NXFlatTableSchema(new HashSet<>(extraFields), new HashSet<>());
 	}
 
-	public static NXFlatTableSchema withExtraFields(List<String> standardFields,
+	public static NXFlatTableSchema withExtraColumn(List<String> standardFields,
 	                                                List<String> fieldsContributingToUnicityKey) {
 
 		return new NXFlatTableSchema(new HashSet<>(standardFields), new HashSet<>(fieldsContributingToUnicityKey));
@@ -74,7 +75,7 @@ public class NXFlatTableSchema implements Schema {
 		for (int i = 1; i <= columnCount; i++) {
 			String columnName = rsmd.getColumnName(i);
 
-			if (!NXFlatTableStatementField.hasKey(columnName)) {
+			if (!CoreStatementField.hasKey(columnName)) {
 				extraFields.add(columnName);
 			}
 		}
@@ -83,59 +84,59 @@ public class NXFlatTableSchema implements Schema {
 			return new NXFlatTableSchema();
 		}
 
-		return NXFlatTableSchema.withExtraFields(extraFields);
+		return NXFlatTableSchema.withExtraColumn(extraFields);
 	}
 
-	private void registerExtraFields(Set<String> extraFields, boolean partOfUnicityKey, List<StatementField> customFields) {
+	private void specifyExtraFields(Set<String> extraFields, boolean partOfUnicityKey, List<StatementField> customFields) {
 
 		customFields.addAll(extraFields.stream()
 				.map(fieldName -> new CustomStatementField(fieldName, partOfUnicityKey))
-				.peek(schema::registerField)
+				.peek(statementSpecifications::specifyField)
 				.collect(Collectors.toList()));
 	}
 
 	@Override
-	public boolean hasField(String field) {
+	public boolean hasField(String columnName) {
 
-		return schema.hasField(field);
+		return statementSpecifications.hasField(columnName);
 	}
 
 	public boolean hasExtrasField() {
 
-		return schema.hasField(EXTRA_FIELDS);
+		return statementSpecifications.hasField(EXTRAS);
 	}
 
 	@Override
 	public Collection<StatementField> getFields() {
 
-		return schema.getFields();
-	}
-
-	@Override
-	public CompositeField searchCompositeFieldOrNull(StatementField field) {
-
-		return schema.searchCompositeFieldOrNull(field);
-	}
-
-	@Override
-	public StatementField getField(String field) {
-
-		return schema.getField(field);
-	}
-
-	public CompositeField getExtrasField() {
-
-		if (!schema.hasField(EXTRA_FIELDS)) {
-			return null;
-		}
-
-		return (CompositeField) schema.getField(EXTRA_FIELDS);
+		return statementSpecifications.getFields();
 	}
 
 	@Override
 	public int size() {
 
-		return schema.size();
+		return statementSpecifications.size();
+	}
+
+	@Override
+	public CompositeField searchCompositeFieldOrNull(StatementField field) {
+
+		return statementSpecifications.searchCompositeFieldOrNull(field);
+	}
+
+	@Override
+	public StatementField getField(String field) {
+
+		return statementSpecifications.getField(field);
+	}
+
+	public CompositeField getExtrasField() {
+
+		if (!statementSpecifications.hasField(EXTRAS)) {
+			return null;
+		}
+
+		return (CompositeField) statementSpecifications.getField(EXTRAS);
 	}
 
 	/** @return the sql to create the table schema for nxflat.{tableName} */
@@ -154,13 +155,13 @@ public class NXFlatTableSchema implements Schema {
 		sb.append("CREATE INDEX ").append(tableName, 0, 10)
 				.append("_ENTRY_AC_IDX ON nxflat.").append(tableName)
 				.append(" ( ")
-				.append(NXFlatTableStatementField.ENTRY_ACCESSION.name())
+				.append(CoreStatementField.ENTRY_ACCESSION.name())
 				.append(" );\n");
 
 		sb.append("CREATE INDEX ").append(tableName, 0, 10)
 				.append("_ANNOT_ID_IDX ON nxflat.").append(tableName)
 				.append(" ( ")
-				.append(NXFlatTableStatementField.ANNOTATION_ID.name())
+				.append(CoreStatementField.ANNOTATION_ID.name())
 				.append(" );\n");
 		sb.append("\n");
 

@@ -14,20 +14,19 @@ import java.util.stream.Collectors;
 import org.nextprot.commons.algo.MD5Algo;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
-import org.nextprot.commons.statements.schema.Schema;
-import org.nextprot.commons.statements.schema.MutableSchema;
+import org.nextprot.commons.statements.schema.StatementSpecifications;
+import org.nextprot.commons.statements.schema.MutableStatementSpecifications;
 import org.nextprot.commons.utils.StringUtils;
 
-import static org.nextprot.commons.statements.NXFlatTableStatementField.*;
+import static org.nextprot.commons.statements.CoreStatementField.*;
 
 /**
  * A StatementID is computed based on the fields when build() is invoked
  */
 public class StatementBuilder {
 
-	private Schema schema;
+	private StatementSpecifications specifications;
 	private final Map<StatementField, String> keyValues;
-	private boolean withStatementHash;
 	private boolean withAnnotationHash;
 
 	public StatementBuilder() {
@@ -42,16 +41,11 @@ public class StatementBuilder {
 	// Note: Used in bed
 	public static StatementBuilder createFromExistingStatement(Statement s) {
 		StatementBuilder sb = new StatementBuilder();
-		if (s.getSchema() != null) {
-			sb.withSchema(s.getSchema());
+		if (s.getSpecifications() != null) {
+			sb.withSpecifications(s.getSpecifications());
 		}
 		sb.addMap(s);
 		return sb;
-	}
-
-	public StatementBuilder withStatementHash() {
-		withStatementHash = true;
-		return this;
 	}
 
 	public StatementBuilder withAnnotationHash() {
@@ -64,8 +58,8 @@ public class StatementBuilder {
 		return this;
 	}
 
-	public StatementBuilder withSchema(Schema schema) {
-		this.schema = schema;
+	public StatementBuilder withSpecifications(StatementSpecifications specifications) {
+		this.specifications = specifications;
 		return this;
 	}
 
@@ -104,7 +98,7 @@ public class StatementBuilder {
 		addField(SUBJECT_STATEMENT_IDS, subjectStatemendIds);
 		
 		if(!subjectAnnotationIds.isEmpty()){
-			addField(NXFlatTableStatementField.SUBJECT_ANNOTATION_IDS, subjectAnnotationIds);
+			addField(CoreStatementField.SUBJECT_ANNOTATION_IDS, subjectAnnotationIds);
 		}
 
 		return this;
@@ -141,7 +135,7 @@ public class StatementBuilder {
 	}
 
 	public StatementBuilder addQuality(QualityQualifier quality) {
-		addField(NXFlatTableStatementField.EVIDENCE_QUALITY, quality.name());
+		addField(CoreStatementField.EVIDENCE_QUALITY, quality.name());
 		return this;
 	}
 
@@ -173,34 +167,26 @@ public class StatementBuilder {
 	public Statement build() {
 		Statement statement = new Statement(keyValues);
 
-		if (withStatementHash) {
-			statement.putValue(NXFlatTableStatementField.STATEMENT_ID, computeUniqueKey(statement, UniqueKey.STATEMENT));
+		if (!statement.containsKey(CoreStatementField.STATEMENT_ID)) {
+			statement.putValue(CoreStatementField.STATEMENT_ID, computeUniqueKey(statement, UniqueKey.STATEMENT));
 		}
 		if (withAnnotationHash) {
-			statement.putValue(NXFlatTableStatementField.ANNOTATION_ID, computeUniqueKey(statement, UniqueKey.ENTRY));
+			statement.putValue(CoreStatementField.ANNOTATION_ID, computeUniqueKey(statement, UniqueKey.ENTRY));
 		}
-		statement.setSchema((schema == null) ? buildSchema(statement) : schema);
+		statement.setSpecifications((specifications == null) ? buildSchema(statement) : specifications);
 
 		return statement;
 	}
 
-	public Statement generateHashAndBuild() {
-		return withStatementHash().build();
-	}
-
-	public Statement generateAllHashesAndBuild() {
-		return withStatementHash().withAnnotationHash().build();
-	}
-
 	/** Build the schema based on the statement content */
-	private Schema buildSchema(Map<StatementField, String> keyValues) {
+	private StatementSpecifications buildSchema(Map<StatementField, String> keyValues) {
 
-		MutableSchema schema = new MutableSchema();
+		MutableStatementSpecifications schema = new MutableStatementSpecifications();
 
 		for (StatementField field : keyValues.keySet()) {
 
 			if (!schema.hasField(field.getName())) {
-				schema.registerField(field);
+				schema.specifyField(field);
 			}
 		}
 
@@ -230,7 +216,7 @@ public class StatementBuilder {
 			}
 			// STATEMENT TYPE: all fields are considered to build the unique key
 			else if (uniqueKey.equals(UniqueKey.STATEMENT)) { // All fields for the statement
-				if (!field.equals(NXFlatTableStatementField.STATEMENT_ID) && !field.equals(NXFlatTableStatementField.ANNOTATION_ID)) {
+				if (!field.equals(CoreStatementField.STATEMENT_ID) && !field.equals(CoreStatementField.ANNOTATION_ID)) {
 					unicityFields.add(field);
 				}
 			}

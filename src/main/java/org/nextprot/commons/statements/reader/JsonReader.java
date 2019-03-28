@@ -10,7 +10,7 @@ import org.nextprot.commons.statements.CustomStatementField;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.schema.Schema;
+import org.nextprot.commons.statements.schema.StatementSpecifications;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,10 +25,10 @@ public class JsonReader {
 
 	private final SimpleModule module;
 
-	public JsonReader(Schema schema) {
+	public JsonReader(StatementSpecifications specifications) {
 
 		module = new SimpleModule();
-		module.addKeyDeserializer(StatementField.class, new StatementFieldDeserializer(schema));
+		module.addKeyDeserializer(StatementField.class, new StatementFieldDeserializer(specifications));
 	}
 
 	public Map<StatementField, String> readMap(String content) throws IOException {
@@ -74,17 +74,17 @@ public class JsonReader {
 	 */
 	private static class StatementFieldDeserializer extends KeyDeserializer {
 
-		private final Schema schema;
+		private final StatementSpecifications specifications;
 
-		public StatementFieldDeserializer(Schema schema) {
-			this.schema = schema;
+		public StatementFieldDeserializer(StatementSpecifications specifications) {
+			this.specifications = specifications;
 		}
 
 		@Override
 		public StatementField deserializeKey(String key, DeserializationContext ctxt) {
 
-			if (schema.hasField(key)) {
-				return schema.getField(key);
+			if (specifications.hasField(key)) {
+				return specifications.getField(key);
 			}
 			return new CustomStatementField(key);
 		}

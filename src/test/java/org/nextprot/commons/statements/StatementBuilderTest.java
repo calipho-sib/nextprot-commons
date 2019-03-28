@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
 import org.nextprot.commons.statements.schema.NXFlatTableSchema;
-import org.nextprot.commons.statements.schema.Schema;
+import org.nextprot.commons.statements.schema.StatementSpecifications;
 
 public class StatementBuilderTest {
 	
@@ -23,20 +23,20 @@ public class StatementBuilderTest {
 	
 	@Test
 	public void testRawStatementEquals() {
-		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).generateHashAndBuild();
-		Statement rs2 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).generateHashAndBuild();
+		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
+		Statement rs2 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
 		assertEquals(rs1, rs2);
 	}
 
 	@Test
 	public void testRawStatementInsertionInSets() {
 		Set<Statement> set1 = new HashSet<>();
-		set1.add(StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).generateHashAndBuild());
-		set1.add(StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality ).generateHashAndBuild());
+		set1.add(StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build());
+		set1.add(StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality ).build());
 		
 		assertEquals(set1.size(), 1);
 		
-		set1.add(StatementBuilder.createNew().addCompulsoryFields("DDD", "BBB", "CCC", defaultQuality).generateHashAndBuild());
+		set1.add(StatementBuilder.createNew().addCompulsoryFields("DDD", "BBB", "CCC", defaultQuality).build());
 		assertEquals(set1.size(), 2);
 
 	}
@@ -45,27 +45,30 @@ public class StatementBuilderTest {
 	public void testAnnotHashUnicity() {
 
 		Statement rs1 = StatementBuilder.createNew()
-				.addField(NXFlatTableStatementField.NEXTPROT_ACCESSION, "NX_P25054")
-				.addField(NXFlatTableStatementField.GENE_NAME, "apc")
+				.addField(CoreStatementField.NEXTPROT_ACCESSION, "NX_P25054")
+				.addField(CoreStatementField.GENE_NAME, "apc")
 				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
-   	    	    .addField(NXFlatTableStatementField.TARGET_ISOFORMS, "[]")
-				.addSourceInfo("CAVA-VP90999", "BED").generateAllHashesAndBuild();
+   	    	    .addField(CoreStatementField.TARGET_ISOFORMS, "[]")
+				.addSourceInfo("CAVA-VP90999", "BED")
+				.withAnnotationHash()
+				.build();
 		Statement rs2 = StatementBuilder.createNew()
-				.addField(NXFlatTableStatementField.NEXTPROT_ACCESSION, "NX_P25054")
-				.addField(NXFlatTableStatementField.GENE_NAME, "apc")
+				.addField(CoreStatementField.NEXTPROT_ACCESSION, "NX_P25054")
+				.addField(CoreStatementField.GENE_NAME, "apc")
 				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
-   	    	    .addField(NXFlatTableStatementField.TARGET_ISOFORMS, "[]")
-				.addSourceInfo("XPTO", "Caviar").generateAllHashesAndBuild();
+   	    	    .addField(CoreStatementField.TARGET_ISOFORMS, "[]")
+				.addSourceInfo("XPTO", "Caviar").withAnnotationHash()
+				.build();
 
 		assertNotEquals(rs1, rs2); 
-		assertEquals(rs1.get(NXFlatTableStatementField.ANNOTATION_ID), rs2.get(NXFlatTableStatementField.ANNOTATION_ID));
+		assertEquals(rs1.get(CoreStatementField.ANNOTATION_ID), rs2.get(CoreStatementField.ANNOTATION_ID));
 	}
 
 	@Test
 	public void testRawStatement2() {
 
-		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).generateHashAndBuild();
-		Statement rs2 = StatementBuilder.createNew().addMap(rs1).generateHashAndBuild();
+		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
+		Statement rs2 = StatementBuilder.createNew().addMap(rs1).build();
 
 		assertEquals(rs1, rs2);
 	}
@@ -74,8 +77,8 @@ public class StatementBuilderTest {
 	public void testStatementEquality() {
 
 		Statement rs1 = StatementBuilder.createNew()
-				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).generateHashAndBuild();
-		Statement rs2 = StatementBuilder.createNew().addMap(rs1).generateHashAndBuild();
+				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
+		Statement rs2 = StatementBuilder.createNew().addMap(rs1).build();
 
 		assertEquals(rs1, rs2);
 	}
@@ -126,12 +129,12 @@ public class StatementBuilderTest {
 				"  \"VARIANT_VARIATION_AMINO_ACID\" : \"L\"\n" +
 				"}";
 
-		Statement sub1 = StatementBuilder.createNew().addMap(buildStatementFromJsonString(subjectOne)).generateHashAndBuild();
+		Statement sub1 = StatementBuilder.createNew().addMap(buildStatementFromJsonString(subjectOne)).build();
 
 		Statement sub2 = buildStatementFromJsonString(subjectTwo);
 
-		Statement vp1 = StatementBuilder.createNew().addField(NXFlatTableStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub1, sub2)).generateHashAndBuild();
-		Statement vp2 = StatementBuilder.createNew().addField(NXFlatTableStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub2, sub1)).generateHashAndBuild();
+		Statement vp1 = StatementBuilder.createNew().addField(CoreStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub1, sub2)).build();
+		Statement vp2 = StatementBuilder.createNew().addField(CoreStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub2, sub1)).build();
 
 		String vp1Hash = StatementBuilder.computeUniqueKey(vp1, UniqueKey.ENTRY);
 		String vp2Hash = StatementBuilder.computeUniqueKey(vp2, UniqueKey.ENTRY);
@@ -144,16 +147,17 @@ public class StatementBuilderTest {
 
 		Statement rs1 = StatementBuilder.createNew()
 				.addField(new CustomStatementField("DBSNP_ID"), "rs745905374")
-				.generateHashAndBuild();
+				.build();
 
-		Assert.assertTrue(rs1.containsKey(NXFlatTableStatementField.STATEMENT_ID));
+		Assert.assertTrue(rs1.containsKey(CoreStatementField.STATEMENT_ID));
 	}
 
 	@Test
 	public void testGnomADStatements() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.generateHashAndBuild();
+				.withAnnotationHash()
+				.build();
 
 		Assert.assertEquals("1", stmt.getValueOrNull("ALLELE_COUNT"));
 		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
@@ -167,8 +171,9 @@ public class StatementBuilderTest {
 	public void testGnomADStatementsWithSchema() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.withSchema(newGnomADSchema())
-				.generateHashAndBuild();
+				.withSpecifications(newGnomADSpecifications())
+				.withAnnotationHash()
+				.build();
 
 		Assert.assertEquals("1", stmt.getValueOrNull("ALLELE_COUNT"));
 		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
@@ -183,11 +188,13 @@ public class StatementBuilderTest {
 	public void testGnomADStatementsUniqueEntryKeys() throws IOException {
 
 		Statement stmt1 = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.generateAllHashesAndBuild();
+				.withAnnotationHash()
+				.build();
 
 		Statement stmt2 = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.withSchema(newGnomADSchema())
-				.generateAllHashesAndBuild();
+				.withSpecifications(newGnomADSpecifications())
+				.withAnnotationHash()
+				.build();
 
 		String stmt1EntryKey = StatementBuilder.computeUniqueKey(stmt1, UniqueKey.ENTRY);
 		String stmt2EntryKey = StatementBuilder.computeUniqueKey(stmt2, UniqueKey.ENTRY);
@@ -205,10 +212,10 @@ public class StatementBuilderTest {
 				"}";
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(json))
-				.generateHashAndBuild();
+				.build();
 
-		Schema defaultSchema = stmt.getSchema();
-		Assert.assertEquals(Arrays.asList("age", "location", "name"), defaultSchema.getFields().stream()
+		StatementSpecifications defaultSpecifications = stmt.getSpecifications();
+		Assert.assertEquals(Arrays.asList("age", "location", "name"), defaultSpecifications.getFields().stream()
 				.map(StatementField::getName)
 				.filter(statementField -> !new NXFlatTableSchema().hasField(statementField))
 				.collect(Collectors.toList()));
@@ -218,54 +225,54 @@ public class StatementBuilderTest {
 	public void testGetCompositeFieldValue() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSONFromDB()))
-				.withSchema(newGnomADSchema())
-				.generateHashAndBuild();
+				.withSpecifications(newGnomADSpecifications())
+				.build();
 
-		Assert.assertEquals("1", stmt.getValue(newGnomADSchema().getField("ALLELE_COUNT")));
-		Assert.assertEquals("YES", stmt.getValue(newGnomADSchema().getField("CANONICAL")));
-		Assert.assertEquals("217610", stmt.getValue(newGnomADSchema().getField("ALLELE_SAMPLED")));
-		Assert.assertEquals("rs745905374", stmt.getValue(newGnomADSchema().getField("DBSNP_ID")));
+		Assert.assertEquals("1", stmt.getValue(newGnomADSpecifications().getField("ALLELE_COUNT")));
+		Assert.assertEquals("YES", stmt.getValue(newGnomADSpecifications().getField("CANONICAL")));
+		Assert.assertEquals("217610", stmt.getValue(newGnomADSpecifications().getField("ALLELE_SAMPLED")));
+		Assert.assertEquals("rs745905374", stmt.getValue(newGnomADSpecifications().getField("DBSNP_ID")));
 	}
 
 	@Test
 	public void testCannotFindFieldFromCompositeFieldValue() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSONFromDBNoCanonicalField()))
-				.withSchema(newGnomADSchema())
-				.generateHashAndBuild();
+				.withSpecifications(newGnomADSpecifications())
+				.build();
 
-		Assert.assertNull(stmt.getValue(newGnomADSchema().getField("CANONICAL")));
+		Assert.assertNull(stmt.getValue(newGnomADSpecifications().getField("CANONICAL")));
 	}
 
 	@Test
 	public void testRemoveEnumField() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.withSchema(newGnomADSchema())
+				.withSpecifications(newGnomADSpecifications())
 				.removeField(new CustomStatementField("ANNOTATION_NAME"))
-				.generateHashAndBuild();
+				.build();
 
-		Assert.assertTrue(!stmt.containsField("ANNOTATION_NAME"));
+		Assert.assertFalse(stmt.containsField("ANNOTATION_NAME"));
 	}
 
 	@Test
 	public void testRemoveCustomField() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.withSchema(newGnomADSchema())
+				.withSpecifications(newGnomADSpecifications())
 				.removeField(new CustomStatementField("ALLELE_SAMPLED"))
-				.generateHashAndBuild();
+				.build();
 
-		Assert.assertTrue(!stmt.containsField("ALLELE_SAMPLED"));
+		Assert.assertFalse(stmt.containsField("ALLELE_SAMPLED"));
 	}
 
 	@Test
 	public void testResetField() throws IOException {
 
 		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
-				.withSchema(newGnomADSchema())
+				.withSpecifications(newGnomADSpecifications())
 				.addField(new CustomStatementField("ANNOTATION_NAME"), "roudoudou")
-				.generateHashAndBuild();
+				.build();
 
 		Assert.assertEquals("roudoudou", stmt.getValueOrNull("ANNOTATION_NAME"));
 	}
@@ -337,9 +344,9 @@ public class StatementBuilderTest {
 		return new NXFlatTableSchema().jsonReader().readStatement(content);
 	}
 
-	private Schema newGnomADSchema() {
+	private StatementSpecifications newGnomADSpecifications() {
 
-		return NXFlatTableSchema.withExtraFields(Arrays.asList(
+		return NXFlatTableSchema.withExtraColumn(Arrays.asList(
 				"CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"), Collections.singletonList("DBSNP_ID"));
 	}
 }

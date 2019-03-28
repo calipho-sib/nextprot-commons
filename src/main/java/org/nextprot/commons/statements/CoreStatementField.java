@@ -5,7 +5,7 @@ import org.nextprot.commons.utils.EnumDictionarySupplier;
 
 import java.util.Map;
 
-public enum NXFlatTableStatementField implements StatementField, EnumDictionarySupplier<NXFlatTableStatementField> {
+public enum CoreStatementField implements StatementField, EnumDictionarySupplier<CoreStatementField> {
 
 	//Generated automatically from the builder when all fields are set	
 	STATEMENT_ID, 
@@ -92,12 +92,12 @@ public enum NXFlatTableStatementField implements StatementField, EnumDictionaryS
 	RAW_STATEMENT_ID //Keep a reference to the Raw statement
 	;
 
-	private static EnumConstantDictionary<NXFlatTableStatementField> dictionaryOfConstants =
-			new EnumConstantDictionary<NXFlatTableStatementField>(NXFlatTableStatementField.class, values()) {
+	private static EnumConstantDictionary<CoreStatementField> dictionaryOfConstants =
+			new EnumConstantDictionary<CoreStatementField>(CoreStatementField.class, values()) {
 				@Override
-				protected void updateDictionaryOfConstants(Map<String, NXFlatTableStatementField> dictionary) {
+				protected void updateDictionaryOfConstants(Map<String, CoreStatementField> dictionary) {
 
-					for (NXFlatTableStatementField db : values()) {
+					for (CoreStatementField db : values()) {
 						dictionary.put(db.getName(), db);
 					}
 				}
@@ -105,12 +105,12 @@ public enum NXFlatTableStatementField implements StatementField, EnumDictionaryS
 
 	private final boolean isUnicityField;
 
-	NXFlatTableStatementField(boolean isUnicityField) {
+	CoreStatementField(boolean isUnicityField) {
 
 		this.isUnicityField = isUnicityField;
 	}
 	
-	NXFlatTableStatementField() {
+	CoreStatementField() {
 
 		this(false);
 	}
@@ -139,7 +139,7 @@ public enum NXFlatTableStatementField implements StatementField, EnumDictionaryS
 	}
 
 	@Override
-	public EnumConstantDictionary<NXFlatTableStatementField> getEnumConstantDictionary() {
+	public EnumConstantDictionary<CoreStatementField> getEnumConstantDictionary() {
 
 		return dictionaryOfConstants;
 	}

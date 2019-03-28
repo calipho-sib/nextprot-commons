@@ -1,7 +1,7 @@
 package org.nextprot.commons.statements;
 
 
-import org.nextprot.commons.statements.schema.Schema;
+import org.nextprot.commons.statements.schema.StatementSpecifications;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -10,24 +10,15 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Mechanism of mapping to nxflat db
- *
- * Statement (Set of Field -> Value)
- * F1   -> V1
- * F2   -> V2
- * ...
- * Fi   -> Vi
- * ...
- * Fn   -> Vn
- * Fn+1 -> {Fj:Vj, Fh:Vh,...} // a composite field that can be a column type (string or json) in nxflat
- *
- * DO NOT ADD public setters on this class.
+ * A statement is a set of Field/Values
+ * Each field can be a simple or a composite.
+ * A composite is composed of multiple fields.
  */
 public class Statement extends TreeMap<StatementField, String> implements Map<StatementField, String> {
 
 	private static final long serialVersionUID = 2L;
 
-	private Schema schema;
+	private StatementSpecifications specifications;
 
 	public Statement() {
 		super(Comparator.comparing(StatementField::getName));
@@ -46,16 +37,17 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 
 	public String getValueOrNull(String field) {
 
-		if (!schema.hasField(field)) {
+		if (!specifications.hasField(field)) {
 			return null;
 		}
 
-		return getValue(schema.getField(field));
+		return getValue(specifications.getField(field));
 	}
 
 	/**
-	 * @return the value associated with the given field or if the field type is a composite
-	 * returns a map of field/value in json
+	 * Get the value from a specific field
+	 * @return the value associated with the given field even if the field is part of another composite field
+	 *  or if the field type is a composite it returns a map of field/value in json
 	 */
 	public String getValue(StatementField field) {
 
@@ -66,7 +58,7 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 
 		if (!containsKey(field)) {
 			// search the field in a composite fields
-			CompositeField compositeField = schema.searchCompositeFieldOrNull(field);
+			CompositeField compositeField = specifications.searchCompositeFieldOrNull(field);
 			if (compositeField != null) {
 				Map<StatementField, String> map = readMapFromCompositeField(compositeField);
 				if (map.containsKey(field)) {
@@ -83,7 +75,7 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		String jsonContent = get(compositeField);
 
 		try {
-			return schema.jsonReader().readMap(jsonContent);
+			return specifications.jsonReader().readMap(jsonContent);
 		} catch (IOException e) {
 			throw new IllegalStateException("cannot deserialize json for field "+ compositeField.getName()+": "+jsonContent);
 		}
@@ -106,38 +98,38 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		return put(field, value);
 	}
 
-	void setSchema(Schema schema) {
-		this.schema = schema;
+	void setSpecifications(StatementSpecifications specifications) {
+		this.specifications = specifications;
 	}
 
-	public Schema getSchema() {
-		return schema;
+	public StatementSpecifications getSpecifications() {
+		return specifications;
 	}
 
 	public String getSubjectStatementIds() {
-		return get(NXFlatTableStatementField.SUBJECT_STATEMENT_IDS);
+		return get(CoreStatementField.SUBJECT_STATEMENT_IDS);
 	}
-	
+
 	public String[] getSubjectStatementIdsArray() {
-		String subjects = get(NXFlatTableStatementField.SUBJECT_STATEMENT_IDS);
+		String subjects = get(CoreStatementField.SUBJECT_STATEMENT_IDS);
 		if(subjects == null) return null;
 		else return subjects.split(",");
 	}
-	
+
 	public String getStatementId() {
-		return this.get(NXFlatTableStatementField.STATEMENT_ID);
+		return this.get(CoreStatementField.STATEMENT_ID);
 	}
-	
+
 	public String getAnnotationId() {
-		return this.get(NXFlatTableStatementField.ANNOTATION_ID);
+		return this.get(CoreStatementField.ANNOTATION_ID);
 	}
-	
+
 	public String getObjectStatementId() {
-		return get(NXFlatTableStatementField.OBJECT_STATEMENT_IDS);
+		return get(CoreStatementField.OBJECT_STATEMENT_IDS);
 	}
-	
+
 	public boolean hasModifiedSubject() {
-		return (get(NXFlatTableStatementField.SUBJECT_STATEMENT_IDS) != null);
+		return (get(CoreStatementField.SUBJECT_STATEMENT_IDS) != null);
 	}
 
 	public String toString(){

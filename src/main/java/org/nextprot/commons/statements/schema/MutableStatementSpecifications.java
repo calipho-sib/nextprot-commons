@@ -10,25 +10,21 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public class MutableSchema implements Schema {
+public class MutableStatementSpecifications implements StatementSpecifications {
 
 	private final Map<String, StatementField> statementFields = new TreeMap<>();
 
-	public MutableSchema() {}
+	public MutableStatementSpecifications() {}
 
-	public MutableSchema(Schema schema) {
-		schema.getFields().forEach(this::registerField);
-	}
-
-	public final void registerField(StatementField field) {
+	public final void specifyField(StatementField field) {
 
 		statementFields.put(field.getName(), field);
 	}
 
-	public final void registerFields(StatementField... fields) {
+	public final void specifyFields(StatementField... fields) {
 
 		for (StatementField field : fields) {
-			registerField(field);
+			specifyField(field);
 		}
 	}
 

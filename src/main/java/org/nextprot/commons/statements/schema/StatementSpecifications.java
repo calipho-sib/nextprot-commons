@@ -8,10 +8,10 @@ import java.util.Collection;
 
 
 /**
- * A schema defines all fields that describe a statement provided by a
+ * Defines all fields that describe a statement provided by a
  * given external neXtProt source.
  */
-public interface Schema {
+public interface StatementSpecifications {
 
 	/** @return the statement field named fieldName */
 	StatementField getField(String fieldName);

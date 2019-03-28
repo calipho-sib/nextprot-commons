@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.nextprot.commons.statements.NXFlatTableStatementField.*;
+import static org.nextprot.commons.statements.CoreStatementField.*;
 
 public class JsonReaderTest {
 
@@ -42,7 +42,7 @@ public class JsonReaderTest {
 		JsonReader reader = new JsonReader(new NXFlatTableSchema());
 		Statement statement = reader.readStatement(getStatement());
 
-		Assert.assertNotNull(statement.getSchema());
+		Assert.assertNotNull(statement.getSpecifications());
 
 		Assert.assertEquals(13, statement.size());
 		Assert.assertEquals("variant", statement.getValue(ANNOTATION_CATEGORY));
@@ -70,7 +70,7 @@ public class JsonReaderTest {
 
 		Statement statement = statements.get(0);
 
-		Assert.assertNotNull(statement.getSchema());
+		Assert.assertNotNull(statement.getSpecifications());
 
 		Assert.assertEquals(17, statement.size());
 		Assert.assertEquals("variant", statement.getValue(ANNOTATION_CATEGORY));
@@ -93,7 +93,7 @@ public class JsonReaderTest {
 
 		statement = statements.get(1);
 
-		Assert.assertNotNull(statement.getSchema());
+		Assert.assertNotNull(statement.getSpecifications());
 
 		Assert.assertEquals(24, statement.size());
 	}
