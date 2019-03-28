@@ -182,8 +182,8 @@ public class StatementBuilderTest {
 		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
 		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
 		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
-		Assert.assertNotNull(stmt.getValueOrNull("EXTRAS"));
-		Assert.assertEquals("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"DBSNP_ID\":\"rs745905374\"}", stmt.getValueOrNull("EXTRAS"));
+		Assert.assertNotNull(stmt.getValueOrNull("EXTRA_COLUMNS"));
+		Assert.assertEquals("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"DBSNP_ID\":\"rs745905374\"}", stmt.getValueOrNull("EXTRA_COLUMNS"));
 		Assert.assertNull(stmt.getValueOrNull("ROUDOUDOU"));
 	}
 
@@ -220,7 +220,7 @@ public class StatementBuilderTest {
 		StatementSpecifications defaultSpecifications = stmt.getSpecifications();
 		Assert.assertEquals(Arrays.asList("age", "location", "name"), defaultSpecifications.getFields().stream()
 				.map(StatementField::getName)
-				.filter(statementField -> !new NXFlatTableSchema().hasField(statementField))
+				.filter(statementField -> !new NXFlatTableSchema.Builder().build().hasField(statementField))
 				.collect(Collectors.toList()));
 	}
 
@@ -314,7 +314,7 @@ public class StatementBuilderTest {
 				"\"LOCATION_BEGIN\": \"34\",\n" +
 				"\"LOCATION_END\": \"34\",\n" +
 				"\"NEXTPROT_ACCESSION\": \"NX_Q6S545\",\n" +
-				"\"EXTRAS\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"CANONICAL\\\":\\\"YES\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
+				"\"EXTRA_COLUMNS\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"CANONICAL\\\":\\\"YES\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
 				"\"SOURCE\": \"gnomAD\",\n" +
 				"\"STATEMENT_ID\": \"792d509b2d452da2cf4a74faa2773c15\",\n" +
 				"\"VARIANT_ORIGINAL_AMINO_ACID\": \"W\",\n" +
@@ -344,12 +344,14 @@ public class StatementBuilderTest {
 
 	private Statement buildStatementFromJsonString(String content) throws IOException {
 
-		return new NXFlatTableSchema().jsonReader().readStatement(content);
+		return NXFlatTableSchema.build().jsonReader().readStatement(content);
 	}
 
 	private StatementSpecifications newGnomADSpecifications() {
 
-		return NXFlatTableSchema.withExtraColumn(Arrays.asList(
-				"CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"), Collections.singletonList("DBSNP_ID"));
+		return new NXFlatTableSchema.Builder()
+				.withCustomFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
+				.withExtraFieldsContributingToUnicityKey(Collections.singletonList("DBSNP_ID"))
+				.build();
 	}
 }

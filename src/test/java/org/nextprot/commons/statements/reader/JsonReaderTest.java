@@ -17,7 +17,7 @@ public class JsonReaderTest {
 	@Test
 	public void readStatementAsMap() throws IOException {
 
-		JsonReader reader = new JsonReader(new NXFlatTableSchema());
+		JsonReader reader = new JsonReader(NXFlatTableSchema.build());
 		Map<StatementField, String> map = reader.readMap(getStatement());
 
 		Assert.assertEquals(13, map.size());
@@ -39,7 +39,7 @@ public class JsonReaderTest {
 	@Test
 	public void readStatement() throws IOException {
 
-		JsonReader reader = new JsonReader(new NXFlatTableSchema());
+		JsonReader reader = new JsonReader(NXFlatTableSchema.build());
 		Statement statement = reader.readStatement(getStatement());
 
 		Assert.assertNotNull(statement.getSpecifications());
@@ -63,7 +63,7 @@ public class JsonReaderTest {
 	@Test
 	public void readStatements() throws IOException {
 
-		JsonReader reader = new JsonReader(new NXFlatTableSchema());
+		JsonReader reader = new JsonReader(NXFlatTableSchema.build());
 		List<Statement> statements = reader.readStatements(getStatements());
 
 		Assert.assertEquals(2, statements.size());

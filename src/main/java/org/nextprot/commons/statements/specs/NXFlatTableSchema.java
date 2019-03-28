@@ -12,82 +12,104 @@ import java.util.stream.Collectors;
 /**
  * The NXFlat DB schema based on statement specifications.
  *
- * It consists of mandatory columns (string types)
- * and an extra column composed of more fields (as a json column of type map).
+ * It consists of core fields (string types) and
+ * a supplementary column composed of all the custom fields (as a json column of type map keyed with custom field name).
  */
 public class NXFlatTableSchema implements StatementSpecifications {
 
-	private static final String EXTRAS = "EXTRAS";
+	private static final String CUSTOM_FIELDS = "EXTRA_COLUMNS";
 
-	private final MutableStatementSpecifications statementSpecifications;
+	private final StatementSpecifications statementSpecifications;
 
-	public NXFlatTableSchema() {
+	public static class Builder {
 
-		this.statementSpecifications = new MutableStatementSpecifications();
+		private final List<StatementField> customFields = new ArrayList<>();
+		private final MutableStatementSpecifications specifications = new MutableStatementSpecifications();
 
-		for (StatementField field : CoreStatementField.values()) {
+		public Builder() {
 
-			statementSpecifications.specifyField(field);
+			for (StatementField field : CoreStatementField.values()) {
+
+				specifications.specifyField(field);
+			}
+		}
+
+		public Builder withCustomFields(List<String> fields) {
+
+			return withCustomFields(new HashSet<>(fields));
+		}
+
+		public Builder withCustomFields(Set<String> fields) {
+
+			if (fields.isEmpty()) {
+				throw new IllegalArgumentException("missing extra fields");
+			}
+			specifyCustomFields(fields, false);
+			return this;
+		}
+
+		public Builder withExtraFieldsContributingToUnicityKey(List<String> fields) {
+
+			return withExtraFieldsContributingToUnicityKey(new HashSet<>(fields));
+		}
+
+		public Builder withExtraFieldsContributingToUnicityKey(Set<String> fields) {
+
+			if (fields.isEmpty()) {
+				throw new IllegalArgumentException("missing extra fields");
+			}
+			specifyCustomFields(fields, true);
+			return this;
+		}
+
+		private void specifyCustomFields(Set<String> extraFields, boolean partOfUnicityKey) {
+
+			customFields.addAll(extraFields.stream()
+					.map(fieldName -> new CustomStatementField(fieldName, partOfUnicityKey))
+					.peek(specifications::specifyField)
+					.collect(Collectors.toList()));
+		}
+
+		public NXFlatTableSchema build() {
+
+			if (!customFields.isEmpty()) {
+				specifications.specifyField(new CompositeField(CUSTOM_FIELDS, customFields));
+			}
+			return new NXFlatTableSchema(this);
 		}
 	}
 
-	private NXFlatTableSchema(Set<String> standardFields, Set<String> fieldsContributingToUnicityKey) {
+	private NXFlatTableSchema(Builder builder) {
 
-		this();
-
-		if (standardFields.isEmpty() && fieldsContributingToUnicityKey.isEmpty()) {
-			throw new IllegalArgumentException("missing extra fields");
-		}
-
-		List<StatementField> newFields = new ArrayList<>();
-		specifyExtraFields(standardFields, false, newFields);
-		specifyExtraFields(fieldsContributingToUnicityKey, true, newFields);
-
-		statementSpecifications.specifyField(new CompositeField(EXTRAS, newFields));
-
+		this.statementSpecifications = builder.specifications;
 	}
 
-	/**
-	 * Add an supplementary column of mixed type
-	 */
-	public static NXFlatTableSchema withExtraColumn(List<String> extraFields) {
+	public static NXFlatTableSchema build() {
 
-		return new NXFlatTableSchema(new HashSet<>(extraFields), new HashSet<>());
-	}
-
-	public static NXFlatTableSchema withExtraColumn(List<String> standardFields,
-	                                                List<String> fieldsContributingToUnicityKey) {
-
-		return new NXFlatTableSchema(new HashSet<>(standardFields), new HashSet<>(fieldsContributingToUnicityKey));
+		return new NXFlatTableSchema.Builder().build();
 	}
 
 	public static NXFlatTableSchema fromResultSetMetaData(ResultSetMetaData rsmd) throws SQLException {
 
+		Builder builder = new Builder();
+
 		int columnCount = rsmd.getColumnCount();
 
-		List<String> extraFields = new ArrayList<>();
+		List<String> customFields = new ArrayList<>();
 
 		for (int i = 1; i <= columnCount; i++) {
 			String columnName = rsmd.getColumnName(i);
 
 			if (!CoreStatementField.hasKey(columnName)) {
-				extraFields.add(columnName);
+				customFields.add(columnName);
 			}
 		}
 
-		if (extraFields.isEmpty()) {
-			return new NXFlatTableSchema();
+		if (!customFields.isEmpty()) {
+			builder.withCustomFields(new HashSet<>(customFields));
 		}
 
-		return NXFlatTableSchema.withExtraColumn(extraFields);
-	}
-
-	private void specifyExtraFields(Set<String> extraFields, boolean partOfUnicityKey, List<StatementField> customFields) {
-
-		customFields.addAll(extraFields.stream()
-				.map(fieldName -> new CustomStatementField(fieldName, partOfUnicityKey))
-				.peek(statementSpecifications::specifyField)
-				.collect(Collectors.toList()));
+		return builder.build();
 	}
 
 	@Override
@@ -96,9 +118,9 @@ public class NXFlatTableSchema implements StatementSpecifications {
 		return statementSpecifications.hasField(columnName);
 	}
 
-	public boolean hasExtrasField() {
+	public boolean hasCustomFields() {
 
-		return statementSpecifications.hasField(EXTRAS);
+		return statementSpecifications.hasField(CUSTOM_FIELDS);
 	}
 
 	@Override
@@ -125,13 +147,13 @@ public class NXFlatTableSchema implements StatementSpecifications {
 		return statementSpecifications.getField(field);
 	}
 
-	public CompositeField getExtrasField() {
+	public CompositeField getCustomFields() {
 
-		if (!statementSpecifications.hasField(EXTRAS)) {
+		if (!statementSpecifications.hasField(CUSTOM_FIELDS)) {
 			return null;
 		}
 
-		return (CompositeField) statementSpecifications.getField(EXTRAS);
+		return (CompositeField) statementSpecifications.getField(CUSTOM_FIELDS);
 	}
 
 	/** @return the sql to create the table schema for nxflat.{tableName} */
