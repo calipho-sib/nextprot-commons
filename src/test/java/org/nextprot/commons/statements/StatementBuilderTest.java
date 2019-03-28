@@ -182,8 +182,8 @@ public class StatementBuilderTest {
 		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
 		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
 		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
-		Assert.assertNotNull(stmt.getValueOrNull("EXTRA_COLUMNS"));
-		Assert.assertEquals("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"DBSNP_ID\":\"rs745905374\"}", stmt.getValueOrNull("EXTRA_COLUMNS"));
+		Assert.assertNotNull(stmt.getValueOrNull(NXFlatTableSchema.EXTRA_FIELDS));
+		Assert.assertEquals("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"DBSNP_ID\":\"rs745905374\"}", stmt.getValueOrNull(NXFlatTableSchema.EXTRA_FIELDS));
 		Assert.assertNull(stmt.getValueOrNull("ROUDOUDOU"));
 	}
 
@@ -314,7 +314,7 @@ public class StatementBuilderTest {
 				"\"LOCATION_BEGIN\": \"34\",\n" +
 				"\"LOCATION_END\": \"34\",\n" +
 				"\"NEXTPROT_ACCESSION\": \"NX_Q6S545\",\n" +
-				"\"EXTRA_COLUMNS\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"CANONICAL\\\":\\\"YES\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
+				"\""+NXFlatTableSchema.EXTRA_FIELDS +"\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"CANONICAL\\\":\\\"YES\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
 				"\"SOURCE\": \"gnomAD\",\n" +
 				"\"STATEMENT_ID\": \"792d509b2d452da2cf4a74faa2773c15\",\n" +
 				"\"VARIANT_ORIGINAL_AMINO_ACID\": \"W\",\n" +
@@ -334,7 +334,7 @@ public class StatementBuilderTest {
 				"\"LOCATION_BEGIN\": \"34\",\n" +
 				"\"LOCATION_END\": \"34\",\n" +
 				"\"NEXTPROT_ACCESSION\": \"NX_Q6S545\",\n" +
-				"\"PROPERTIES\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
+				"\""+NXFlatTableSchema.EXTRA_FIELDS +"\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
 				"\"SOURCE\": \"gnomAD\",\n" +
 				"\"STATEMENT_ID\": \"792d509b2d452da2cf4a74faa2773c15\",\n" +
 				"\"VARIANT_ORIGINAL_AMINO_ACID\": \"W\",\n" +
@@ -350,7 +350,7 @@ public class StatementBuilderTest {
 	private StatementSpecifications newGnomADSpecifications() {
 
 		return new NXFlatTableSchema.Builder()
-				.withCustomFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
+				.withExtraFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
 				.withExtraFieldsContributingToUnicityKey(Collections.singletonList("DBSNP_ID"))
 				.build();
 	}

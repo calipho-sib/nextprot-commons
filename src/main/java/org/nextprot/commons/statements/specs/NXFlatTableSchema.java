@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class NXFlatTableSchema implements StatementSpecifications {
 
-	private static final String CUSTOM_FIELDS = "EXTRA_COLUMNS";
+	public static final String EXTRA_FIELDS = "EXTRA_FIELDS";
 
 	private final StatementSpecifications statementSpecifications;
 
@@ -33,13 +33,13 @@ public class NXFlatTableSchema implements StatementSpecifications {
 				specifications.specifyField(field);
 			}
 		}
+		/** Specify custom fields that will be added in */
+		public Builder withExtraFields(List<String> fields) {
 
-		public Builder withCustomFields(List<String> fields) {
-
-			return withCustomFields(new HashSet<>(fields));
+			return withExtraFields(new HashSet<>(fields));
 		}
 
-		public Builder withCustomFields(Set<String> fields) {
+		public Builder withExtraFields(Set<String> fields) {
 
 			if (fields.isEmpty()) {
 				throw new IllegalArgumentException("missing extra fields");
@@ -73,7 +73,7 @@ public class NXFlatTableSchema implements StatementSpecifications {
 		public NXFlatTableSchema build() {
 
 			if (!customFields.isEmpty()) {
-				specifications.specifyField(new CompositeField(CUSTOM_FIELDS, customFields));
+				specifications.specifyField(new CompositeField(EXTRA_FIELDS, customFields));
 			}
 			return new NXFlatTableSchema(this);
 		}
@@ -106,7 +106,7 @@ public class NXFlatTableSchema implements StatementSpecifications {
 		}
 
 		if (!customFields.isEmpty()) {
-			builder.withCustomFields(new HashSet<>(customFields));
+			builder.withExtraFields(new HashSet<>(customFields));
 		}
 
 		return builder.build();
@@ -120,7 +120,7 @@ public class NXFlatTableSchema implements StatementSpecifications {
 
 	public boolean hasCustomFields() {
 
-		return statementSpecifications.hasField(CUSTOM_FIELDS);
+		return statementSpecifications.hasField(EXTRA_FIELDS);
 	}
 
 	@Override
@@ -149,11 +149,11 @@ public class NXFlatTableSchema implements StatementSpecifications {
 
 	public CompositeField getCustomFields() {
 
-		if (!statementSpecifications.hasField(CUSTOM_FIELDS)) {
+		if (!statementSpecifications.hasField(EXTRA_FIELDS)) {
 			return null;
 		}
 
-		return (CompositeField) statementSpecifications.getField(CUSTOM_FIELDS);
+		return (CompositeField) statementSpecifications.getField(EXTRA_FIELDS);
 	}
 
 	/** @return the sql to create the table schema for nxflat.{tableName} */

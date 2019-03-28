@@ -20,12 +20,12 @@ public class NXFlatTableSchemaTest {
 	@Test
 	public void testWithExtraFields() {
 
-		NXFlatTableSchema schema = new NXFlatTableSchema.Builder().withCustomFields(Arrays.asList("f1", "f2")).build();
+		NXFlatTableSchema schema = new NXFlatTableSchema.Builder().withExtraFields(Arrays.asList("f1", "f2")).build();
 		Assert.assertEquals(52, schema.size());
 
 		Assert.assertTrue(schema.hasField("f1"));
 		Assert.assertTrue(schema.hasField("f2"));
-		Assert.assertTrue(schema.hasField("EXTRA_COLUMNS"));
+		Assert.assertTrue(schema.hasField(NXFlatTableSchema.EXTRA_FIELDS));
 		Assert.assertTrue(schema.hasCustomFields());
 		Assert.assertNotNull(schema.getCustomFields());
 		Assert.assertTrue(schema.getCustomFields().hasField(new CustomStatementField("f1")));
@@ -38,14 +38,14 @@ public class NXFlatTableSchemaTest {
 	public void testWithExtraFields2() {
 
 		NXFlatTableSchema schema = new NXFlatTableSchema.Builder()
-				.withCustomFields(Arrays.asList("f1", "f2"))
+				.withExtraFields(Arrays.asList("f1", "f2"))
 				.withExtraFieldsContributingToUnicityKey(Collections.singletonList("f3")).build();
 		Assert.assertEquals(53, schema.size());
 
 		Assert.assertTrue(schema.hasField("f1"));
 		Assert.assertTrue(schema.hasField("f2"));
 		Assert.assertTrue(schema.hasField("f3"));
-		Assert.assertTrue(schema.hasField("EXTRA_COLUMNS"));
+		Assert.assertTrue(schema.hasField(NXFlatTableSchema.EXTRA_FIELDS));
 		Assert.assertTrue(schema.hasCustomFields());
 		Assert.assertNotNull(schema.getCustomFields());
 		Assert.assertTrue(schema.getCustomFields().hasField(new CustomStatementField("f1")));
@@ -120,7 +120,7 @@ public class NXFlatTableSchemaTest {
 	@Test
 	public void testCreateGenericTableWithExtras() {
 
-		String sql = new NXFlatTableSchema.Builder().withCustomFields(Arrays.asList(
+		String sql = new NXFlatTableSchema.Builder().withExtraFields(Arrays.asList(
 				"CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED", "DBSNP_ID")).build()
 				.generateCreateTableInSQL(StatementTableNames.ENTRY_TABLE);
 
@@ -156,7 +156,7 @@ public class NXFlatTableSchemaTest {
 				"\tEXP_CONTEXT_ECO_DETECT_METHOD VARCHAR(10000),\n" +
 				"\tEXP_CONTEXT_ECO_ISS VARCHAR(10000),\n" +
 				"\tEXP_CONTEXT_ECO_MUTATION VARCHAR(10000),\n" +
-				"\tEXTRA_COLUMNS VARCHAR(10000),\n" +
+				"\t"+NXFlatTableSchema.EXTRA_FIELDS+" VARCHAR(10000),\n" +
 				"\tGENE_NAME VARCHAR(10000),\n" +
 				"\tISOFORM_CANONICAL VARCHAR(10000),\n" +
 				"\tIS_NEGATIVE VARCHAR(10000),\n" +
