@@ -6,6 +6,11 @@ import org.nextprot.commons.statements.reader.JsonReader;
 
 import java.util.Collection;
 
+
+/**
+ * A schema defines all fields that describe a statement provided by a
+ * given external neXtProt source.
+ */
 public interface Schema {
 
 	/** @return the statement field named fieldName */

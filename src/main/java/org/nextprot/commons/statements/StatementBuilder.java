@@ -152,12 +152,6 @@ public class StatementBuilder {
 		return this;
 	}
 
-
-	public StatementBuilder addDebugInfo(String info) {
-		addField(DEBUG_INFO, info);
-		return this;
-	}
-
 	// Note: Used in bed
 	public StatementBuilder addVariantInfo(String annotationCategory, String firstPosition, String lastPosition, String variationOrigin, String variationVariation) {
 

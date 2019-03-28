@@ -102,10 +102,6 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		return map;
 	}
 
-	public String getDebugInfo() {
-		return get(NXFlatTableStatementField.DEBUG_INFO);
-	}
-
 	String putValue(StatementField field, String value) {
 		return put(field, value);
 	}

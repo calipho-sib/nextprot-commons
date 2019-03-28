@@ -15,7 +15,7 @@ public class NXFlatTableSchemaTest {
 	public void testConstr() {
 
 		NXFlatTableSchema schema = new NXFlatTableSchema();
-		Assert.assertEquals(50, schema.size());
+		Assert.assertEquals(49, schema.size());
 		Assert.assertNull(schema.getExtrasField());
 	}
 
@@ -23,7 +23,7 @@ public class NXFlatTableSchemaTest {
 	public void testWithExtraFields() {
 
 		NXFlatTableSchema schema = NXFlatTableSchema.withExtraFields(Arrays.asList("f1", "f2"));
-		Assert.assertEquals(53, schema.size());
+		Assert.assertEquals(52, schema.size());
 
 		Assert.assertTrue(schema.hasField("f1"));
 		Assert.assertTrue(schema.hasField("f2"));
@@ -41,7 +41,7 @@ public class NXFlatTableSchemaTest {
 
 		NXFlatTableSchema schema = NXFlatTableSchema.withExtraFields(Arrays.asList("f1", "f2"),
 				Collections.singletonList("f3"));
-		Assert.assertEquals(54, schema.size());
+		Assert.assertEquals(53, schema.size());
 
 		Assert.assertTrue(schema.hasField("f1"));
 		Assert.assertTrue(schema.hasField("f2"));
@@ -81,7 +81,6 @@ public class NXFlatTableSchemaTest {
 				"\tBIOLOGICAL_OBJECT_DATABASE VARCHAR(10000),\n" +
 				"\tBIOLOGICAL_OBJECT_NAME VARCHAR(10000),\n" +
 				"\tBIOLOGICAL_OBJECT_TYPE VARCHAR(10000),\n" +
-				"\tDEBUG_INFO VARCHAR(10000),\n" +
 				"\tENTRY_ACCESSION VARCHAR(10000),\n" +
 				"\tEVIDENCE_CODE VARCHAR(10000),\n" +
 				"\tEVIDENCE_INTENSITY VARCHAR(10000),\n" +
@@ -148,7 +147,6 @@ public class NXFlatTableSchemaTest {
 				"\tBIOLOGICAL_OBJECT_TYPE VARCHAR(10000),\n" +
 				"\tCANONICAL VARCHAR(10000),\n" +
 				"\tDBSNP_ID VARCHAR(10000),\n" +
-				"\tDEBUG_INFO VARCHAR(10000),\n" +
 				"\tENTRY_ACCESSION VARCHAR(10000),\n" +
 				"\tEVIDENCE_CODE VARCHAR(10000),\n" +
 				"\tEVIDENCE_INTENSITY VARCHAR(10000),\n" +

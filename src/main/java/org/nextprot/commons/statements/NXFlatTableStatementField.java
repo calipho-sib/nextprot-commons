@@ -89,10 +89,8 @@ public enum NXFlatTableStatementField implements StatementField, EnumDictionaryS
 	ASSIGMENT_METHOD,
 	RESOURCE_TYPE,
 	
-	RAW_STATEMENT_ID, //Keep a reference to the Raw statement
-
-	//DEBUG_INFO
-	DEBUG_INFO;
+	RAW_STATEMENT_ID //Keep a reference to the Raw statement
+	;
 
 	private static EnumConstantDictionary<NXFlatTableStatementField> dictionaryOfConstants =
 			new EnumConstantDictionary<NXFlatTableStatementField>(NXFlatTableStatementField.class, values()) {

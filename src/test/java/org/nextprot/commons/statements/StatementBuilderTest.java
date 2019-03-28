@@ -71,16 +71,6 @@ public class StatementBuilderTest {
 	}
 
 	@Test
-	public void testDebugInfo() {
-
-		Statement rs1 = StatementBuilder.createNew().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).addDebugInfo("Oh yeah").generateHashAndBuild();
-		Statement rs2 = StatementBuilder.createNew().addMap(rs1).addDebugInfo("oh oh").generateHashAndBuild();
-
-		assertEquals(rs1.get(NXFlatTableStatementField.DEBUG_INFO), "Oh yeah");
-		assertEquals(rs2.get(NXFlatTableStatementField.DEBUG_INFO), "oh oh");
-	}
-
-	@Test
 	public void testStatementEquality() {
 
 		Statement rs1 = StatementBuilder.createNew()
