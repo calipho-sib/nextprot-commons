@@ -62,12 +62,12 @@ public class StatementBuilderTest {
 		Statement s = new StatementBuilder()
 				.addField(field3, "{\"f1\":\"1\",\"f2\":\"217610\"}")
 				.build();
+
 		Assert.assertEquals("1", s.getValue(field1));
 		Assert.assertEquals("217610", s.getValue(field2));
 		Assert.assertTrue(s.getSpecifications().hasField("f1"));
 		Assert.assertTrue(s.getSpecifications().hasField("f2"));
 		Assert.assertTrue(s.getSpecifications().hasField("f3"));
-		Assert.assertEquals("5ab4289a88bf7f86288c82f538c3e09b", s.getStatementId());
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -104,7 +104,29 @@ public class StatementBuilderTest {
 		Assert.assertTrue(s.getSpecifications().hasField("f1"));
 		Assert.assertTrue(s.getSpecifications().hasField("f2"));
 		Assert.assertTrue(s.getSpecifications().hasField("f3"));
-		Assert.assertEquals("5ab4289a88bf7f86288c82f538c3e09b", s.getStatementId());
+	}
+
+	@Test
+	public void shouldHaveSameStatementId() {
+
+		CustomStatementField field1 = new CustomStatementField("f1");
+		CustomStatementField field2 = new CustomStatementField("f2");
+		CompositeField field3 = new CompositeField("f3", Arrays.asList(field1, field2));
+
+		Statement s1 = new StatementBuilder()
+				.withSpecifications(new MutableStatementSpecifications()
+						.specifyFields(field1, field2, field3))
+				.addField(field1, "1")
+				.addField(field2, "217610")
+				.build();
+
+		Statement s2 = new StatementBuilder()
+				.addField(field3, "{\"f1\":\"1\",\"f2\":\"217610\"}")
+				.build();
+
+		Assert.assertEquals(s1.getStatementId(), s2.getStatementId());
+		Assert.assertEquals("5ab4289a88bf7f86288c82f538c3e09b", s1.getStatementId());
+		Assert.assertEquals("5ab4289a88bf7f86288c82f538c3e09b", s2.getStatementId());
 	}
 
 	@Test

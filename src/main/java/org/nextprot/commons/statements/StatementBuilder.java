@@ -1,5 +1,6 @@
 package org.nextprot.commons.statements;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -164,15 +165,35 @@ public class StatementBuilder {
 			throw new IllegalStateException("cannot build empty statement");
 		}
 
+		statement.setSpecifications((specifications == null) ? buildSpecifications(statement) : specifications);
+
+		for (StatementField field : keyValues.keySet()) {
+
+			// add composite field values from json
+			if (field instanceof CompositeField && keyValues.get(field) != null) {
+
+				addCompositeFields(statement, (CompositeField)field);
+			}
+		}
+
 		if (!statement.containsKey(CoreStatementField.STATEMENT_ID)) {
 			statement.putValue(CoreStatementField.STATEMENT_ID, computeUniqueKey(statement, UniqueKey.STATEMENT));
 		}
 		if (withAnnotationHash) {
 			statement.putValue(CoreStatementField.ANNOTATION_ID, computeUniqueKey(statement, UniqueKey.ENTRY));
 		}
-		statement.setSpecifications((specifications == null) ? buildSpecifications(statement) : specifications);
 
 		return statement;
+	}
+
+	private void addCompositeFields(Statement statement, CompositeField field) {
+
+		try {
+			Map<StatementField, String> fields = statement.getSpecifications().jsonReader().readMap(keyValues.get(field));
+			fields.keySet().forEach(f -> statement.putValue(f, fields.get(f)));
+		} catch (IOException e) {
+			throw new IllegalStateException("could not build statement", e);
+		}
 	}
 
 	/** Build the schema based on the statement content */
@@ -191,6 +212,14 @@ public class StatementBuilder {
 			if (!specs.hasField(field.getName())) {
 				specs.specifyField(field);
 			}
+		}
+
+		if (!specs.hasField(STATEMENT_ID.getName())) {
+			specs.specifyField(STATEMENT_ID);
+		}
+
+		if (!specs.hasField(ANNOTATION_ID.getName()) && withAnnotationHash) {
+			specs.specifyField(ANNOTATION_ID);
 		}
 
 		return specs;
@@ -219,7 +248,7 @@ public class StatementBuilder {
 			}
 			// STATEMENT TYPE: all fields are considered to build the unique key
 			else if (uniqueKey.equals(UniqueKey.STATEMENT)) { // All fields for the statement
-				if (!field.equals(CoreStatementField.STATEMENT_ID) && !field.equals(CoreStatementField.ANNOTATION_ID)) {
+				if (field.getClass() != CompositeField.class && !field.equals(CoreStatementField.STATEMENT_ID) && !field.equals(CoreStatementField.ANNOTATION_ID)) {
 					unicityFields.add(field);
 				}
 			}
