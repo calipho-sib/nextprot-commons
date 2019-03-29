@@ -13,16 +13,18 @@ public class MutableStatementSpecifications implements StatementSpecifications {
 
 	public MutableStatementSpecifications() {}
 
-	public final void specifyField(StatementField field) {
+	public final MutableStatementSpecifications specifyField(StatementField field) {
 
 		statementFields.put(field.getName(), field);
+		return this;
 	}
 
-	public final void specifyFields(StatementField... fields) {
+	public final MutableStatementSpecifications specifyFields(StatementField... fields) {
 
 		for (StatementField field : fields) {
 			specifyField(field);
 		}
+		return this;
 	}
 
 	@Override
