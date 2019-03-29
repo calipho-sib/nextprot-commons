@@ -82,7 +82,7 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		try {
 			return specifications.jsonReader().readMap(jsonContent);
 		} catch (IOException e) {
-			throw new IllegalStateException("cannot deserialize json for field "+ compositeField.getName()+": "+jsonContent);
+			throw new IllegalStateException("cannot deserialize json field "+ compositeField.getName()+" with value "+jsonContent);
 		}
 	}
 
