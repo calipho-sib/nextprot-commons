@@ -5,7 +5,7 @@
 	<groupId>org.nextprot</groupId>
 	<artifactId>nextprot-commons</artifactId>
 	<packaging>jar</packaging>
-	<version>3.15.0-STATEMENT-REFACTORING</version>
+	<version>3.15.0-STATEMENTS-CHANGED</version>
 
 	<build>
 		<finalName>nextprot-commons</finalName>
