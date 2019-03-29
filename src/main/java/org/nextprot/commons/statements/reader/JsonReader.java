@@ -48,7 +48,7 @@ public class JsonReader {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
 
-		return StatementBuilder.createFromExistingStatement(mapper.readValue(content, new TypeReference<Statement>() { }))
+		return new StatementBuilder(mapper.readValue(content, new TypeReference<Statement>() { }))
 				.build();
 	}
 
@@ -65,7 +65,7 @@ public class JsonReader {
 
 		List<Statement> statements = mapper.readValue(content, new TypeReference<List<Statement>>() { });
 		return statements.stream()
-				.map(statement -> StatementBuilder.createFromExistingStatement(statement).build())
+				.map(statement -> new StatementBuilder(statement).build())
 				.collect(Collectors.toList());
 	}
 

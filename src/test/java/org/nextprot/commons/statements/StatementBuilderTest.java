@@ -32,11 +32,13 @@ public class StatementBuilderTest {
 	@Test
 	public void shouldBuiltStatement() {
 
-		Statement rs1 = new StatementBuilder()
-				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
+		Statement rs = new StatementBuilder()
+				.addCompulsoryFields("AAA", "?", "CCC", defaultQuality)
 				.build();
 
-		System.out.println(rs1);
+		Assert.assertEquals("AAA", rs.getValue(CoreStatementField.ENTRY_ACCESSION));
+		Assert.assertEquals("CCC", rs.getValue(CoreStatementField.ANNOTATION_CATEGORY));
+		Assert.assertEquals("GOLD", rs.getValue(CoreStatementField.EVIDENCE_QUALITY));
 	}
 
 	@Test
@@ -86,7 +88,7 @@ public class StatementBuilderTest {
 	public void testRawStatement2() {
 
 		Statement rs1 = new StatementBuilder().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
-		Statement rs2 = new StatementBuilder().addMap(rs1).build();
+		Statement rs2 = new StatementBuilder(rs1).build();
 
 		assertEquals(rs1, rs2);
 	}
@@ -96,7 +98,7 @@ public class StatementBuilderTest {
 
 		Statement rs1 = new StatementBuilder()
 				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
-		Statement rs2 = new StatementBuilder().addMap(rs1).build();
+		Statement rs2 = new StatementBuilder(rs1).build();
 
 		assertEquals(rs1, rs2);
 	}
@@ -147,7 +149,7 @@ public class StatementBuilderTest {
 				"  \"VARIANT_VARIATION_AMINO_ACID\" : \"L\"\n" +
 				"}";
 
-		Statement sub1 = new StatementBuilder().addMap(buildStatementFromJsonString(subjectOne)).build();
+		Statement sub1 = new StatementBuilder(buildStatementFromJsonString(subjectOne)).build();
 
 		Statement sub2 = buildStatementFromJsonString(subjectTwo);
 
@@ -173,7 +175,7 @@ public class StatementBuilderTest {
 	@Test
 	public void testGnomADStatements() throws IOException {
 
-		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+		Statement stmt = new StatementBuilder(buildStatementFromJsonString(getGnomADStatementAsJSON()))
 				.withAnnotationHash()
 				.build();
 
@@ -188,7 +190,7 @@ public class StatementBuilderTest {
 	@Test
 	public void testGnomADStatementsWithSchema() throws IOException {
 
-		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+		Statement stmt = new StatementBuilder(buildStatementFromJsonString(getGnomADStatementAsJSON()))
 				.withSpecifications(newGnomADSpecifications())
 				.withAnnotationHash()
 				.build();
@@ -205,11 +207,11 @@ public class StatementBuilderTest {
 	@Test
 	public void testGnomADStatementsUniqueEntryKeys() throws IOException {
 
-		Statement stmt1 = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+		Statement stmt1 = new StatementBuilder(buildStatementFromJsonString(getGnomADStatementAsJSON()))
 				.withAnnotationHash()
 				.build();
 
-		Statement stmt2 = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+		Statement stmt2 = new StatementBuilder(buildStatementFromJsonString(getGnomADStatementAsJSON()))
 				.withSpecifications(newGnomADSpecifications())
 				.withAnnotationHash()
 				.build();
@@ -229,7 +231,7 @@ public class StatementBuilderTest {
 				"\"location\":\"geneva\"\n" +
 				"}";
 
-		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(json))
+		Statement stmt = new StatementBuilder(buildStatementFromJsonString(json))
 				.build();
 
 		StatementSpecifications defaultSpecifications = stmt.getSpecifications();
@@ -242,7 +244,7 @@ public class StatementBuilderTest {
 	@Test
 	public void testGetCompositeFieldValue() throws IOException {
 
-		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSONFromDB()))
+		Statement stmt = new StatementBuilder(buildStatementFromJsonString(getGnomADStatementAsJSONFromDB()))
 				.withSpecifications(newGnomADSpecifications())
 				.build();
 
@@ -255,7 +257,7 @@ public class StatementBuilderTest {
 	@Test
 	public void testCannotFindFieldFromCompositeFieldValue() throws IOException {
 
-		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSONFromDBNoCanonicalField()))
+		Statement stmt = new StatementBuilder(buildStatementFromJsonString(getGnomADStatementAsJSONFromDBNoCanonicalField()))
 				.withSpecifications(newGnomADSpecifications())
 				.build();
 
@@ -265,7 +267,7 @@ public class StatementBuilderTest {
 	@Test
 	public void testRemoveEnumField() throws IOException {
 
-		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+		Statement stmt = new StatementBuilder(buildStatementFromJsonString(getGnomADStatementAsJSON()))
 				.withSpecifications(newGnomADSpecifications())
 				.removeField(new CustomStatementField("ANNOTATION_NAME"))
 				.build();
@@ -276,7 +278,7 @@ public class StatementBuilderTest {
 	@Test
 	public void testRemoveCustomField() throws IOException {
 
-		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+		Statement stmt = new StatementBuilder(buildStatementFromJsonString(getGnomADStatementAsJSON()))
 				.withSpecifications(newGnomADSpecifications())
 				.removeField(new CustomStatementField("ALLELE_SAMPLED"))
 				.build();
@@ -287,7 +289,7 @@ public class StatementBuilderTest {
 	@Test
 	public void testResetField() throws IOException {
 
-		Statement stmt = StatementBuilder.createFromExistingStatement(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+		Statement stmt = new StatementBuilder(buildStatementFromJsonString(getGnomADStatementAsJSON()))
 				.withSpecifications(newGnomADSpecifications())
 				.addField(new CustomStatementField("ANNOTATION_NAME"), "roudoudou")
 				.build();

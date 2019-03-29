@@ -36,14 +36,11 @@ public class StatementBuilder {
 		keyValues = new TreeMap<>(Comparator.comparing(StatementField::getName));
 	}
 
-	// Note: Used in bed
-	public static StatementBuilder createFromExistingStatement(Statement s) {
-		StatementBuilder sb = new StatementBuilder();
-		if (s.getSpecifications() != null) {
-			sb.withSpecifications(s.getSpecifications());
-		}
-		sb.addMap(s);
-		return sb;
+	public StatementBuilder(Statement statement) {
+
+		this();
+		keyValues.putAll(statement);
+		specifications = statement.getSpecifications();
 	}
 
 	public StatementBuilder withAnnotationHash() {
@@ -112,11 +109,8 @@ public class StatementBuilder {
 		return this;
 	}
 
-	public StatementBuilder addMap(Map<StatementField, String> map) {
-		keyValues.putAll(map);
-		return this;
-	}
-
+	// TODO: it is only used in tests
+	//     : I guess we should impose their definition by adding them in the constructor of StatementBuilder
 	public StatementBuilder addCompulsoryFields(String entryAccession, String isoformAccession, String annotationCategory, QualityQualifier quality) {
 		addField(ENTRY_ACCESSION, entryAccession);
 		addField(ANNOTATION_CATEGORY, annotationCategory);
