@@ -22,6 +22,7 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 
 	private static final long serialVersionUID = 2L;
 
+	// TODO: specs should be final
 	private StatementSpecifications specifications;
 
 	public Statement() {

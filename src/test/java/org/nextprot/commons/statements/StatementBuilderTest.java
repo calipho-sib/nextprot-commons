@@ -2,6 +2,7 @@ package org.nextprot.commons.statements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.nextprot.commons.statements.specs.CoreStatementField.ENTRY_ACCESSION;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,6 +21,8 @@ import org.nextprot.commons.statements.specs.NXFlatTableSchema;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
 
+import static org.nextprot.commons.statements.specs.CoreStatementField.*;
+
 public class StatementBuilderTest {
 	
 	private QualityQualifier defaultQuality = QualityQualifier.GOLD;
@@ -30,33 +33,49 @@ public class StatementBuilderTest {
 	}
 
 	@Test
-	public void shouldBuiltStatement() {
+	public void statementsShouldHaveSpecs() {
 
 		Statement rs = new StatementBuilder()
 				.addCompulsoryFields("AAA", "?", "CCC", defaultQuality)
 				.build();
 
-		Assert.assertEquals("AAA", rs.getValue(CoreStatementField.ENTRY_ACCESSION));
-		Assert.assertEquals("CCC", rs.getValue(CoreStatementField.ANNOTATION_CATEGORY));
-		Assert.assertEquals("GOLD", rs.getValue(CoreStatementField.EVIDENCE_QUALITY));
+		Assert.assertEquals("AAA", rs.getValue(ENTRY_ACCESSION));
+		Assert.assertEquals("CCC", rs.getValue(ANNOTATION_CATEGORY));
+		Assert.assertEquals("GOLD", rs.getValue(EVIDENCE_QUALITY));
+		Assert.assertNotNull(rs.getSpecifications());
+		Assert.assertEquals(4, rs.getSpecifications().size());
+		Assert.assertTrue(rs.getSpecifications().hasField(ENTRY_ACCESSION.getName()));
+		Assert.assertTrue(rs.getSpecifications().hasField(ANNOTATION_CATEGORY.getName()));
+		Assert.assertTrue(rs.getSpecifications().hasField(EVIDENCE_QUALITY.getName()));
+		Assert.assertTrue(rs.getSpecifications().hasField(STATEMENT_ID.getName()));
 	}
 
 	@Test
 	public void testRawStatementEquals() {
-		Statement rs1 = new StatementBuilder().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
-		Statement rs2 = new StatementBuilder().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
+		Statement rs1 = new StatementBuilder()
+				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
+				.build();
+		Statement rs2 = new StatementBuilder()
+				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
+				.build();
 		assertEquals(rs1, rs2);
 	}
 
 	@Test
 	public void testRawStatementInsertionInSets() {
 		Set<Statement> set1 = new HashSet<>();
-		set1.add(new StatementBuilder().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build());
-		set1.add(new StatementBuilder().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality ).build());
+		set1.add(new StatementBuilder()
+				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
+				.build());
+		set1.add(new StatementBuilder()
+				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality )
+				.build());
 		
 		assertEquals(set1.size(), 1);
 		
-		set1.add(new StatementBuilder().addCompulsoryFields("DDD", "BBB", "CCC", defaultQuality).build());
+		set1.add(new StatementBuilder()
+				.addCompulsoryFields("DDD", "BBB", "CCC", defaultQuality)
+				.build());
 		assertEquals(set1.size(), 2);
 
 	}
@@ -87,7 +106,9 @@ public class StatementBuilderTest {
 	@Test
 	public void testRawStatement2() {
 
-		Statement rs1 = new StatementBuilder().addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
+		Statement rs1 = new StatementBuilder()
+				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
+				.build();
 		Statement rs2 = new StatementBuilder(rs1).build();
 
 		assertEquals(rs1, rs2);
@@ -97,7 +118,8 @@ public class StatementBuilderTest {
 	public void testStatementEquality() {
 
 		Statement rs1 = new StatementBuilder()
-				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality).build();
+				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
+				.build();
 		Statement rs2 = new StatementBuilder(rs1).build();
 
 		assertEquals(rs1, rs2);
@@ -153,8 +175,14 @@ public class StatementBuilderTest {
 
 		Statement sub2 = buildStatementFromJsonString(subjectTwo);
 
-		Statement vp1 = new StatementBuilder().addField(CoreStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub1, sub2)).build();
-		Statement vp2 = new StatementBuilder().addField(CoreStatementField.ANNOTATION_CATEGORY, "phenotypic").addSubjects(Arrays.asList(sub2, sub1)).build();
+		Statement vp1 = new StatementBuilder()
+				.addField(CoreStatementField.ANNOTATION_CATEGORY, "phenotypic")
+				.addSubjects(Arrays.asList(sub1, sub2))
+				.build();
+		Statement vp2 = new StatementBuilder()
+				.addField(CoreStatementField.ANNOTATION_CATEGORY, "phenotypic")
+				.addSubjects(Arrays.asList(sub2, sub1))
+				.build();
 
 		String vp1Hash = StatementBuilder.computeUniqueKey(vp1, UniqueKey.ENTRY);
 		String vp2Hash = StatementBuilder.computeUniqueKey(vp2, UniqueKey.ENTRY);
@@ -200,7 +228,8 @@ public class StatementBuilderTest {
 		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
 		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
 		Assert.assertNotNull(stmt.getValueOrNull(NXFlatTableSchema.EXTRA_FIELDS));
-		Assert.assertEquals("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"DBSNP_ID\":\"rs745905374\"}", stmt.getValueOrNull(NXFlatTableSchema.EXTRA_FIELDS));
+		Assert.assertEquals("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"DBSNP_ID\":\"rs745905374\"}",
+				stmt.getValueOrNull(NXFlatTableSchema.EXTRA_FIELDS));
 		Assert.assertNull(stmt.getValueOrNull("ROUDOUDOU"));
 	}
 
