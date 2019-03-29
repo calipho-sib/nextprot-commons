@@ -169,6 +169,10 @@ public class StatementBuilder {
 	public Statement build() {
 		Statement statement = new Statement(keyValues);
 
+		if (keyValues.isEmpty()) {
+			throw new IllegalStateException("cannot build empty statement");
+		}
+
 		if (!statement.containsKey(CoreStatementField.STATEMENT_ID)) {
 			statement.putValue(CoreStatementField.STATEMENT_ID, computeUniqueKey(statement, UniqueKey.STATEMENT));
 		}
@@ -225,7 +229,7 @@ public class StatementBuilder {
 		}
 
 		if (unicityFields.isEmpty()) {
-			throw new IllegalStateException("could not compute a unique key for statement "+statement + " (type="+ uniqueKey +")");
+			throw new IllegalStateException("missing fields used to compute a unique key for statement "+statement + " (type="+ uniqueKey +")");
 		}
 
 		return MD5Algo.computeMD5(unicityFields.stream()
