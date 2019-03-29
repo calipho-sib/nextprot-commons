@@ -164,6 +164,7 @@ public class NXFlatTableSchema implements StatementSpecifications {
 		sb.append("CREATE TABLE nxflat.").append(tableName).append(" (\n");
 
 		sb.append(getFields().stream()
+				.filter(StatementField::isNXFlatTableColumn)
 				.map(field -> "\t" + field.getName() + " VARCHAR(10000)")
 				.collect(Collectors.joining(",\n")));
 
