@@ -2,7 +2,6 @@ package org.nextprot.commons.statements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.mockito.Mockito.mock;
 import static org.nextprot.commons.statements.specs.CoreStatementField.ENTRY_ACCESSION;
 
 import java.io.IOException;
@@ -65,6 +64,10 @@ public class StatementBuilderTest {
 				.build();
 		Assert.assertEquals("1", s.getValue(field1));
 		Assert.assertEquals("217610", s.getValue(field2));
+		Assert.assertTrue(s.getSpecifications().hasField("f1"));
+		Assert.assertTrue(s.getSpecifications().hasField("f2"));
+		Assert.assertTrue(s.getSpecifications().hasField("f3"));
+		Assert.assertEquals("5ab4289a88bf7f86288c82f538c3e09b", s.getStatementId());
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -98,6 +101,10 @@ public class StatementBuilderTest {
 
 		Assert.assertEquals("1", s.getValue(field1));
 		Assert.assertEquals("217610", s.getValue(field2));
+		Assert.assertTrue(s.getSpecifications().hasField("f1"));
+		Assert.assertTrue(s.getSpecifications().hasField("f2"));
+		Assert.assertTrue(s.getSpecifications().hasField("f3"));
+		Assert.assertEquals("5ab4289a88bf7f86288c82f538c3e09b", s.getStatementId());
 	}
 
 	@Test

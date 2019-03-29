@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.nextprot.commons.algo.MD5Algo;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
+import org.nextprot.commons.statements.specs.CompositeField;
 import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
@@ -169,24 +170,30 @@ public class StatementBuilder {
 		if (withAnnotationHash) {
 			statement.putValue(CoreStatementField.ANNOTATION_ID, computeUniqueKey(statement, UniqueKey.ENTRY));
 		}
-		statement.setSpecifications((specifications == null) ? buildSchema(statement) : specifications);
+		statement.setSpecifications((specifications == null) ? buildSpecifications(statement) : specifications);
 
 		return statement;
 	}
 
 	/** Build the schema based on the statement content */
-	private StatementSpecifications buildSchema(Map<StatementField, String> keyValues) {
+	private StatementSpecifications buildSpecifications(Map<StatementField, String> keyValues) {
 
-		MutableStatementSpecifications schema = new MutableStatementSpecifications();
+		MutableStatementSpecifications specs = new MutableStatementSpecifications();
 
 		for (StatementField field : keyValues.keySet()) {
 
-			if (!schema.hasField(field.getName())) {
-				schema.specifyField(field);
+			if (field instanceof CompositeField) {
+
+				CompositeField cf = (CompositeField) field;
+				cf.getFields().forEach(specs::specifyField);
+			}
+
+			if (!specs.hasField(field.getName())) {
+				specs.specifyField(field);
 			}
 		}
 
-		return schema;
+		return specs;
 	}
 
 	/**
