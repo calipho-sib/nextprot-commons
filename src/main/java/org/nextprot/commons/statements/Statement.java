@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * A statement is a set of Field/Values
@@ -135,13 +136,22 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		return (get(CoreStatementField.SUBJECT_STATEMENT_IDS) != null);
 	}
 
-	public String toString(){
+	public String toString() {
+
 		StringBuilder sb = new StringBuilder();
-		sb.append("{");
+
+		sb.append("Specs: [").append(
+				specifications.getFields().stream()
+						.map(field -> field.getName()+((field.isPartOfAnnotationUnicityKey()) ? "*":""))
+						.collect(Collectors.joining(", ")))
+				.append("]\n");
+
+		sb.append("Values: {\n");
 		for (StatementField sf : this.keySet()) {
-			sb.append("\t\"" + sf.getName() + "\": \"" + this.get(sf).replace("\"", "''") + "\",\n");
+			sb.append("\t\"").append(sf.getName()).append("\": \"").append(get(sf).replace("\"", "''")).append("\"\n");
 		}
-		sb.append("}");
+		sb.append("}\n*: fields contributing to the calculation of the ANNOTATION_ID key");
+
 		return sb.toString();
 	}
 }
