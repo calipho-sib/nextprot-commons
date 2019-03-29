@@ -35,7 +35,7 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		putAll(map);
 	}
 
-	public boolean containsField(String field) {
+	public boolean hasField(String field) {
 
 		return getValueOrNull(field) != null;
 	}

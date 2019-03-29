@@ -44,7 +44,7 @@ public class StatementBuilderTest {
 		Assert.assertEquals("GOLD", rs.getValue(EVIDENCE_QUALITY));
 		Assert.assertNotNull(rs.getSpecifications());
 		Assert.assertEquals(4, rs.getSpecifications().size());
-		Assert.assertTrue(rs.getSpecifications().hasField(ENTRY_ACCESSION.getName()));
+		Assert.assertTrue(rs.hasField(ENTRY_ACCESSION.getName()));
 		Assert.assertTrue(rs.getSpecifications().hasField(ANNOTATION_CATEGORY.getName()));
 		Assert.assertTrue(rs.getSpecifications().hasField(EVIDENCE_QUALITY.getName()));
 		Assert.assertTrue(rs.getSpecifications().hasField(STATEMENT_ID.getName()));
@@ -301,7 +301,7 @@ public class StatementBuilderTest {
 				.removeField(new CustomStatementField("ANNOTATION_NAME"))
 				.build();
 
-		Assert.assertFalse(stmt.containsField("ANNOTATION_NAME"));
+		Assert.assertFalse(stmt.hasField("ANNOTATION_NAME"));
 	}
 
 	@Test
@@ -312,7 +312,7 @@ public class StatementBuilderTest {
 				.removeField(new CustomStatementField("ALLELE_SAMPLED"))
 				.build();
 
-		Assert.assertFalse(stmt.containsField("ALLELE_SAMPLED"));
+		Assert.assertFalse(stmt.hasField("ALLELE_SAMPLED"));
 	}
 
 	@Test
