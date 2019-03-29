@@ -2,6 +2,7 @@ package org.nextprot.commons.statements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.mock;
 import static org.nextprot.commons.statements.specs.CoreStatementField.ENTRY_ACCESSION;
 
 import java.io.IOException;
@@ -15,8 +16,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
+import org.nextprot.commons.statements.specs.CompositeField;
 import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.CustomStatementField;
+import org.nextprot.commons.statements.specs.MutableStatementSpecifications;
 import org.nextprot.commons.statements.specs.NXFlatTableSchema;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
@@ -48,6 +51,53 @@ public class StatementBuilderTest {
 		Assert.assertTrue(rs.getSpecifications().hasField(ANNOTATION_CATEGORY.getName()));
 		Assert.assertTrue(rs.getSpecifications().hasField(EVIDENCE_QUALITY.getName()));
 		Assert.assertTrue(rs.getSpecifications().hasField(STATEMENT_ID.getName()));
+	}
+
+	@Test
+	public void shouldBePossibleToAssignJsonValueToCompositeField() {
+
+		CustomStatementField field1 = new CustomStatementField("f1");
+		CustomStatementField field2 = new CustomStatementField("f2");
+		CompositeField field3 = new CompositeField("f3", Arrays.asList(field1, field2));
+
+		Statement s = new StatementBuilder()
+				.addField(field3, "{\"f1\":\"1\",\"f2\":\"217610\"}")
+				.build();
+		Assert.assertEquals("1", s.getValue(field1));
+		Assert.assertEquals("217610", s.getValue(field2));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void shouldNotBePossibleToAssignNonJsonValueToCompositeField() {
+
+		CustomStatementField field1 = new CustomStatementField("f1");
+		CustomStatementField field2 = new CustomStatementField("f2");
+		CompositeField field3 = new CompositeField("f3", Arrays.asList(field1, field2));
+
+		Statement s = new StatementBuilder()
+				.addField(field3, "roudoudou")
+				.build();
+
+		Assert.assertEquals("1", s.getValue(field1));
+		Assert.assertEquals("217610", s.getValue(field2));
+	}
+
+	@Test
+	public void shouldBePossibleToAssignValueToCompositeField2() {
+
+		CustomStatementField field1 = new CustomStatementField("f1");
+		CustomStatementField field2 = new CustomStatementField("f2");
+		CompositeField field3 = new CompositeField("f3", Arrays.asList(field1, field2));
+
+		Statement s = new StatementBuilder()
+				.withSpecifications(new MutableStatementSpecifications()
+						.specifyFields(field1, field2, field3))
+				.addField(field1, "1")
+				.addField(field2, "217610")
+				.build();
+
+		Assert.assertEquals("1", s.getValue(field1));
+		Assert.assertEquals("217610", s.getValue(field2));
 	}
 
 	@Test
