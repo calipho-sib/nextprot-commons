@@ -36,10 +36,6 @@ public class StatementBuilder {
 		keyValues = new TreeMap<>(Comparator.comparing(StatementField::getName));
 	}
 
-	public static StatementBuilder createNew() {
-		return new StatementBuilder();
-	}
-
 	// Note: Used in bed
 	public static StatementBuilder createFromExistingStatement(Statement s) {
 		StatementBuilder sb = new StatementBuilder();
