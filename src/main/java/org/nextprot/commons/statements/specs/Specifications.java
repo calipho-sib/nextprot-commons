@@ -23,21 +23,6 @@ public class Specifications implements StatementSpecifications {
 		this.statementSpecifications = builder.specifications;
 	}
 
-	public static Specifications fromExtraFieldsValue(String extraFieldsValue) {
-
-		Specifications.Builder builder = new Specifications.Builder();
-
-		try {
-			builder.withExtraFields(readStringMap(extraFieldsValue).keySet());
-		} catch (IOException e) {
-
-			throw new IllegalStateException("Json value of column "+EXTRA_FIELDS+" should be of " +
-					"type map: cannot create StatementSpecifications", e);
-		}
-
-		return builder.build();
-	}
-
 	@Override
 	public boolean hasField(String columnName) {
 
@@ -98,6 +83,19 @@ public class Specifications implements StatementSpecifications {
 		public Builder withUndefinedExtraFields() {
 
 			specifications.specifyField(new CustomStatementField(EXTRA_FIELDS));
+			return this;
+		}
+
+		public Builder withExtraFieldsValue(String extraFieldsJsonValue) {
+
+			try {
+				withExtraFields(readStringMap(extraFieldsJsonValue).keySet());
+			} catch (IOException e) {
+
+				throw new IllegalStateException("Json value of column "+EXTRA_FIELDS+" should be of " +
+						"type map: cannot create StatementSpecifications", e);
+			}
+
 			return this;
 		}
 

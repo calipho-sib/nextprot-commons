@@ -67,11 +67,11 @@ public class SpecificationsTest {
 	}
 
 	@Test
-	public void shouldCreateSpecsFromExtraFieldsValue() throws SQLException {
+	public void shouldCreateSpecsFromExtraFieldsValue() {
 
 		String extraFieldValue = "{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"DBSNP_ID\":\"rs745905374\"}";
 
-		Specifications spec = Specifications.fromExtraFieldsValue(extraFieldValue);
+		Specifications spec = new Specifications.Builder().withExtraFieldsValue(extraFieldValue).build();
 
 		Arrays.stream(CoreStatementField.values()).forEach(field -> Assert.assertTrue(spec.hasField(field.getName())));
 		Assert.assertTrue(spec.hasCustomFields());
@@ -82,8 +82,8 @@ public class SpecificationsTest {
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void shouldNotCreateSpecsFromInvalidExtraFieldsValue() throws SQLException {
+	public void shouldNotCreateSpecsFromInvalidExtraFieldsValue() {
 
-		Specifications.fromExtraFieldsValue("roudouroud");
+		new Specifications.Builder().withExtraFieldsValue("roudouroud");
 	}
 }
