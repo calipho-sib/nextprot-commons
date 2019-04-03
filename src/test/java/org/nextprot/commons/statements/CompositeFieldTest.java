@@ -43,14 +43,4 @@ public class CompositeFieldTest {
 
 		Assert.assertEquals("{\"age\":\"23\",\"id\":\"1\",\"name\":\"roudoudou\"}", propField.valueAsString(values));
 	}
-
-	@Test
-	public void shouldBeDBColumnCreatable() {
-
-		StatementField idField = new CustomStatementField("id", true);
-		StatementField nameField = new CustomStatementField("name");
-		CompositeField propField = new CompositeField("infos", Arrays.asList(idField, nameField));
-
-		Assert.assertTrue(propField.isNXFlatTableColumn());
-	}
 }

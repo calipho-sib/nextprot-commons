@@ -3,8 +3,8 @@ package org.nextprot.commons.statements.reader;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.specs.Specifications;
 import org.nextprot.commons.statements.specs.StatementField;
-import org.nextprot.commons.statements.specs.NXFlatTableSchema;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,7 +17,7 @@ public class JsonReaderTest {
 	@Test
 	public void readStatementAsMap() throws IOException {
 
-		JsonReader reader = new JsonReader(NXFlatTableSchema.build());
+		JsonReader reader = new JsonReader(new Specifications.Builder().build());
 		Map<StatementField, String> map = reader.readMap(getStatement());
 
 		Assert.assertEquals(13, map.size());
@@ -39,7 +39,7 @@ public class JsonReaderTest {
 	@Test
 	public void readStatement() throws IOException {
 
-		JsonReader reader = new JsonReader(NXFlatTableSchema.build());
+		JsonReader reader = new JsonReader(new Specifications.Builder().build());
 		Statement statement = reader.readStatement(getStatement());
 
 		Assert.assertNotNull(statement.getSpecifications());
@@ -63,7 +63,7 @@ public class JsonReaderTest {
 	@Test
 	public void readStatements() throws IOException {
 
-		JsonReader reader = new JsonReader(NXFlatTableSchema.build());
+		JsonReader reader = new JsonReader(new Specifications.Builder().build());
 		List<Statement> statements = reader.readStatements(getStatements());
 
 		Assert.assertEquals(2, statements.size());

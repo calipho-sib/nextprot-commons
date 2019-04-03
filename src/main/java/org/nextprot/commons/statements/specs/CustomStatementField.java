@@ -32,12 +32,6 @@ public class CustomStatementField implements StatementField {
 	}
 
 	@Override
-	public boolean isNXFlatTableColumn() {
-
-		return false;
-	}
-
-	@Override
 	public String toString() {
 
 		return name;

@@ -127,12 +127,6 @@ public enum CoreStatementField implements StatementField, EnumDictionarySupplier
 		return isUnicityField;
 	}
 
-	@Override
-	public boolean isNXFlatTableColumn() {
-
-		return true;
-	}
-
 	public static boolean hasKey(String name) {
 
 		return dictionaryOfConstants.haskey(name);

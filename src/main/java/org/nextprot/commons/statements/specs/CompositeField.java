@@ -55,12 +55,6 @@ public class CompositeField implements StatementField {
 	}
 
 	@Override
-	public boolean isNXFlatTableColumn() {
-
-		return creatableDBColumn;
-	}
-
-	@Override
 	public String valueAsString(Object value) {
 
 		return StringUtils.serializeAsJsonStringOrNull(value);

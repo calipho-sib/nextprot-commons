@@ -20,10 +20,12 @@ import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.CustomStatementField;
 import org.nextprot.commons.statements.specs.MutableStatementSpecifications;
 import org.nextprot.commons.statements.specs.NXFlatTableSchema;
+import org.nextprot.commons.statements.specs.Specifications;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
 
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
+import static org.nextprot.commons.statements.specs.Specifications.EXTRA_FIELDS;
 
 public class StatementBuilderTest {
 	
@@ -306,9 +308,9 @@ public class StatementBuilderTest {
 		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
 		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
 		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
-		Assert.assertNotNull(stmt.getValueOrNull(NXFlatTableSchema.EXTRA_FIELDS));
+		Assert.assertNotNull(stmt.getValueOrNull(EXTRA_FIELDS));
 		Assert.assertEquals("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"DBSNP_ID\":\"rs745905374\"}",
-				stmt.getValueOrNull(NXFlatTableSchema.EXTRA_FIELDS));
+				stmt.getValueOrNull(EXTRA_FIELDS));
 		Assert.assertNull(stmt.getValueOrNull("ROUDOUDOU"));
 	}
 
@@ -345,7 +347,7 @@ public class StatementBuilderTest {
 		StatementSpecifications defaultSpecifications = stmt.getSpecifications();
 		Assert.assertEquals(Arrays.asList("age", "location", "name"), defaultSpecifications.getFields().stream()
 				.map(StatementField::getName)
-				.filter(statementField -> !new NXFlatTableSchema.Builder().build().hasField(statementField))
+				.filter(statementField -> !new Specifications.Builder().build().hasField(statementField))
 				.collect(Collectors.toList()));
 	}
 
@@ -439,7 +441,7 @@ public class StatementBuilderTest {
 				"\"LOCATION_BEGIN\": \"34\",\n" +
 				"\"LOCATION_END\": \"34\",\n" +
 				"\"NEXTPROT_ACCESSION\": \"NX_Q6S545\",\n" +
-				"\""+NXFlatTableSchema.EXTRA_FIELDS +"\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"CANONICAL\\\":\\\"YES\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
+				"\""+EXTRA_FIELDS +"\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"CANONICAL\\\":\\\"YES\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
 				"\"SOURCE\": \"gnomAD\",\n" +
 				"\"STATEMENT_ID\": \"792d509b2d452da2cf4a74faa2773c15\",\n" +
 				"\"VARIANT_ORIGINAL_AMINO_ACID\": \"W\",\n" +
@@ -459,7 +461,7 @@ public class StatementBuilderTest {
 				"\"LOCATION_BEGIN\": \"34\",\n" +
 				"\"LOCATION_END\": \"34\",\n" +
 				"\"NEXTPROT_ACCESSION\": \"NX_Q6S545\",\n" +
-				"\""+NXFlatTableSchema.EXTRA_FIELDS +"\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
+				"\""+EXTRA_FIELDS +"\":\"{\\\"ALLELE_COUNT\\\":\\\"1\\\",\\\"ALLELE_SAMPLED\\\":\\\"217610\\\",\\\"DBSNP_ID\\\":\\\"rs745905374\\\"}\",\n" +
 				"\"SOURCE\": \"gnomAD\",\n" +
 				"\"STATEMENT_ID\": \"792d509b2d452da2cf4a74faa2773c15\",\n" +
 				"\"VARIANT_ORIGINAL_AMINO_ACID\": \"W\",\n" +
@@ -469,12 +471,12 @@ public class StatementBuilderTest {
 
 	private Statement buildStatementFromJsonString(String content) throws IOException {
 
-		return NXFlatTableSchema.build().jsonReader().readStatement(content);
+		return new Specifications.Builder().build().jsonReader().readStatement(content);
 	}
 
 	private StatementSpecifications newGnomADSpecifications() {
 
-		return new NXFlatTableSchema.Builder()
+		return new Specifications.Builder()
 				.withExtraFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
 				.withExtraFieldsContributingToUnicityKey(Collections.singletonList("DBSNP_ID"))
 				.build();
