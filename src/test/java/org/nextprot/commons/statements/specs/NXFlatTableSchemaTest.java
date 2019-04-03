@@ -2,10 +2,15 @@ package org.nextprot.commons.statements.specs;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.nextprot.commons.statements.constants.StatementTableNames;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class NXFlatTableSchemaTest {
 
@@ -178,5 +183,119 @@ public class NXFlatTableSchemaTest {
 				"\tVARIANT_VARIATION_AMINO_ACID VARCHAR(10000));\n" +
 				"CREATE INDEX ENTRY_MAPP_ENTRY_AC_IDX ON nxflat.ENTRY_MAPPED_STATEMENTS ( ENTRY_ACCESSION );\n" +
 				"CREATE INDEX ENTRY_MAPP_ANNOT_ID_IDX ON nxflat.ENTRY_MAPPED_STATEMENTS ( ANNOTATION_ID );\n\n", sql);
+	}
+
+	@Test
+	public void shouldNotAddExtraFieldsFromEmptyResultSetMetaData() throws SQLException {
+
+		ResultSetMetaData rsmd = Mockito.mock(ResultSetMetaData.class);
+
+		ResultSet rs = Mockito.mock(ResultSet.class);
+		Mockito.when(rs.getMetaData()).thenReturn(rsmd);
+
+		NXFlatTableSchema schema = NXFlatTableSchema.fromResultSet(rs);
+
+		Arrays.stream(CoreStatementField.values()).forEach(field -> Assert.assertTrue(schema.hasField(field.getName())));
+		Assert.assertEquals(CoreStatementField.values().length, schema.size());
+	}
+
+	@Test
+	public void shouldAddExtraFieldsFromResultSetMetaData() throws SQLException {
+
+		List<String> nxflatFields = getNxFlatColumns();
+
+		ResultSet resultSet = Mockito.mock(ResultSet.class);
+
+		ResultSetMetaData rsmd = Mockito.mock(ResultSetMetaData.class);
+		for (int i = 0; i < nxflatFields.size(); i++) {
+			Mockito.when(rsmd.getColumnName(i+1)).thenReturn(nxflatFields.get(i).toUpperCase());
+		}
+		Mockito.when(rsmd.getColumnCount()).thenReturn(nxflatFields.size());
+
+		Mockito.when(resultSet.getMetaData()).thenReturn(rsmd);
+		Mockito.when(resultSet.getString("EXTRA_FIELDS"))
+				.thenReturn("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"DBSNP_ID\":\"rs745905374\"}");
+
+		NXFlatTableSchema schema = NXFlatTableSchema.fromResultSet(resultSet);
+
+		Arrays.stream(CoreStatementField.values()).forEach(field -> Assert.assertTrue(schema.hasField(field.getName())));
+		Assert.assertTrue(schema.hasField("EXTRA_FIELDS"));
+		Assert.assertTrue(schema.hasField("ALLELE_COUNT"));
+		Assert.assertTrue(schema.hasField("ALLELE_SAMPLED"));
+		Assert.assertTrue(schema.hasField("DBSNP_ID"));
+		Assert.assertEquals(CoreStatementField.values().length+4, schema.size());
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void shouldThrowErrorWhenInvalidExtraFieldValues() throws SQLException {
+
+		List<String> nxflatFields = getNxFlatColumns();
+
+		ResultSet resultSet = Mockito.mock(ResultSet.class);
+
+		ResultSetMetaData rsmd = Mockito.mock(ResultSetMetaData.class);
+		for (int i = 0; i < nxflatFields.size(); i++) {
+			Mockito.when(rsmd.getColumnName(i+1)).thenReturn(nxflatFields.get(i).toUpperCase());
+		}
+		Mockito.when(rsmd.getColumnCount()).thenReturn(nxflatFields.size());
+
+		Mockito.when(resultSet.getMetaData()).thenReturn(rsmd);
+		Mockito.when(resultSet.getString("EXTRA_FIELDS"))
+				.thenReturn("roudouroud");
+
+		NXFlatTableSchema.fromResultSet(resultSet);
+	}
+
+	private List<String> getNxFlatColumns() {
+		return Arrays.asList("statement_id",
+				"nextprot_accession",
+				"entry_accession",
+				"gene_name",
+				"location_begin_master",
+				"location_end_master",
+				"location_begin",
+				"location_end",
+				"subject_statement_ids",
+				"subject_annotation_ids",
+				"annotation_subject_species",
+				"annotation_object_species",
+				"annotation_category",
+				"annot_description",
+				"isoform_canonical",
+				"target_isoforms",
+				"annotation_id",
+				"annotation_name",
+				"is_negative",
+				"evidence_quality",
+				"evidence_intensity",
+				"evidence_note",
+				"evidence_statement_ref",
+				"evidence_code",
+				"evidence_properties",
+				"annot_cv_term_terminology",
+				"annot_cv_term_accession",
+				"annot_cv_term_name",
+				"variant_original_amino_acid",
+				"variant_variation_amino_acid",
+				"biological_object_type",
+				"biological_object_accession",
+				"biological_object_database",
+				"biological_object_name",
+				"object_statement_ids",
+				"object_annotation_ids",
+				"object_annot_iso_unames",
+				"object_annot_entry_unames",
+				"source",
+				"annot_source_accession",
+				"exp_context_eco_detect_method",
+				"exp_context_eco_mutation",
+				"exp_context_eco_iss",
+				"reference_database",
+				"reference_accession",
+				"assigned_by",
+				"assigment_method",
+				"resource_type",
+				"raw_statement_id",
+				"extra_fields");
 	}
 }

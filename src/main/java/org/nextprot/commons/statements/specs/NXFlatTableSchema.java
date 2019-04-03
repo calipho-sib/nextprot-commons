@@ -1,5 +1,8 @@
 package org.nextprot.commons.statements.specs;
 
+
+import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.nextprot.commons.statements.reader.JsonReader.readStringMap;
 
 /**
  * The NXFlat DB schema based on statement specifications.
@@ -73,7 +78,12 @@ public class NXFlatTableSchema implements StatementSpecifications {
 		public NXFlatTableSchema build() {
 
 			if (!customFields.isEmpty()) {
-				specifications.specifyField(new CompositeField(EXTRA_FIELDS, customFields));
+				if (customFields.size() == 1) {
+					specifications.specifyField(customFields.get(0));
+				}
+				else {
+					specifications.specifyField(new CompositeField(EXTRA_FIELDS, customFields));
+				}
 			}
 			return new NXFlatTableSchema(this);
 		}
@@ -89,24 +99,29 @@ public class NXFlatTableSchema implements StatementSpecifications {
 		return new NXFlatTableSchema.Builder().build();
 	}
 
-	public static NXFlatTableSchema fromResultSetMetaData(ResultSetMetaData rsmd) throws SQLException {
+	public static NXFlatTableSchema fromResultSet(ResultSet resultSet) throws SQLException {
 
 		Builder builder = new Builder();
 
-		int columnCount = rsmd.getColumnCount();
+		try {
+			ResultSetMetaData rsmd = resultSet.getMetaData();
 
-		List<String> customFields = new ArrayList<>();
+			int columnCount = rsmd.getColumnCount();
 
-		for (int i = 1; i <= columnCount; i++) {
-			String columnName = rsmd.getColumnName(i);
+			// exists only one extra field in NXFlatTableSchema that can contains fields/values as JSON map string
+			for (int i = 1; i <= columnCount; i++) {
+				String columnName = rsmd.getColumnName(i);
 
-			if (!CoreStatementField.hasKey(columnName)) {
-				customFields.add(columnName);
+				if (columnName.equalsIgnoreCase(NXFlatTableSchema.EXTRA_FIELDS)) {
+
+					builder.withExtraFields(readStringMap(resultSet.getString(columnName)).keySet());
+					break;
+				}
 			}
-		}
+		} catch (IOException e) {
 
-		if (!customFields.isEmpty()) {
-			builder.withExtraFields(new HashSet<>(customFields));
+			throw new IllegalStateException("Json value of column "+NXFlatTableSchema.EXTRA_FIELDS+" should be of " +
+					"type map: cannot create NXFlat schema", e);
 		}
 
 		return builder.build();
