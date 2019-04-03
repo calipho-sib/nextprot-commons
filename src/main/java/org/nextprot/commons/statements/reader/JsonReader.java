@@ -89,4 +89,11 @@ public class JsonReader {
 			return new CustomStatementField(key);
 		}
 	}
+
+	public static Map<String, String> readStringMap(String jsonContent) throws IOException {
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		return mapper.readValue(jsonContent, new TypeReference<Map<String, String>>() { });
+	}
 }
