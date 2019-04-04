@@ -20,7 +20,7 @@ public class SpecificationsTest {
 	public void testConstr() {
 
 		Specifications specifications = new Specifications.Builder().build();
-		Assert.assertEquals(49, specifications.size());
+		Assert.assertEquals(50, specifications.size());
 		Assert.assertNull(specifications.getCustomFields());
 	}
 
@@ -29,7 +29,7 @@ public class SpecificationsTest {
 
 		Specifications specifications = new Specifications.Builder()
 				.withExtraFields(Arrays.asList("f1", "f2")).build();
-		Assert.assertEquals(52, specifications.size());
+		Assert.assertEquals(53, specifications.size());
 
 		Assert.assertTrue(specifications.hasField("f1"));
 		Assert.assertTrue(specifications.hasField("f2"));
@@ -49,7 +49,7 @@ public class SpecificationsTest {
 		Specifications specifications = new Specifications.Builder()
 				.withExtraFields(Arrays.asList("f1", "f2"))
 				.withExtraFieldsContributingToUnicityKey(Collections.singletonList("f3")).build();
-		Assert.assertEquals(53, specifications.size());
+		Assert.assertEquals(54, specifications.size());
 
 		Assert.assertTrue(specifications.hasField("f1"));
 		Assert.assertTrue(specifications.hasField("f2"));
