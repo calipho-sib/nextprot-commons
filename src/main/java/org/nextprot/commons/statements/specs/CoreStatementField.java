@@ -88,7 +88,9 @@ public enum CoreStatementField implements StatementField, EnumDictionarySupplier
 	//TODO: TYPO TO FIX: ADD A name() method for backward compatibility
 	ASSIGMENT_METHOD,
 	RESOURCE_TYPE,
-	
+
+	//DEBUG_INFO
+	DEBUG_INFO,
 	RAW_STATEMENT_ID //Keep a reference to the Raw statement
 	;
 
