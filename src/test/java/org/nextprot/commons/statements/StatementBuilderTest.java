@@ -142,6 +142,22 @@ public class StatementBuilderTest {
 	}
 
 	@Test
+	public void testDebugInfoIsNotAffectingStatementIdCalculation() {
+
+		Statement rs1 = new StatementBuilder()
+				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
+				.addDebugInfo("YOYO")
+				.build();
+
+		Statement rs2 = new StatementBuilder()
+				.addCompulsoryFields("AAA", "BBB", "CCC", defaultQuality)
+				.build();
+
+		assertNotEquals(rs1, rs2);
+		assertEquals(rs1.getStatementId(), rs2.getStatementId());
+	}
+
+	@Test
 	public void testRawStatementInsertionInSets() {
 		Set<Statement> set1 = new HashSet<>();
 		set1.add(new StatementBuilder()
