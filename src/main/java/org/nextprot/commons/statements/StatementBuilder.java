@@ -251,6 +251,10 @@ public class StatementBuilder {
 
 		for (StatementField field : statement.keySet()) {
 
+			if (field.equals(DEBUG_INFO)) {
+				continue;
+			}
+
 			// ENTRY TYPE: only fields that are part of unicity key are considered
 			if (uniqueKey.equals(UniqueKey.ENTRY)) {
 				if (field.isPartOfAnnotationUnicityKey()) {
