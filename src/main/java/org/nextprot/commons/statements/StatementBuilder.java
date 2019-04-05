@@ -1,10 +1,12 @@
 package org.nextprot.commons.statements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -182,10 +184,12 @@ public class StatementBuilder {
 		}
 
 		if (!statement.containsKey(CoreStatementField.STATEMENT_ID)) {
-			statement.putValue(CoreStatementField.STATEMENT_ID, computeUniqueKey(statement, UniqueKey.STATEMENT));
+			statement.putValue(CoreStatementField.STATEMENT_ID,
+					MD5Algo.computeMD5(extractUniqueFieldValues(statement, UniqueKey.STATEMENT)));
 		}
 		if (withAnnotationHash) {
-			statement.putValue(CoreStatementField.ANNOTATION_ID, computeUniqueKey(statement, UniqueKey.ENTRY));
+			statement.putValue(CoreStatementField.ANNOTATION_ID,
+					MD5Algo.computeMD5(extractUniqueFieldValues(statement, UniqueKey.ENTRY)));
 		}
 
 		return statement;
@@ -230,6 +234,8 @@ public class StatementBuilder {
 		return specs;
 	}
 
+
+
 	/**
 	 * This method compute a MD5 unique key based on the combination of selected statement fields
 	 *
@@ -238,10 +244,10 @@ public class StatementBuilder {
 	 * @return a unique key as string
 	 * @implSpec at https://calipho.isb-sib.ch/wiki/display/cal/Raw+statements+specifications
 	 */
-	static String computeUniqueKey(Statement statement, UniqueKey uniqueKey) {
+	static String extractUniqueFieldValues(Statement statement, UniqueKey uniqueKey) {
 
 		// Filter fields which are used to compute unicity key
-		Set<StatementField> unicityFields = new HashSet<>();
+		List<StatementField> unicityFields = new ArrayList<>();
 
 		for (StatementField field : statement.keySet()) {
 
@@ -263,9 +269,9 @@ public class StatementBuilder {
 			throw new IllegalStateException("missing fields used to compute a unique key for statement "+statement + " (type="+ uniqueKey +")");
 		}
 
-		return MD5Algo.computeMD5(unicityFields.stream()
+		return unicityFields.stream()
 				.map(statement::getValue)
 				.filter(Objects::nonNull)
-				.collect(Collectors.joining("")));
+				.collect(Collectors.joining(""));
 	}
 }

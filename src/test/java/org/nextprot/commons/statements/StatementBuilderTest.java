@@ -19,7 +19,6 @@ import org.nextprot.commons.statements.specs.CompositeField;
 import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.CustomStatementField;
 import org.nextprot.commons.statements.specs.MutableStatementSpecifications;
-import org.nextprot.commons.statements.specs.NXFlatTableSchema;
 import org.nextprot.commons.statements.specs.Specifications;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
@@ -265,8 +264,8 @@ public class StatementBuilderTest {
 				.addSubjects(Arrays.asList(sub2, sub1))
 				.build();
 
-		String vp1Hash = StatementBuilder.computeUniqueKey(vp1, UniqueKey.ENTRY);
-		String vp2Hash = StatementBuilder.computeUniqueKey(vp2, UniqueKey.ENTRY);
+		String vp1Hash = StatementBuilder.extractUniqueFieldValues(vp1, UniqueKey.ENTRY);
+		String vp2Hash = StatementBuilder.extractUniqueFieldValues(vp2, UniqueKey.ENTRY);
 
 		Assert.assertEquals(vp1Hash, vp2Hash);
 	}
@@ -326,8 +325,8 @@ public class StatementBuilderTest {
 				.withAnnotationHash()
 				.build();
 
-		String stmt1EntryKey = StatementBuilder.computeUniqueKey(stmt1, UniqueKey.ENTRY);
-		String stmt2EntryKey = StatementBuilder.computeUniqueKey(stmt2, UniqueKey.ENTRY);
+		String stmt1EntryKey = StatementBuilder.extractUniqueFieldValues(stmt1, UniqueKey.ENTRY);
+		String stmt2EntryKey = StatementBuilder.extractUniqueFieldValues(stmt2, UniqueKey.ENTRY);
 
 		Assert.assertEquals(stmt1EntryKey, stmt2EntryKey);
 	}
