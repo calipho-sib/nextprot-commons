@@ -276,6 +276,6 @@ public class StatementBuilder {
 		return unicityFields.stream()
 				.map(statement::getValue)
 				.filter(Objects::nonNull)
-				.collect(Collectors.joining(""));
+				.collect(Collectors.joining("|"));
 	}
 }
