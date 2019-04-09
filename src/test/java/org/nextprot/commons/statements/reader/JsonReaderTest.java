@@ -87,7 +87,7 @@ public class JsonReaderTest {
 		Assert.assertEquals("NX_Q15858", statement.getValue(ENTRY_ACCESSION));
 		Assert.assertEquals("BioEditor", statement.getValue(SOURCE));
 		Assert.assertEquals("publication", statement.getValue(RESOURCE_TYPE));
-		Assert.assertEquals("2b75f7ff2b618c00ef491971b140d14b", statement.getValue(STATEMENT_ID));
+		Assert.assertEquals("618c2674745cea56a67cfd6a9fb5718e", statement.getValue(STATEMENT_ID));
 		Assert.assertEquals("F", statement.getValue(VARIANT_ORIGINAL_AMINO_ACID));
 		Assert.assertEquals("V", statement.getValue(VARIANT_VARIATION_AMINO_ACID));
 
