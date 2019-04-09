@@ -165,6 +165,12 @@ public class StatementBuilder {
 	}
 
 	public Statement build() {
+
+		return build(false);
+	}
+
+	public Statement build(boolean rebuildStatementId) {
+
 		Statement statement = new Statement(keyValues);
 
 		if (keyValues.isEmpty()) {
@@ -182,8 +188,10 @@ public class StatementBuilder {
 			}
 		}
 
-		statement.putValue(CoreStatementField.STATEMENT_ID,
-				MD5Algo.computeMD5(extractUniqueFieldValues(statement, UniqueKey.STATEMENT)));
+		if (rebuildStatementId || !statement.containsKey(CoreStatementField.STATEMENT_ID)) {
+			statement.putValue(CoreStatementField.STATEMENT_ID,
+					MD5Algo.computeMD5(extractUniqueFieldValues(statement, UniqueKey.STATEMENT)));
+		}
 
 		if (withAnnotationHash) {
 			statement.putValue(CoreStatementField.ANNOTATION_ID,
@@ -246,9 +254,7 @@ public class StatementBuilder {
 		List<StatementField> unicityFields = new ArrayList<>();
 
 		//TODO: revert it
-		//for (StatementField field : CoreStatementField.values()) {
-
-		for (StatementField field : statement.keySet()) {
+		for (StatementField field : CoreStatementField.values()) {
 
 			if (field.equals(DEBUG_INFO)) {
 				continue;
@@ -273,14 +279,9 @@ public class StatementBuilder {
 		}
 
 		//TODO: revert it
-		/*return "["+unicityFields.stream()
+		return "["+unicityFields.stream()
 				.map(statement::getValue)
 				.filter(Objects::nonNull)
-				.collect(Collectors.joining(", ")) +"]"; */
-
-		return unicityFields.stream()
-				.map(statement::getValue)
-				.filter(Objects::nonNull)
-				.collect(Collectors.joining("|"));
+				.collect(Collectors.joining(", ")) +"]";
 	}
 }

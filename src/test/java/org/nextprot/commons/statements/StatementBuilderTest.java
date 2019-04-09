@@ -126,8 +126,8 @@ public class StatementBuilderTest {
 				.build();
 
 		Assert.assertEquals(s1.getStatementId(), s2.getStatementId());
-		Assert.assertEquals("d520d152edad068dc1b5773240d46d82", s1.getStatementId());
-		Assert.assertEquals("d520d152edad068dc1b5773240d46d82", s2.getStatementId());
+		Assert.assertEquals("d751713988987e9331980363e24189ce", s1.getStatementId());
+		Assert.assertEquals("d751713988987e9331980363e24189ce", s2.getStatementId());
 	}
 
 	@Test
