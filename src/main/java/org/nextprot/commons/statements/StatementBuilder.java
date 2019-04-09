@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -183,10 +182,9 @@ public class StatementBuilder {
 			}
 		}
 
-		if (!statement.containsKey(CoreStatementField.STATEMENT_ID)) {
-			statement.putValue(CoreStatementField.STATEMENT_ID,
-					MD5Algo.computeMD5(extractUniqueFieldValues(statement, UniqueKey.STATEMENT)));
-		}
+		statement.putValue(CoreStatementField.STATEMENT_ID,
+				MD5Algo.computeMD5(extractUniqueFieldValues(statement, UniqueKey.STATEMENT)));
+
 		if (withAnnotationHash) {
 			statement.putValue(CoreStatementField.ANNOTATION_ID,
 					MD5Algo.computeMD5(extractUniqueFieldValues(statement, UniqueKey.ENTRY)));
@@ -234,8 +232,6 @@ public class StatementBuilder {
 		return specs;
 	}
 
-
-
 	/**
 	 * This method compute a MD5 unique key based on the combination of selected statement fields
 	 *
@@ -248,6 +244,9 @@ public class StatementBuilder {
 
 		// Filter fields which are used to compute unicity key
 		List<StatementField> unicityFields = new ArrayList<>();
+
+		//TODO: revert it
+		//for (StatementField field : CoreStatementField.values()) {
 
 		for (StatementField field : statement.keySet()) {
 
@@ -263,7 +262,7 @@ public class StatementBuilder {
 			}
 			// STATEMENT TYPE: all fields are considered to build the unique key
 			else if (uniqueKey.equals(UniqueKey.STATEMENT)) { // All fields for the statement
-				if (field.getClass() != CompositeField.class && !field.equals(CoreStatementField.STATEMENT_ID) && !field.equals(CoreStatementField.ANNOTATION_ID)) {
+				if (field.getClass() != CompositeField.class && !field.equals(CoreStatementField.STATEMENT_ID)) {
 					unicityFields.add(field);
 				}
 			}
@@ -272,6 +271,12 @@ public class StatementBuilder {
 		if (unicityFields.isEmpty()) {
 			throw new IllegalStateException("missing fields used to compute a unique key for statement "+statement + " (type="+ uniqueKey +")");
 		}
+
+		//TODO: revert it
+		/*return "["+unicityFields.stream()
+				.map(statement::getValue)
+				.filter(Objects::nonNull)
+				.collect(Collectors.joining(", ")) +"]"; */
 
 		return unicityFields.stream()
 				.map(statement::getValue)

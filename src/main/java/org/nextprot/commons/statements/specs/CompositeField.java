@@ -16,7 +16,6 @@ public class CompositeField implements StatementField {
 
 	private final String name;
 	private final List<StatementField> fields;
-	private final boolean creatableDBColumn;
 
 	public CompositeField(String name, List<StatementField> fields) {
 
@@ -30,7 +29,6 @@ public class CompositeField implements StatementField {
 		}
 		this.name = name;
 		this.fields = new ArrayList<>(fields);
-		this.creatableDBColumn = creatableDBColumn;
 	}
 
 	@Override

@@ -55,7 +55,7 @@ public class JsonReaderTest {
 		Assert.assertEquals("34", statement.getValue(LOCATION_END));
 		Assert.assertEquals("NX_Q6S545", statement.getValue(NEXTPROT_ACCESSION));
 		Assert.assertEquals("gnomAD", statement.getValue(SOURCE));
-		Assert.assertEquals("792d509b2d452da2cf4a74faa2773c15", statement.getValue(STATEMENT_ID));
+		Assert.assertEquals("5be0a6bfafde6ddfc380bffed6eca40e", statement.getValue(STATEMENT_ID));
 		Assert.assertEquals("W", statement.getValue(VARIANT_ORIGINAL_AMINO_ACID));
 		Assert.assertEquals("*", statement.getValue(VARIANT_VARIATION_AMINO_ACID));
 	}
@@ -87,7 +87,7 @@ public class JsonReaderTest {
 		Assert.assertEquals("NX_Q15858", statement.getValue(ENTRY_ACCESSION));
 		Assert.assertEquals("BioEditor", statement.getValue(SOURCE));
 		Assert.assertEquals("publication", statement.getValue(RESOURCE_TYPE));
-		Assert.assertEquals("618c2674745cea56a67cfd6a9fb5718e", statement.getValue(STATEMENT_ID));
+		Assert.assertEquals("0f8c71813a30bce322053f458efc41fd", statement.getValue(STATEMENT_ID));
 		Assert.assertEquals("F", statement.getValue(VARIANT_ORIGINAL_AMINO_ACID));
 		Assert.assertEquals("V", statement.getValue(VARIANT_VARIATION_AMINO_ACID));
 
@@ -135,7 +135,6 @@ public class JsonReaderTest {
 				"  \"NEXTPROT_ACCESSION\" : \"NX_Q15858\",\n" +
 				"  \"RESOURCE_TYPE\" : \"publication\",\n" +
 				"  \"SOURCE\" : \"BioEditor\",\n" +
-				"  \"STATEMENT_ID\" : \"618c2674745cea56a67cfd6a9fb5718e\",\n" +
 				"  \"VARIANT_ORIGINAL_AMINO_ACID\" : \"F\",\n" +
 				"  \"VARIANT_VARIATION_AMINO_ACID\" : \"V\"\n" +
 				"}, {\n" +
@@ -161,7 +160,6 @@ public class JsonReaderTest {
 				"  \"REFERENCE_DATABASE\" : \"PubMed\",\n" +
 				"  \"RESOURCE_TYPE\" : \"publication\",\n" +
 				"  \"SOURCE\" : \"BioEditor\",\n" +
-				"  \"STATEMENT_ID\" : \"4450ee2b55fb5f6692aece065968c7c6\",\n" +
 				"  \"SUBJECT_STATEMENT_IDS\" : \"618c2674745cea56a67cfd6a9fb5718e\"\n" +
 				"}]\n";
 	}
