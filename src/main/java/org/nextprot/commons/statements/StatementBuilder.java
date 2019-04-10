@@ -161,15 +161,9 @@ public class StatementBuilder {
 		addField(VARIANT_VARIATION_AMINO_ACID, variationVariation);
 
 		return this;
-
 	}
 
 	public Statement build() {
-
-		return build(false);
-	}
-
-	public Statement build(boolean rebuildStatementId) {
 
 		Statement statement = new Statement(keyValues);
 
@@ -179,6 +173,8 @@ public class StatementBuilder {
 
 		statement.setSpecifications((specifications == null) ? buildSpecifications(statement) : specifications);
 
+		statement.putValue(CoreStatementField.STATEMENT_ID, MD5Algo.computeMD5(extractUniqueFieldValues(statement, UniqueKey.STATEMENT)));
+
 		for (StatementField field : keyValues.keySet()) {
 
 			// add composite field values from json
@@ -186,11 +182,6 @@ public class StatementBuilder {
 
 				addCompositeFields(statement, (CompositeField)field);
 			}
-		}
-
-		if (rebuildStatementId || !statement.containsKey(CoreStatementField.STATEMENT_ID)) {
-			statement.putValue(CoreStatementField.STATEMENT_ID,
-					MD5Algo.computeMD5(extractUniqueFieldValues(statement, UniqueKey.STATEMENT)));
 		}
 
 		if (withAnnotationHash) {
@@ -268,7 +259,7 @@ public class StatementBuilder {
 			}
 			// STATEMENT TYPE: all fields are considered to build the unique key
 			else if (uniqueKey.equals(UniqueKey.STATEMENT)) { // All fields for the statement
-				if (field.getClass() != CompositeField.class && !field.equals(CoreStatementField.STATEMENT_ID)) {
+				if (field.getClass() != CompositeField.class && !field.equals(STATEMENT_ID)) {
 					unicityFields.add(field);
 				}
 			}
