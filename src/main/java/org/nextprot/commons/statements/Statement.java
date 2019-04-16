@@ -1,88 +1,158 @@
 package org.nextprot.commons.statements;
 
+
+import org.nextprot.commons.statements.specs.CompositeField;
+import org.nextprot.commons.statements.specs.CoreStatementField;
+import org.nextprot.commons.statements.specs.StatementField;
+import org.nextprot.commons.statements.specs.StatementSpecifications;
+
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
- * DO NOT ADD public setters on this class.
- * A StatementID is computed based on the fields when build() is invoked
- * 
- * @author Daniel Teixeira http://github.com/ddtxra
- *
+ * A statement is a set of Field/Values
+ * Each field can be a simple or a composite.
+ * A composite is composed of multiple fields.
  */
-public class Statement extends TreeMap<String, String>{
+public class Statement extends TreeMap<StatementField, String> implements Map<StatementField, String> {
 
-	private static final long serialVersionUID = -4723168061980820149L;
-	private boolean isProcessed = false;
-	
-	//Needed for serialization in Play?
+	private static final long serialVersionUID = 2L;
+
+	// TODO: specs should be final
+	private StatementSpecifications specifications;
+
 	public Statement() {
-		super();
+		super(Comparator.comparing(StatementField::getName));
 	}
 
 	// Keep the constructor package protected, so it enforces the use of the Builder
-	Statement(Map<String, String> map) {
-		super(new TreeMap<String, String>(map));
+	Statement(Map<StatementField, String> map) {
+		this();
+		putAll(map);
 	}
 
+	public boolean hasField(String field) {
+
+		return getValueOrNull(field) != null;
+	}
+
+	public String getValueOrNull(String field) {
+
+		if (!specifications.hasField(field)) {
+			return null;
+		}
+
+		return getValue(specifications.getField(field));
+	}
+
+	/**
+	 * Get the value from a specific field
+	 * @return the value associated with the given field even if the field is part of another composite field
+	 *  or if the field type is a composite it returns a map of field/value in json
+	 */
 	public String getValue(StatementField field) {
-		return get(field.name());
+
+		if (field instanceof CompositeField) {
+			CompositeField compositeField = (CompositeField) field;
+			return compositeField.valueAsString(extractCompositeValuesFrom(compositeField.getFields()));
+		}
+
+		if (!containsKey(field)) {
+			// search the field in a composite fields
+			CompositeField compositeField = specifications.searchCompositeFieldOrNull(field);
+			if (compositeField != null) {
+				Map<StatementField, String> map = readMapFromCompositeField(compositeField);
+				if (map.containsKey(field)) {
+					return map.get(field);
+				}
+			}
+		}
+
+		return get(field);
 	}
 
-	public String getDebugInfo() {
-		return get(StatementField.DEBUG_INFO.name());
+	private Map<StatementField, String> readMapFromCompositeField(CompositeField compositeField) {
+
+		String jsonContent = get(compositeField);
+
+		try {
+			return specifications.jsonReader().readMap(jsonContent);
+		} catch (IOException e) {
+			throw new IllegalStateException("cannot deserialize json field "+ compositeField.getName()+" with value "+jsonContent);
+		}
+	}
+
+	private Map<String, String> extractCompositeValuesFrom(List<StatementField> compositeFields) {
+
+		Map<String, String> map = new TreeMap<>();
+
+		for (StatementField field : compositeFields) {
+			if (containsKey(field)) {
+				map.put(field.getName(), get(field));
+			}
+		}
+
+		return map;
 	}
 
 	String putValue(StatementField field, String value) {
-		return put(field.name(), value);
+		return put(field, value);
 	}
-	
-/*	void computeAndSetAnnotationIds(AnnotationType annotationType){
-		putValue(StatementField.ANNOTATION_ID, StatementUtil.computeAndGetAnnotationId(this,annotationType));
-	}*/
+
+	void setSpecifications(StatementSpecifications specifications) {
+		this.specifications = specifications;
+	}
+
+	public StatementSpecifications getSpecifications() {
+		return specifications;
+	}
 
 	public String getSubjectStatementIds() {
-		return getValue(StatementField.SUBJECT_STATEMENT_IDS);
+		return get(CoreStatementField.SUBJECT_STATEMENT_IDS);
 	}
-	
+
 	public String[] getSubjectStatementIdsArray() {
-		String subjects = getValue(StatementField.SUBJECT_STATEMENT_IDS);
+		String subjects = get(CoreStatementField.SUBJECT_STATEMENT_IDS);
 		if(subjects == null) return null;
 		else return subjects.split(",");
 	}
-	
+
 	public String getStatementId() {
-		return this.getValue(StatementField.STATEMENT_ID);
+		return this.get(CoreStatementField.STATEMENT_ID);
 	}
-	
+
 	public String getAnnotationId() {
-		return this.getValue(StatementField.ANNOTATION_ID);
+		return this.get(CoreStatementField.ANNOTATION_ID);
 	}
-	
+
 	public String getObjectStatementId() {
-		return getValue(StatementField.OBJECT_STATEMENT_IDS);
+		return get(CoreStatementField.OBJECT_STATEMENT_IDS);
 	}
-	
+
 	public boolean hasModifiedSubject() {
-		return (getValue(StatementField.SUBJECT_STATEMENT_IDS) != null);
+		return (get(CoreStatementField.SUBJECT_STATEMENT_IDS) != null);
 	}
 
-	public boolean isProcessed() {
-		return isProcessed;
-	}
+	public String toString() {
 
-	public void processed() {
-		this.isProcessed = true;
-	}
-
-	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("{");
-		for (String s : this.keySet()) {
-			sb.append("\t\"" + s + "\": \"" + this.get(s).replace("\"", "''") + "\",\n");
+
+		sb.append("Specs: [").append(
+				specifications.getFields().stream()
+						.map(field -> field.getName()+((field.isPartOfAnnotationUnicityKey()) ? "*":""))
+						.collect(Collectors.joining(", ")))
+				.append("]\n");
+
+		sb.append("Values: {\n");
+		for (StatementField sf : this.keySet()) {
+			sb.append("\t\"").append(sf.getName()).append("\": \"").append(get(sf).replace("\"", "''")).append("\"\n");
 		}
-		sb.append("}");
+		sb.append("}\n*: fields contributing to the calculation of the ANNOTATION_ID key");
+
 		return sb.toString();
 	}
-
 }
