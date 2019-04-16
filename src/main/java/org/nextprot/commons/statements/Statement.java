@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import static org.nextprot.commons.statements.specs.CoreStatementField.ENTRY_ACCESSION;
 import static org.nextprot.commons.statements.specs.CoreStatementField.NEXTPROT_ACCESSION;
 
 /**
@@ -138,6 +139,11 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 
 	public boolean hasModifiedSubject() {
 		return (get(CoreStatementField.SUBJECT_STATEMENT_IDS) != null);
+	}
+
+	public String getEntryAccession() {
+
+		return getValue(ENTRY_ACCESSION);
 	}
 
 	public Optional<String> getOptionalIsoformAccession() {
