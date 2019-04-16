@@ -14,8 +14,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import static org.nextprot.commons.statements.specs.CoreStatementField.ENTRY_ACCESSION;
-import static org.nextprot.commons.statements.specs.CoreStatementField.NEXTPROT_ACCESSION;
+import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 /**
  * A statement is a set of Field/Values
@@ -26,7 +25,6 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 
 	private static final long serialVersionUID = 2L;
 
-	// TODO: specs should be final
 	private StatementSpecifications specifications;
 
 	public Statement() {
@@ -144,6 +142,11 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 	public String getEntryAccession() {
 
 		return getValue(ENTRY_ACCESSION);
+	}
+
+	public String getAnnotationCategory() {
+
+		return getValue(ANNOTATION_CATEGORY);
 	}
 
 	public Optional<String> getOptionalIsoformAccession() {

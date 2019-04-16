@@ -42,8 +42,8 @@ public class StatementBuilderTest {
 				.addCompulsoryFields("AAA", "?", "CCC", defaultQuality)
 				.build();
 
-		Assert.assertEquals("AAA", rs.getValue(ENTRY_ACCESSION));
-		Assert.assertEquals("CCC", rs.getValue(ANNOTATION_CATEGORY));
+		Assert.assertEquals("AAA", rs.getEntryAccession());
+		Assert.assertEquals("CCC", rs.getAnnotationCategory());
 		Assert.assertEquals("GOLD", rs.getValue(EVIDENCE_QUALITY));
 		Assert.assertNotNull(rs.getSpecifications());
 		Assert.assertEquals(4, rs.getSpecifications().size());
