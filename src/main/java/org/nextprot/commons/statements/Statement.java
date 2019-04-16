@@ -10,8 +10,11 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import static org.nextprot.commons.statements.specs.CoreStatementField.NEXTPROT_ACCESSION;
 
 /**
  * A statement is a set of Field/Values
@@ -37,16 +40,16 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 
 	public boolean hasField(String field) {
 
-		return getValueOrNull(field) != null;
+		return getOptionalValue(field).isPresent();
 	}
 
-	public String getValueOrNull(String field) {
+	public Optional<String> getOptionalValue(String field) {
 
 		if (!specifications.hasField(field)) {
-			return null;
+			return Optional.empty();
 		}
 
-		return getValue(specifications.getField(field));
+		return Optional.ofNullable(getValue(specifications.getField(field)));
 	}
 
 	/**
@@ -135,6 +138,17 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 
 	public boolean hasModifiedSubject() {
 		return (get(CoreStatementField.SUBJECT_STATEMENT_IDS) != null);
+	}
+
+	public Optional<String> getOptionalIsoformAccession() {
+
+		String accession = getValue(NEXTPROT_ACCESSION);
+
+		if (accession != null && accession.contains("-")) { //It is iso specific for example NX_P19544-4 means only specifc to iso 4
+			return Optional.of(accession);
+		}
+
+		return Optional.empty();
 	}
 
 	public String toString() {

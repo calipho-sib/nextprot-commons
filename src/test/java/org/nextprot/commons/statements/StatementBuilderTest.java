@@ -303,12 +303,12 @@ public class StatementBuilderTest {
 				.withAnnotationHash()
 				.build();
 
-		Assert.assertEquals("1", stmt.getValueOrNull("ALLELE_COUNT"));
-		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
-		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
-		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
-		Assert.assertNull(stmt.getValueOrNull("PROPERTIES"));
-		Assert.assertNull(stmt.getValueOrNull("ROUDOUDOU"));
+		Assert.assertEquals("1", stmt.getOptionalValue("ALLELE_COUNT").get());
+		Assert.assertEquals("217610", stmt.getOptionalValue("ALLELE_SAMPLED").get());
+		Assert.assertEquals("rs745905374", stmt.getOptionalValue("DBSNP_ID").get());
+		Assert.assertEquals("YES", stmt.getOptionalValue("CANONICAL").get());
+		Assert.assertFalse(stmt.getOptionalValue("PROPERTIES").isPresent());
+		Assert.assertFalse(stmt.getOptionalValue("ROUDOUDOU").isPresent());
 	}
 
 	@Test
@@ -319,14 +319,14 @@ public class StatementBuilderTest {
 				.withAnnotationHash()
 				.build();
 
-		Assert.assertEquals("1", stmt.getValueOrNull("ALLELE_COUNT"));
-		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
-		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
-		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
-		Assert.assertNotNull(stmt.getValueOrNull(EXTRA_FIELDS));
+		Assert.assertEquals("1", stmt.getOptionalValue("ALLELE_COUNT").get());
+		Assert.assertEquals("217610", stmt.getOptionalValue("ALLELE_SAMPLED").get());
+		Assert.assertEquals("rs745905374", stmt.getOptionalValue("DBSNP_ID").get());
+		Assert.assertEquals("YES", stmt.getOptionalValue("CANONICAL").get());
+		Assert.assertTrue(stmt.getOptionalValue(EXTRA_FIELDS).isPresent());
 		Assert.assertEquals("{\"ALLELE_COUNT\":\"1\",\"ALLELE_SAMPLED\":\"217610\",\"CANONICAL\":\"YES\",\"DBSNP_ID\":\"rs745905374\"}",
-				stmt.getValueOrNull(EXTRA_FIELDS));
-		Assert.assertNull(stmt.getValueOrNull("ROUDOUDOU"));
+				stmt.getOptionalValue(EXTRA_FIELDS).get());
+		Assert.assertFalse(stmt.getOptionalValue("ROUDOUDOU").isPresent());
 	}
 
 	@Test
@@ -373,10 +373,10 @@ public class StatementBuilderTest {
 				.withSpecifications(newGnomADSpecifications())
 				.build();
 
-		Assert.assertEquals("1", stmt.getValueOrNull("ALLELE_COUNT"));
-		Assert.assertEquals("YES", stmt.getValueOrNull("CANONICAL"));
-		Assert.assertEquals("217610", stmt.getValueOrNull("ALLELE_SAMPLED"));
-		Assert.assertEquals("rs745905374", stmt.getValueOrNull("DBSNP_ID"));
+		Assert.assertEquals("1", stmt.getOptionalValue("ALLELE_COUNT").get());
+		Assert.assertEquals("YES", stmt.getOptionalValue("CANONICAL").get());
+		Assert.assertEquals("217610", stmt.getOptionalValue("ALLELE_SAMPLED").get());
+		Assert.assertEquals("rs745905374", stmt.getOptionalValue("DBSNP_ID").get());
 	}
 
 	@Test
@@ -386,7 +386,7 @@ public class StatementBuilderTest {
 				.withSpecifications(newGnomADSpecifications())
 				.build();
 
-		Assert.assertNull(stmt.getValueOrNull("CANONICAL"));
+		Assert.assertFalse(stmt.getOptionalValue("CANONICAL").isPresent());
 	}
 
 	@Test
@@ -419,7 +419,20 @@ public class StatementBuilderTest {
 				.addField(new CustomStatementField("ANNOTATION_NAME"), "roudoudou")
 				.build();
 
-		Assert.assertEquals("roudoudou", stmt.getValueOrNull("ANNOTATION_NAME"));
+		Assert.assertTrue(stmt.getOptionalValue("ANNOTATION_NAME").isPresent());
+		Assert.assertEquals("roudoudou", stmt.getOptionalValue("ANNOTATION_NAME").get());
+	}
+
+	@Test
+	public void testGetIsoformAccession() throws IOException {
+
+		Statement stmt = new StatementBuilder(buildStatementFromJsonString(getGnomADStatementAsJSON()))
+				.addField(NEXTPROT_ACCESSION, "NX_Q6S545-2")
+				.build();
+
+		Assert.assertTrue(stmt.getOptionalValue("NEXTPROT_ACCESSION").isPresent());
+		Assert.assertTrue(stmt.getOptionalIsoformAccession().isPresent());
+		Assert.assertEquals("NX_Q6S545-2", stmt.getOptionalIsoformAccession().get());
 	}
 
 	private String getGnomADStatementAsJSON() {
