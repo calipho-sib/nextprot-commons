@@ -435,6 +435,34 @@ public class StatementBuilderTest {
 		Assert.assertEquals("NX_Q6S545-2", stmt.getOptionalIsoformAccession().get());
 	}
 
+	@Test
+	public void testSpecificationAfterCopy() throws IOException {
+
+		Statement stmt = new StatementBuilder()
+				.addField(NEXTPROT_ACCESSION, "NX_Q6S545-2")
+				.addField(LOCATION_BEGIN, "2")
+				.build();
+
+		StatementSpecifications specs = stmt.getSpecifications();
+
+		Assert.assertEquals(3, specs.size());
+		Assert.assertTrue(specs.hasField(NEXTPROT_ACCESSION.getName()));
+		Assert.assertTrue(specs.hasField(LOCATION_BEGIN.getName()));
+		Assert.assertTrue(specs.hasField(STATEMENT_ID.getName()));
+
+		Statement copy = new StatementBuilder(stmt)
+				.addField(ENTRY_ACCESSION, "NX_Q6S545")
+				.build();
+
+		StatementSpecifications copySpecs = copy.getSpecifications();
+
+		Assert.assertEquals(4, copySpecs.size());
+		Assert.assertTrue(copySpecs.hasField(NEXTPROT_ACCESSION.getName()));
+		Assert.assertTrue(copySpecs.hasField(LOCATION_BEGIN.getName()));
+		Assert.assertTrue(copySpecs.hasField(STATEMENT_ID.getName()));
+		Assert.assertTrue(copySpecs.hasField(ENTRY_ACCESSION.getName()));
+	}
+
 	private String getGnomADStatementAsJSON() {
 
 		return "{\n" +

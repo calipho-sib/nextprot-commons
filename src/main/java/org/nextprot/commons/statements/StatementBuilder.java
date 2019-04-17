@@ -43,7 +43,6 @@ public class StatementBuilder {
 
 		this();
 		keyValues.putAll(statement);
-		specifications = statement.getSpecifications();
 	}
 
 	public StatementBuilder withAnnotationHash() {

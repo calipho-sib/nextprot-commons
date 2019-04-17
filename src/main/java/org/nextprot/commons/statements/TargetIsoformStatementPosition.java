@@ -12,6 +12,7 @@ public class TargetIsoformStatementPosition implements Comparable<TargetIsoformS
 		
 	}
 
+	// FIXME: WTF are the positions ????
 	public TargetIsoformStatementPosition(String isoformAccession, String specificity, String name) {
 		this.isoformAccession = isoformAccession;
 		this.specificity = specificity;
