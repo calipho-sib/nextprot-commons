@@ -117,7 +117,7 @@ public class JsonReaderTest {
 				"}";
 	}
 
-	private String getStatements() {
+	public static String getStatements() {
 
 		return "[\n" +
 				"{\n" +

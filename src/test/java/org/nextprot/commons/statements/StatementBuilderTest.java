@@ -530,7 +530,7 @@ public class StatementBuilderTest {
 		return new Specifications.Builder().build().jsonReader().readStatement(content);
 	}
 
-	private StatementSpecifications newGnomADSpecifications() {
+	private static StatementSpecifications newGnomADSpecifications() {
 
 		return new Specifications.Builder()
 				.withExtraFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
