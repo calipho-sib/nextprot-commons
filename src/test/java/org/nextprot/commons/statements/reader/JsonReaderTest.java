@@ -98,7 +98,7 @@ public class JsonReaderTest {
 		Assert.assertEquals(24, statement.size());
 	}
 
-	private String getStatement() {
+	public static String getStatement() {
 
 		return "{\n" +
 				"\"ANNOTATION_CATEGORY\": \"variant\",\n" +
