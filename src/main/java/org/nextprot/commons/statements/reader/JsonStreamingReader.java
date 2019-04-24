@@ -90,18 +90,18 @@ public class JsonStreamingReader extends StatementJsonReader {
 
 	/**
 	 * Read n statements
-	 * @return a maximum of n statements
+	 * @return maxNumberOfStatements the maximum number of statements to read
 	 * @throws IOException
 	 */
-	public List<Statement> readStatements(int n) throws IOException {
+	public List<Statement> readStatements(int maxNumberOfStatements) throws IOException {
 
-		if (n <= 0) {
-			throw new IllegalArgumentException("n="+n+": cannot read a negative (or 0) number of statements ");
+		if (maxNumberOfStatements <= 0) {
+			throw new IllegalArgumentException("maxNumberOfStatements="+maxNumberOfStatements+": cannot read a negative (or 0) number of statements ");
 		}
 
 		List<Statement> statements = new ArrayList<>();
 
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < maxNumberOfStatements; i++) {
 
 			Optional<Statement> statement = readStatement();
 
