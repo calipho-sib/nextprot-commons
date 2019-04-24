@@ -17,10 +17,9 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class JsonStreamingReader {
+public class JsonStreamingReader extends StatementJsonReader {
 
 	private final JsonParser parser;
-	private final StatementSpecifications specifications;
 
 	public JsonStreamingReader(Reader content) throws IOException {
 
@@ -29,7 +28,7 @@ public class JsonStreamingReader {
 
 	public JsonStreamingReader(Reader content, StatementSpecifications specifications) throws IOException {
 
-		this.specifications = specifications;
+		super(specifications);
 		JsonFactory factory = new JsonFactory();
 
 		parser = factory.createParser(content);

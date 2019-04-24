@@ -21,11 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class JsonReader {
+public class JsonReader extends StatementJsonReader {
 
 	private final SimpleModule module;
 
 	public JsonReader(StatementSpecifications specifications) {
+
+		super(specifications);
 
 		module = new SimpleModule();
 		module.addKeyDeserializer(StatementField.class, new StatementFieldDeserializer(specifications));

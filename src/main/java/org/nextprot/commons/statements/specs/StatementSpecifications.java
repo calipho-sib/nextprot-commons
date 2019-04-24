@@ -25,10 +25,4 @@ public interface StatementSpecifications {
 
 	/** @return the composite field that contain the given field or null if absent */
 	CompositeField searchCompositeFieldOrNull(StatementField field);
-
-	/** @return a new instance of JsonReader that create Statements from json String */
-	default JsonReader jsonReader() {
-
-		return new JsonReader(this);
-	}
 }
