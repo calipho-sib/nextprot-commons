@@ -13,6 +13,8 @@ import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,6 +24,11 @@ public class JsonReader extends StatementJsonReader {
 	private final ObjectMapper mapper;
 
 	public JsonReader(String content, StatementSpecifications specifications) {
+
+		this(new StringReader(content), specifications);
+	}
+
+	public JsonReader(Reader content, StatementSpecifications specifications) {
 
 		super(content, specifications);
 

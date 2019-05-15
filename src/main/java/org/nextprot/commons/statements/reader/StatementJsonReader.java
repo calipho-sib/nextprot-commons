@@ -5,18 +5,12 @@ import org.nextprot.commons.statements.specs.StatementSpecifications;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.List;
 
 public abstract class StatementJsonReader {
 
 	private final Reader content;
 	private final StatementSpecifications specifications;
-
-	public StatementJsonReader(String content, StatementSpecifications specifications) {
-
-		this(new StringReader(content), specifications);
-	}
 
 	public StatementJsonReader(Reader content, StatementSpecifications specifications) {
 
