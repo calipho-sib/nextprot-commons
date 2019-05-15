@@ -9,23 +9,23 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.Optional;
 
-import static org.nextprot.commons.statements.reader.JsonReaderTest.getStatement;
-import static org.nextprot.commons.statements.reader.JsonReaderTest.getStatements;
+import static org.nextprot.commons.statements.reader.JsonStatementReaderTest.getStatement;
+import static org.nextprot.commons.statements.reader.JsonStatementReaderTest.getStatements;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
-public class JsonStreamingReaderTest {
+public class StreamingJsonStatementReaderTest {
 
 	@Test
 	public void hasNextShouldNotConsumeTokens() throws IOException {
 
-		JsonStreamingReader reader = new JsonStreamingReader(new StringReader(getStatements()));
+		StreamingJsonStatementReader reader = new StreamingJsonStatementReader(new StringReader(getStatements()));
 		Assert.assertTrue(reader.hasNextStatement());
 	}
 
 	@Test
 	public void readStatement() throws IOException {
 
-		JsonStreamingReader reader = new JsonStreamingReader(new StringReader(getStatement()));
+		StreamingJsonStatementReader reader = new StreamingJsonStatementReader(new StringReader(getStatement()));
 
 		Optional<Statement> statement = reader.readOneStatement();
 		Assert.assertTrue(statement.isPresent());
@@ -51,7 +51,7 @@ public class JsonStreamingReaderTest {
 	@Test
 	public void readStatementTwice() throws IOException {
 
-		JsonStreamingReader reader = new JsonStreamingReader(new StringReader(getStatements()));
+		StreamingJsonStatementReader reader = new StreamingJsonStatementReader(new StringReader(getStatements()));
 
 		Optional<Statement> statement = reader.readOneStatement();
 		Assert.assertTrue(statement.isPresent());
@@ -91,7 +91,7 @@ public class JsonStreamingReaderTest {
 
 		StringReader sr = new StringReader(getStatements());
 
-		JsonStreamingReader reader = new JsonStreamingReader(sr, 2);
+		StreamingJsonStatementReader reader = new StreamingJsonStatementReader(sr, 2);
 
 		List<Statement> statements = reader.readStatements();
 		Assert.assertFalse(statements.isEmpty());
@@ -127,13 +127,13 @@ public class JsonStreamingReaderTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotReadZeroStatements() throws IOException {
 
-		new JsonStreamingReader(new StringReader(getStatements()), 0);
+		new StreamingJsonStatementReader(new StringReader(getStatements()), 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotReadNegativeStatements() throws IOException {
 
-		new JsonStreamingReader(new StringReader(getStatements()), -2);
+		new StreamingJsonStatementReader(new StringReader(getStatements()), -2);
 	}
 
 	@Test
@@ -141,7 +141,7 @@ public class JsonStreamingReaderTest {
 
 		StringReader sr = new StringReader(getStatements());
 
-		JsonStreamingReader reader = new JsonStreamingReader(sr, 20);
+		StreamingJsonStatementReader reader = new StreamingJsonStatementReader(sr, 20);
 
 		List<Statement> statements = reader.readStatements();
 		Assert.assertFalse(statements.isEmpty());

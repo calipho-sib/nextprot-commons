@@ -6,11 +6,11 @@ import org.nextprot.commons.statements.specs.StatementSpecifications;
 import java.io.IOException;
 import java.util.List;
 
-public abstract class StatementJsonReader {
+public abstract class StatementReader {
 
 	private final StatementSpecifications specifications;
 
-	public StatementJsonReader(StatementSpecifications specifications) {
+	public StatementReader(StatementSpecifications specifications) {
 
 		this.specifications = specifications;
 	}

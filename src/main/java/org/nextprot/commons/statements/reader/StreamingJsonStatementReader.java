@@ -21,24 +21,24 @@ import java.util.Optional;
  * This reader read statements from a json content one by one or
  * n at a time and close it self when all have been red
  */
-public class JsonStreamingReader extends StatementJsonReader {
+public class StreamingJsonStatementReader extends StatementReader {
 
 	private static final int DEFAULT_MAX_BUFFER_SIZE = 100;
 
 	private final JsonParser parser;
 	private final int maxBufferSize;
 
-	public JsonStreamingReader(Reader url) throws IOException {
+	public StreamingJsonStatementReader(Reader url) throws IOException {
 
 		this(url, new Specifications.Builder().build(), DEFAULT_MAX_BUFFER_SIZE);
 	}
 
-	public JsonStreamingReader(Reader url, int maxBufferSize) throws IOException {
+	public StreamingJsonStatementReader(Reader url, int maxBufferSize) throws IOException {
 
 		this(url, new Specifications.Builder().build(), maxBufferSize);
 	}
 
-	public JsonStreamingReader(Reader url, StatementSpecifications specifications, int maxBufferSize) throws IOException {
+	public StreamingJsonStatementReader(Reader url, StatementSpecifications specifications, int maxBufferSize) throws IOException {
 
 		super(specifications);
 		JsonFactory factory = new JsonFactory();

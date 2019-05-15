@@ -12,12 +12,12 @@ import java.util.Map;
 
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
-public class JsonReaderTest {
+public class JsonStatementReaderTest {
 
 	@Test
 	public void readStatementAsMap() throws IOException {
 
-		JsonReader reader = new JsonReader(getStatement(), new Specifications.Builder().build());
+		JsonStatementReader reader = new JsonStatementReader(getStatement(), new Specifications.Builder().build());
 		Map<StatementField, String> map = reader.readStatements().get(0);
 
 		Assert.assertEquals(13, map.size());
@@ -39,7 +39,7 @@ public class JsonReaderTest {
 	@Test
 	public void readStatement() throws IOException {
 
-		JsonReader reader = new JsonReader(getStatement(), new Specifications.Builder().build());
+		JsonStatementReader reader = new JsonStatementReader(getStatement(), new Specifications.Builder().build());
 		Statement statement = reader.readStatements().get(0);
 
 		Assert.assertNotNull(statement.getSpecifications());
@@ -63,7 +63,7 @@ public class JsonReaderTest {
 	@Test
 	public void readStatements() throws IOException {
 
-		JsonReader reader = new JsonReader(getStatements(), new Specifications.Builder().build());
+		JsonStatementReader reader = new JsonStatementReader(getStatements(), new Specifications.Builder().build());
 		List<Statement> statements = reader.readStatements();
 
 		Assert.assertEquals(2, statements.size());

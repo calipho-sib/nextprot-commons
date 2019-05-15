@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import org.nextprot.commons.algo.MD5Algo;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
-import org.nextprot.commons.statements.reader.JsonReader;
+import org.nextprot.commons.statements.reader.JsonStatementReader;
 import org.nextprot.commons.statements.specs.CompositeField;
 import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.StatementField;
@@ -195,7 +195,7 @@ public class StatementBuilder {
 	private void addCompositeFields(Statement statement, CompositeField field) {
 
 		try {
-			Map<StatementField, String> fields = new JsonReader(keyValues.get(field), statement.getSpecifications())
+			Map<StatementField, String> fields = new JsonStatementReader(keyValues.get(field), statement.getSpecifications())
 					.readStatements().get(0);
 			fields.keySet().forEach(f -> statement.putValue(f, fields.get(f)));
 		} catch (IOException e) {

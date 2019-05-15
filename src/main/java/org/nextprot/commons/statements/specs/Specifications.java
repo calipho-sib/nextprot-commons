@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.nextprot.commons.statements.reader.JsonReader.readStringMap;
+import static org.nextprot.commons.statements.reader.JsonStatementReader.readStringMap;
 
 
 public class Specifications implements StatementSpecifications {

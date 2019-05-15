@@ -1,7 +1,7 @@
 package org.nextprot.commons.statements;
 
 
-import org.nextprot.commons.statements.reader.JsonReader;
+import org.nextprot.commons.statements.reader.JsonStatementReader;
 import org.nextprot.commons.statements.specs.CompositeField;
 import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.StatementField;
@@ -88,7 +88,7 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		}
 
 		try {
-			return new JsonReader(jsonContent, specifications).readStatements().get(0);
+			return new JsonStatementReader(jsonContent, specifications).readStatements().get(0);
 		} catch (IOException e) {
 			throw new IllegalStateException("cannot deserialize json field "+ compositeField.getName()+" with value "+jsonContent);
 		}

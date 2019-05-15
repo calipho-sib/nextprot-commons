@@ -22,17 +22,17 @@ import java.util.stream.Collectors;
 /**
  * Read all statements from an URL to a Json resource
  */
-public class JsonReader extends StatementJsonReader {
+public class JsonStatementReader extends StatementReader {
 
 	private final Reader reader;
 	private final ObjectMapper mapper;
 
-	public JsonReader(String content, StatementSpecifications specifications) {
+	public JsonStatementReader(String content, StatementSpecifications specifications) {
 
 		this(new StringReader(content), specifications);
 	}
 
-	public JsonReader(Reader reader, StatementSpecifications specifications) {
+	public JsonStatementReader(Reader reader, StatementSpecifications specifications) {
 
 		super(specifications);
 

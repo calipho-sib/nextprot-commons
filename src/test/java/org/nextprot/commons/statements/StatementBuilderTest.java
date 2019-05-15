@@ -15,7 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
-import org.nextprot.commons.statements.reader.JsonReader;
+import org.nextprot.commons.statements.reader.JsonStatementReader;
 import org.nextprot.commons.statements.specs.CompositeField;
 import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.CustomStatementField;
@@ -528,7 +528,7 @@ public class StatementBuilderTest {
 
 	private Statement buildStatementFromJsonString(String content) throws IOException {
 
-		return new JsonReader(content, new Specifications.Builder().build()).readStatements().get(0);
+		return new JsonStatementReader(content, new Specifications.Builder().build()).readStatements().get(0);
 	}
 
 	private static StatementSpecifications newGnomADSpecifications() {
