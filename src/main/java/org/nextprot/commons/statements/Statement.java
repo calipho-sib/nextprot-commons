@@ -9,6 +9,7 @@ import org.nextprot.commons.statements.specs.StatementSpecifications;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -82,8 +83,12 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 
 		String jsonContent = get(compositeField);
 
+		if (jsonContent == null) {
+			return new HashMap<>();
+		}
+
 		try {
-			return new JsonReader(specifications).readMap(jsonContent);
+			return new JsonReader(jsonContent, specifications).readStatements().get(0);
 		} catch (IOException e) {
 			throw new IllegalStateException("cannot deserialize json field "+ compositeField.getName()+" with value "+jsonContent);
 		}

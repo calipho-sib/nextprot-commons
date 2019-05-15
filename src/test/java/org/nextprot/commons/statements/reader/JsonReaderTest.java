@@ -17,8 +17,8 @@ public class JsonReaderTest {
 	@Test
 	public void readStatementAsMap() throws IOException {
 
-		JsonReader reader = new JsonReader(new Specifications.Builder().build());
-		Map<StatementField, String> map = reader.readMap(getStatement());
+		JsonReader reader = new JsonReader(getStatement(), new Specifications.Builder().build());
+		Map<StatementField, String> map = reader.readStatements().get(0);
 
 		Assert.assertEquals(13, map.size());
 		Assert.assertEquals("variant", map.get(ANNOTATION_CATEGORY));
@@ -31,7 +31,7 @@ public class JsonReaderTest {
 		Assert.assertEquals("34", map.get(LOCATION_END));
 		Assert.assertEquals("NX_Q6S545", map.get(NEXTPROT_ACCESSION));
 		Assert.assertEquals("gnomAD", map.get(SOURCE));
-		Assert.assertEquals("792d509b2d452da2cf4a74faa2773c15", map.get(STATEMENT_ID));
+		Assert.assertEquals("2dc94938c20a61ea69df3b0434b50e71", map.get(STATEMENT_ID));
 		Assert.assertEquals("W", map.get(VARIANT_ORIGINAL_AMINO_ACID));
 		Assert.assertEquals("*", map.get(VARIANT_VARIATION_AMINO_ACID));
 	}
@@ -39,8 +39,8 @@ public class JsonReaderTest {
 	@Test
 	public void readStatement() throws IOException {
 
-		JsonReader reader = new JsonReader(new Specifications.Builder().build());
-		Statement statement = reader.readStatement(getStatement());
+		JsonReader reader = new JsonReader(getStatement(), new Specifications.Builder().build());
+		Statement statement = reader.readStatements().get(0);
 
 		Assert.assertNotNull(statement.getSpecifications());
 
@@ -63,8 +63,8 @@ public class JsonReaderTest {
 	@Test
 	public void readStatements() throws IOException {
 
-		JsonReader reader = new JsonReader(new Specifications.Builder().build());
-		List<Statement> statements = reader.readStatements(getStatements());
+		JsonReader reader = new JsonReader(getStatements(), new Specifications.Builder().build());
+		List<Statement> statements = reader.readStatements();
 
 		Assert.assertEquals(2, statements.size());
 

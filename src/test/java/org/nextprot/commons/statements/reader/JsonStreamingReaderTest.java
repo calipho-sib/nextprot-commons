@@ -27,7 +27,7 @@ public class JsonStreamingReaderTest {
 
 		JsonStreamingReader reader = new JsonStreamingReader(new StringReader(getStatement()));
 
-		Optional<Statement> statement = reader.readStatement();
+		Optional<Statement> statement = reader.readOneStatement();
 		Assert.assertTrue(statement.isPresent());
 		Statement s = statement.get();
 		Assert.assertEquals(13, s.size());
@@ -53,7 +53,7 @@ public class JsonStreamingReaderTest {
 
 		JsonStreamingReader reader = new JsonStreamingReader(new StringReader(getStatements()));
 
-		Optional<Statement> statement = reader.readStatement();
+		Optional<Statement> statement = reader.readOneStatement();
 		Assert.assertTrue(statement.isPresent());
 		Statement s = statement.get();
 		Assert.assertEquals(17, s.size());
@@ -75,12 +75,12 @@ public class JsonStreamingReaderTest {
 		Assert.assertEquals("F", s.getValue(VARIANT_ORIGINAL_AMINO_ACID));
 		Assert.assertEquals("V", s.getValue(VARIANT_VARIATION_AMINO_ACID));
 
-		statement = reader.readStatement();
+		statement = reader.readOneStatement();
 		Assert.assertTrue(statement.isPresent());
 		s = statement.get();
 		Assert.assertEquals(24, s.size());
 		Assert.assertEquals("phenotypic-variation", s.getValue(ANNOTATION_CATEGORY));
-		statement = reader.readStatement();
+		statement = reader.readOneStatement();
 		Assert.assertFalse(statement.isPresent());
 
 		Assert.assertFalse(reader.hasNextStatement());
@@ -91,9 +91,9 @@ public class JsonStreamingReaderTest {
 
 		StringReader sr = new StringReader(getStatements());
 
-		JsonStreamingReader reader = new JsonStreamingReader(sr);
+		JsonStreamingReader reader = new JsonStreamingReader(sr, 2);
 
-		List<Statement> statements = reader.readStatements(2);
+		List<Statement> statements = reader.readStatements();
 		Assert.assertFalse(statements.isEmpty());
 		Assert.assertEquals(2, statements.size());
 
@@ -127,19 +127,13 @@ public class JsonStreamingReaderTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotReadZeroStatements() throws IOException {
 
-		StringReader sr = new StringReader(getStatements());
-
-		JsonStreamingReader reader = new JsonStreamingReader(sr);
-		reader.readStatements(0);
+		new JsonStreamingReader(new StringReader(getStatements()), 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotReadNegativeStatements() throws IOException {
 
-		StringReader sr = new StringReader(getStatements());
-
-		JsonStreamingReader reader = new JsonStreamingReader(sr);
-		reader.readStatements(-2);
+		new JsonStreamingReader(new StringReader(getStatements()), -2);
 	}
 
 	@Test
@@ -147,9 +141,9 @@ public class JsonStreamingReaderTest {
 
 		StringReader sr = new StringReader(getStatements());
 
-		JsonStreamingReader reader = new JsonStreamingReader(sr);
+		JsonStreamingReader reader = new JsonStreamingReader(sr, 20);
 
-		List<Statement> statements = reader.readStatements(20);
+		List<Statement> statements = reader.readStatements();
 		Assert.assertFalse(statements.isEmpty());
 		Assert.assertEquals(2, statements.size());
 

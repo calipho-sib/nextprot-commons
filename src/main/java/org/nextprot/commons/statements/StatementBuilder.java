@@ -195,7 +195,8 @@ public class StatementBuilder {
 	private void addCompositeFields(Statement statement, CompositeField field) {
 
 		try {
-			Map<StatementField, String> fields = new JsonReader(statement.getSpecifications()).readMap(keyValues.get(field));
+			Map<StatementField, String> fields = new JsonReader(keyValues.get(field), statement.getSpecifications())
+					.readStatements().get(0);
 			fields.keySet().forEach(f -> statement.putValue(f, fields.get(f)));
 		} catch (IOException e) {
 			throw new IllegalStateException("could not build statement", e);

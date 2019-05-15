@@ -528,7 +528,7 @@ public class StatementBuilderTest {
 
 	private Statement buildStatementFromJsonString(String content) throws IOException {
 
-		return new JsonReader(new Specifications.Builder().build()).readStatement(content);
+		return new JsonReader(content, new Specifications.Builder().build()).readStatements().get(0);
 	}
 
 	private static StatementSpecifications newGnomADSpecifications() {

@@ -12,60 +12,31 @@ import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JsonReader extends StatementJsonReader {
 
-	private final SimpleModule module;
+	private final ObjectMapper mapper;
 
-	public JsonReader(StatementSpecifications specifications) {
+	public JsonReader(String content, StatementSpecifications specifications) {
 
-		super(specifications);
+		super(content, specifications);
 
-		module = new SimpleModule();
+		SimpleModule module = new SimpleModule();
 		module.addKeyDeserializer(StatementField.class, new StatementFieldDeserializer(specifications));
-	}
 
-	public Map<StatementField, String> readMap(String content) throws IOException {
-
-		if (content == null) {
-			return new HashMap<>();
-		}
-
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(module);
-
-		return mapper.readValue(content, new TypeReference<Map<StatementField, String>>() { });
-	}
-
-	public Statement readStatement(String content) throws IOException {
-
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(module);
-
-		return new StatementBuilder(mapper.readValue(content, new TypeReference<Statement>() { }))
-				.build();
-	}
-
-	public List<Statement> readStatements(String content) throws IOException {
-
-		return readStatements(new ByteArrayInputStream(content.getBytes(Charset.forName("UTF-8"))));
-	}
-
-	public List<Statement> readStatements(InputStream content) throws IOException {
-
-		ObjectMapper mapper = new ObjectMapper();
+		mapper = new ObjectMapper();
 		mapper.registerModule(module);
 		mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+	}
 
-		List<Statement> statements = mapper.readValue(content, new TypeReference<List<Statement>>() { });
+	@Override
+	public List<Statement> readStatements() throws IOException {
+
+		List<Statement> statements = mapper.readValue(getContent(), new TypeReference<List<Statement>>() { });
 		return statements.stream()
 				.map(statement -> new StatementBuilder(statement).build())
 				.collect(Collectors.toList());

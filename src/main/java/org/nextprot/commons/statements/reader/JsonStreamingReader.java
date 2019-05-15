@@ -24,15 +24,21 @@ import java.util.Optional;
 public class JsonStreamingReader extends StatementJsonReader {
 
 	private final JsonParser parser;
+	private final int maxNumberOfStatements;
 
 	public JsonStreamingReader(Reader content) throws IOException {
 
-		this(content, new Specifications.Builder().build());
+		this(content, new Specifications.Builder().build(), Integer.MAX_VALUE);
 	}
 
-	public JsonStreamingReader(Reader content, StatementSpecifications specifications) throws IOException {
+	public JsonStreamingReader(Reader content, int maxNumberOfStatements) throws IOException {
 
-		super(specifications);
+		this(content, new Specifications.Builder().build(), maxNumberOfStatements);
+	}
+
+	public JsonStreamingReader(Reader content, StatementSpecifications specifications, int maxNumberOfStatements) throws IOException {
+
+		super(content, specifications);
 		JsonFactory factory = new JsonFactory();
 
 		parser = factory.createParser(content);
@@ -43,6 +49,12 @@ public class JsonStreamingReader extends StatementJsonReader {
 
 			throw new IOException("not a valid json content");
 		}
+
+		if (maxNumberOfStatements <= 0) {
+			throw new IllegalArgumentException("maxNumberOfStatements="+maxNumberOfStatements+": cannot read a negative (or 0) number of statements ");
+		}
+
+		this.maxNumberOfStatements = maxNumberOfStatements;
 	}
 
 	/**
@@ -59,7 +71,7 @@ public class JsonStreamingReader extends StatementJsonReader {
 	 * @return a statement or empty if not more statements to read
 	 * @throws IOException
 	 */
-	public Optional<Statement> readStatement() throws IOException {
+	public Optional<Statement> readOneStatement() throws IOException {
 
 		if (parser.isClosed()) {
 			return Optional.empty();
@@ -93,17 +105,14 @@ public class JsonStreamingReader extends StatementJsonReader {
 	 * @return maxNumberOfStatements the maximum number of statements to read
 	 * @throws IOException
 	 */
-	public List<Statement> readStatements(int maxNumberOfStatements) throws IOException {
-
-		if (maxNumberOfStatements <= 0) {
-			throw new IllegalArgumentException("maxNumberOfStatements="+maxNumberOfStatements+": cannot read a negative (or 0) number of statements ");
-		}
+	@Override
+	public List<Statement> readStatements() throws IOException {
 
 		List<Statement> statements = new ArrayList<>();
 
 		for (int i = 0; i < maxNumberOfStatements; i++) {
 
-			Optional<Statement> statement = readStatement();
+			Optional<Statement> statement = readOneStatement();
 
 			if (statement.isPresent()) {
 				statements.add(statement.get());
@@ -118,8 +127,8 @@ public class JsonStreamingReader extends StatementJsonReader {
 
 	private StatementField getKey(String key) {
 
-		if (specifications.hasField(key)) {
-			return specifications.getField(key);
+		if (getSpecifications().hasField(key)) {
+			return getSpecifications().getField(key);
 		}
 		return new CustomStatementField(key);
 	}

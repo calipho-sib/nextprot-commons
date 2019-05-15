@@ -1,13 +1,36 @@
 package org.nextprot.commons.statements.reader;
 
+import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.List;
 
 public abstract class StatementJsonReader {
 
-	protected final StatementSpecifications specifications;
+	private final Reader content;
+	private final StatementSpecifications specifications;
 
-	public StatementJsonReader(StatementSpecifications specifications) {
+	public StatementJsonReader(String content, StatementSpecifications specifications) {
 
+		this(new StringReader(content), specifications);
+	}
+
+	public StatementJsonReader(Reader content, StatementSpecifications specifications) {
+
+		this.content = content;
 		this.specifications = specifications;
 	}
+
+	protected final Reader getContent() {
+		return content;
+	}
+
+	protected final StatementSpecifications getSpecifications() {
+		return specifications;
+	}
+
+	public abstract List<Statement> readStatements() throws IOException;
 }
