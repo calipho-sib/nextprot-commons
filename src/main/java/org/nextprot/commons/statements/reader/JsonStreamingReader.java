@@ -23,25 +23,27 @@ import java.util.Optional;
  */
 public class JsonStreamingReader extends StatementJsonReader {
 
+	private static final int DEFAULT_MAX_BUFFER_SIZE = 100;
+
 	private final JsonParser parser;
-	private final int maxNumberOfStatements;
+	private final int maxBufferSize;
 
-	public JsonStreamingReader(Reader content) throws IOException {
+	public JsonStreamingReader(Reader url) throws IOException {
 
-		this(content, new Specifications.Builder().build(), Integer.MAX_VALUE);
+		this(url, new Specifications.Builder().build(), DEFAULT_MAX_BUFFER_SIZE);
 	}
 
-	public JsonStreamingReader(Reader content, int maxNumberOfStatements) throws IOException {
+	public JsonStreamingReader(Reader url, int maxBufferSize) throws IOException {
 
-		this(content, new Specifications.Builder().build(), maxNumberOfStatements);
+		this(url, new Specifications.Builder().build(), maxBufferSize);
 	}
 
-	public JsonStreamingReader(Reader content, StatementSpecifications specifications, int maxNumberOfStatements) throws IOException {
+	public JsonStreamingReader(Reader url, StatementSpecifications specifications, int maxBufferSize) throws IOException {
 
-		super(content, specifications);
+		super(specifications);
 		JsonFactory factory = new JsonFactory();
 
-		parser = factory.createParser(content);
+		parser = factory.createParser(url);
 
 		// consume and test the first token
 		JsonToken token = parser.nextToken();
@@ -50,11 +52,11 @@ public class JsonStreamingReader extends StatementJsonReader {
 			throw new IOException("not a valid json content");
 		}
 
-		if (maxNumberOfStatements <= 0) {
-			throw new IllegalArgumentException("maxNumberOfStatements="+maxNumberOfStatements+": cannot read a negative (or 0) number of statements ");
+		if (maxBufferSize <= 0) {
+			throw new IllegalArgumentException("maxBufferSize="+maxBufferSize+": cannot define a negative (or 0) number for the buffer size ");
 		}
 
-		this.maxNumberOfStatements = maxNumberOfStatements;
+		this.maxBufferSize = maxBufferSize;
 	}
 
 	/**
@@ -101,16 +103,14 @@ public class JsonStreamingReader extends StatementJsonReader {
 	}
 
 	/**
-	 * Read n statements
-	 * @return maxNumberOfStatements the maximum number of statements to read
-	 * @throws IOException
+	 * Each call return at most n statements
 	 */
 	@Override
 	public List<Statement> readStatements() throws IOException {
 
 		List<Statement> statements = new ArrayList<>();
 
-		for (int i = 0; i < maxNumberOfStatements; i++) {
+		for (int i = 0; i < maxBufferSize; i++) {
 
 			Optional<Statement> statement = readOneStatement();
 

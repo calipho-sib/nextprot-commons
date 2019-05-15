@@ -19,8 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Read all statements from an URL to a Json resource
+ */
 public class JsonReader extends StatementJsonReader {
 
+	private final Reader reader;
 	private final ObjectMapper mapper;
 
 	public JsonReader(String content, StatementSpecifications specifications) {
@@ -28,9 +32,9 @@ public class JsonReader extends StatementJsonReader {
 		this(new StringReader(content), specifications);
 	}
 
-	public JsonReader(Reader content, StatementSpecifications specifications) {
+	public JsonReader(Reader reader, StatementSpecifications specifications) {
 
-		super(content, specifications);
+		super(specifications);
 
 		SimpleModule module = new SimpleModule();
 		module.addKeyDeserializer(StatementField.class, new StatementFieldDeserializer(specifications));
@@ -38,15 +42,17 @@ public class JsonReader extends StatementJsonReader {
 		mapper = new ObjectMapper();
 		mapper.registerModule(module);
 		mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+
+		this.reader = reader;
 	}
 
 	@Override
 	public List<Statement> readStatements() throws IOException {
 
-		List<Statement> statements = mapper.readValue(getContent(), new TypeReference<List<Statement>>() { });
-		return statements.stream()
-				.map(statement -> new StatementBuilder(statement).build())
-				.collect(Collectors.toList());
+			List<Statement> statements = mapper.readValue(reader, new TypeReference<List<Statement>>() {});
+			return statements.stream()
+					.map(statement -> new StatementBuilder(statement).build())
+					.collect(Collectors.toList());
 	}
 
 	/**
