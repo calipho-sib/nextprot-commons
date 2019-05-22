@@ -20,7 +20,7 @@ import java.util.List;
  * This reader read statements from a json content one by one or
  * n at a time and close it self when all have been red
  */
-public class BufferedJsonStatementReader extends StatementReader implements BufferedStatementReader {
+public class BufferedJsonStatementReader extends AbstractStatementReader implements BufferedStatementReader {
 
 	private static final int DEFAULT_MAX_BUFFER_SIZE = 100;
 
@@ -68,11 +68,6 @@ public class BufferedJsonStatementReader extends StatementReader implements Buff
 				&& parser.getCurrentToken() != JsonToken.END_ARRAY;
 	}
 
-	/**
-	 * Read one statement only
-	 * @return a statement or empty if not more statements to read
-	 * @throws IOException
-	 */
 	@Override
 	public Statement nextStatement() throws IOException {
 
@@ -104,7 +99,7 @@ public class BufferedJsonStatementReader extends StatementReader implements Buff
 	}
 
 	/**
-	 * Each call return at most n statements
+	 * @return a list of at most n statements
 	 */
 	@Override
 	public List<Statement> readStatements() throws IOException {
@@ -124,6 +119,20 @@ public class BufferedJsonStatementReader extends StatementReader implements Buff
 		}
 
 		return statements;
+	}
+
+	/**
+	 * Read and push at most n statements into the buffer
+	 * @param buffer the buffer to read Statements into
+	 * @return the number of statements red or -1 if it was closed
+	 */
+	@Override
+	public int readStatements(List<Statement> buffer) throws IOException {
+
+		if (parser.isClosed()) {
+			return -1;
+		}
+		return super.readStatements(buffer);
 	}
 
 	private StatementField getKey(String key) {

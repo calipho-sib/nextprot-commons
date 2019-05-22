@@ -7,6 +7,7 @@ import org.nextprot.commons.statements.specs.Specifications;
 import org.nextprot.commons.statements.specs.StatementField;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -96,6 +97,25 @@ public class JsonStatementReaderTest {
 		Assert.assertNotNull(statement.getSpecifications());
 
 		Assert.assertEquals(24, statement.size());
+	}
+
+	@Test(expected = IOException.class)
+	public void readStatementsTwiceNotAllowed() throws IOException {
+
+		JsonStatementReader reader = new JsonStatementReader(getStatements(), new Specifications.Builder().build());
+		reader.readStatements();
+		reader.readStatements();
+	}
+
+	@Test
+	public void readStatementsWithBuffer() throws IOException {
+
+		JsonStatementReader reader = new JsonStatementReader(getStatements(), new Specifications.Builder().build());
+		List<Statement> statements = new ArrayList<>();
+
+		int count = reader.readStatements(statements);
+
+		Assert.assertEquals(2, count);
 	}
 
 	public static String getStatement() {

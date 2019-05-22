@@ -20,9 +20,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Read all statements from an URL to a Json resource
+ * Reads all statements from an URL Json resource once and then close the stream.
  */
-public class JsonStatementReader extends StatementReader {
+public class JsonStatementReader extends AbstractStatementReader {
 
 	private final Reader reader;
 	private final ObjectMapper mapper;
