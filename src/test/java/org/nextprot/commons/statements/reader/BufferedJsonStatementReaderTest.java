@@ -7,29 +7,27 @@ import org.nextprot.commons.statements.Statement;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
-import java.util.Optional;
 
 import static org.nextprot.commons.statements.reader.JsonStatementReaderTest.getStatement;
 import static org.nextprot.commons.statements.reader.JsonStatementReaderTest.getStatements;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
-public class StreamingJsonStatementReaderTest {
+public class BufferedJsonStatementReaderTest {
 
 	@Test
 	public void hasNextShouldNotConsumeTokens() throws IOException {
 
-		StreamingJsonStatementReader reader = new StreamingJsonStatementReader(new StringReader(getStatements()));
-		Assert.assertTrue(reader.hasNextStatement());
+		BufferedJsonStatementReader reader = new BufferedJsonStatementReader(new StringReader(getStatements()));
+		Assert.assertTrue(reader.hasStatement());
 	}
 
 	@Test
 	public void readStatement() throws IOException {
 
-		StreamingJsonStatementReader reader = new StreamingJsonStatementReader(new StringReader(getStatement()));
+		BufferedJsonStatementReader reader = new BufferedJsonStatementReader(new StringReader(getStatement()));
 
-		Optional<Statement> statement = reader.readOneStatement();
-		Assert.assertTrue(statement.isPresent());
-		Statement s = statement.get();
+		Statement s = reader.nextStatement();
+		Assert.assertNotNull(s);
 		Assert.assertEquals(13, s.size());
 		Assert.assertEquals("variant", s.getValue(ANNOTATION_CATEGORY));
 		Assert.assertEquals("POTEH-p.Trp34Ter", s.getValue(ANNOTATION_NAME));
@@ -45,17 +43,16 @@ public class StreamingJsonStatementReaderTest {
 		Assert.assertEquals("W", s.getValue(VARIANT_ORIGINAL_AMINO_ACID));
 		Assert.assertEquals("*", s.getValue(VARIANT_VARIATION_AMINO_ACID));
 
-		Assert.assertFalse(reader.hasNextStatement());
+		Assert.assertFalse(reader.hasStatement());
 	}
 
 	@Test
 	public void readStatementTwice() throws IOException {
 
-		StreamingJsonStatementReader reader = new StreamingJsonStatementReader(new StringReader(getStatements()));
+		BufferedJsonStatementReader reader = new BufferedJsonStatementReader(new StringReader(getStatements()));
 
-		Optional<Statement> statement = reader.readOneStatement();
-		Assert.assertTrue(statement.isPresent());
-		Statement s = statement.get();
+		Statement s = reader.nextStatement();
+		Assert.assertNotNull(s);
 		Assert.assertEquals(17, s.size());
 		Assert.assertEquals("variant", s.getValue(ANNOTATION_CATEGORY));
 		Assert.assertEquals("SCN9A-iso3-p.Phe1449Val", s.getValue(ANNOTATION_NAME));
@@ -75,15 +72,14 @@ public class StreamingJsonStatementReaderTest {
 		Assert.assertEquals("F", s.getValue(VARIANT_ORIGINAL_AMINO_ACID));
 		Assert.assertEquals("V", s.getValue(VARIANT_VARIATION_AMINO_ACID));
 
-		statement = reader.readOneStatement();
-		Assert.assertTrue(statement.isPresent());
-		s = statement.get();
+		s = reader.nextStatement();
+		Assert.assertNotNull(s);
 		Assert.assertEquals(24, s.size());
 		Assert.assertEquals("phenotypic-variation", s.getValue(ANNOTATION_CATEGORY));
-		statement = reader.readOneStatement();
-		Assert.assertFalse(statement.isPresent());
+		s = reader.nextStatement();
+		Assert.assertNull(s);
 
-		Assert.assertFalse(reader.hasNextStatement());
+		Assert.assertFalse(reader.hasStatement());
 	}
 
 	@Test
@@ -91,7 +87,7 @@ public class StreamingJsonStatementReaderTest {
 
 		StringReader sr = new StringReader(getStatements());
 
-		StreamingJsonStatementReader reader = new StreamingJsonStatementReader(sr, 2);
+		BufferedJsonStatementReader reader = new BufferedJsonStatementReader(sr, 2);
 
 		List<Statement> statements = reader.readStatements();
 		Assert.assertFalse(statements.isEmpty());
@@ -121,19 +117,19 @@ public class StreamingJsonStatementReaderTest {
 		Assert.assertEquals(24, s.size());
 		Assert.assertEquals("phenotypic-variation", s.getValue(ANNOTATION_CATEGORY));
 
-		Assert.assertFalse(reader.hasNextStatement());
+		Assert.assertFalse(reader.hasStatement());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotReadZeroStatements() throws IOException {
 
-		new StreamingJsonStatementReader(new StringReader(getStatements()), 0);
+		new BufferedJsonStatementReader(new StringReader(getStatements()), 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotReadNegativeStatements() throws IOException {
 
-		new StreamingJsonStatementReader(new StringReader(getStatements()), -2);
+		new BufferedJsonStatementReader(new StringReader(getStatements()), -2);
 	}
 
 	@Test
@@ -141,7 +137,7 @@ public class StreamingJsonStatementReaderTest {
 
 		StringReader sr = new StringReader(getStatements());
 
-		StreamingJsonStatementReader reader = new StreamingJsonStatementReader(sr, 20);
+		BufferedJsonStatementReader reader = new BufferedJsonStatementReader(sr, 20);
 
 		List<Statement> statements = reader.readStatements();
 		Assert.assertFalse(statements.isEmpty());
@@ -171,6 +167,6 @@ public class StreamingJsonStatementReaderTest {
 		Assert.assertEquals(24, s.size());
 		Assert.assertEquals("phenotypic-variation", s.getValue(ANNOTATION_CATEGORY));
 
-		Assert.assertFalse(reader.hasNextStatement());
+		Assert.assertFalse(reader.hasStatement());
 	}
 }

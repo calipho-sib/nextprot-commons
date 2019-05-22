@@ -6,7 +6,7 @@ import org.nextprot.commons.statements.specs.StatementSpecifications;
 import java.io.IOException;
 import java.util.List;
 
-public abstract class StatementReader {
+public abstract class StatementReader implements Specifiable {
 
 	private final StatementSpecifications specifications;
 
@@ -15,7 +15,8 @@ public abstract class StatementReader {
 		this.specifications = specifications;
 	}
 
-	protected final StatementSpecifications getSpecifications() {
+	@Override
+	public final StatementSpecifications getSpecifications() {
 		return specifications;
 	}
 

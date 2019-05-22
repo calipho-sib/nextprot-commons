@@ -49,10 +49,10 @@ public class JsonStatementReader extends StatementReader {
 	@Override
 	public List<Statement> readStatements() throws IOException {
 
-			List<Statement> statements = mapper.readValue(reader, new TypeReference<List<Statement>>() {});
-			return statements.stream()
-					.map(statement -> new StatementBuilder(statement).build())
-					.collect(Collectors.toList());
+		List<Statement> statements = mapper.readValue(reader, new TypeReference<List<Statement>>() { });
+		return statements.stream()
+				.map(statement -> new StatementBuilder(statement).build())
+				.collect(Collectors.toList());
 	}
 
 	/**

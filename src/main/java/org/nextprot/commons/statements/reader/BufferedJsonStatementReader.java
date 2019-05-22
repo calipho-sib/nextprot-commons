@@ -14,31 +14,30 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 /**
  * This reader read statements from a json content one by one or
  * n at a time and close it self when all have been red
  */
-public class StreamingJsonStatementReader extends StatementReader {
+public class BufferedJsonStatementReader extends StatementReader implements BufferedStatementReader {
 
 	private static final int DEFAULT_MAX_BUFFER_SIZE = 100;
 
 	private final JsonParser parser;
 	private final int maxBufferSize;
 
-	public StreamingJsonStatementReader(Reader url) throws IOException {
+	public BufferedJsonStatementReader(Reader url) throws IOException {
 
 		this(url, new Specifications.Builder().build(), DEFAULT_MAX_BUFFER_SIZE);
 	}
 
-	public StreamingJsonStatementReader(Reader url, int maxBufferSize) throws IOException {
+	public BufferedJsonStatementReader(Reader url, int maxBufferSize) throws IOException {
 
 		this(url, new Specifications.Builder().build(), maxBufferSize);
 	}
 
-	public StreamingJsonStatementReader(Reader url, StatementSpecifications specifications, int maxBufferSize) throws IOException {
+	public BufferedJsonStatementReader(Reader url, StatementSpecifications specifications, int maxBufferSize) throws IOException {
 
 		super(specifications);
 		JsonFactory factory = new JsonFactory();
@@ -62,7 +61,8 @@ public class StreamingJsonStatementReader extends StatementReader {
 	/**
 	 * @return true if some more statements to read
 	 */
-	public boolean hasNextStatement() {
+	@Override
+	public boolean hasStatement() {
 
 		return !parser.isClosed() && parser.getCurrentToken() != null
 				&& parser.getCurrentToken() != JsonToken.END_ARRAY;
@@ -73,10 +73,11 @@ public class StreamingJsonStatementReader extends StatementReader {
 	 * @return a statement or empty if not more statements to read
 	 * @throws IOException
 	 */
-	public Optional<Statement> readOneStatement() throws IOException {
+	@Override
+	public Statement nextStatement() throws IOException {
 
 		if (parser.isClosed()) {
-			return Optional.empty();
+			return null;
 		}
 
 		StatementBuilder statementBuilder = new StatementBuilder();
@@ -99,7 +100,7 @@ public class StreamingJsonStatementReader extends StatementReader {
 			parser.close();
 		}
 
-		return Optional.ofNullable(statementBuilder.build());
+		return statementBuilder.build();
 	}
 
 	/**
@@ -112,10 +113,10 @@ public class StreamingJsonStatementReader extends StatementReader {
 
 		for (int i = 0; i < maxBufferSize; i++) {
 
-			Optional<Statement> statement = readOneStatement();
+			Statement statement = nextStatement();
 
-			if (statement.isPresent()) {
-				statements.add(statement.get());
+			if (statement != null) {
+				statements.add(statement);
 			}
 			else {
 				break;
