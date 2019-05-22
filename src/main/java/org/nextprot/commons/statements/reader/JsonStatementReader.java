@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Reads all statements from an URL Json resource once and then close the stream.
  */
-public class JsonStatementReader extends AbstractStatementReader {
+public class JsonStatementReader extends AbstractJsonStatementReader {
 
 	private final Reader reader;
 	private final ObjectMapper mapper;

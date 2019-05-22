@@ -10,11 +10,11 @@ import java.util.List;
 /**
  * Base class to read Statements
  */
-public abstract class AbstractStatementReader implements StatementReader {
+public abstract class AbstractJsonStatementReader implements StatementReader {
 
 	private final StatementSpecifications specifications;
 
-	public AbstractStatementReader(StatementSpecifications specifications) {
+	public AbstractJsonStatementReader(StatementSpecifications specifications) {
 
 		this.specifications = specifications;
 	}

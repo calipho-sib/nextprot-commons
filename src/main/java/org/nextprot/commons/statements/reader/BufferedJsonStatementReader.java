@@ -20,7 +20,7 @@ import java.util.List;
  * This reader read statements from a json content one by one or
  * n at a time and close it self when all have been red
  */
-public class BufferedJsonStatementReader extends AbstractStatementReader implements BufferedStatementReader {
+public class BufferedJsonStatementReader extends AbstractJsonStatementReader implements BufferableStatementReader {
 
 	private static final int DEFAULT_MAX_BUFFER_SIZE = 100;
 

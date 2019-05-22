@@ -4,7 +4,7 @@ import org.nextprot.commons.statements.Statement;
 
 import java.io.IOException;
 
-public interface BufferedStatementReader extends StatementReader {
+public interface BufferableStatementReader extends StatementReader {
 
 	/** @return the next statement of null if no more statements */
 	Statement nextStatement() throws IOException;
