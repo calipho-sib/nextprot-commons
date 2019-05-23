@@ -135,6 +135,11 @@ public class BufferedJsonStatementReader extends AbstractJsonStatementReader imp
 		return super.readStatements(buffer);
 	}
 
+	@Override
+	public void close() throws IOException {
+		parser.close();
+	}
+
 	private StatementField getKey(String key) {
 
 		if (getSpecifications().hasField(key)) {

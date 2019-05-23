@@ -3,10 +3,11 @@ package org.nextprot.commons.statements.reader;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 
-public interface StatementReader {
+public interface StatementReader extends Closeable {
 
 	StatementSpecifications getSpecifications();
 

@@ -26,6 +26,7 @@ public class JsonStatementReader extends AbstractJsonStatementReader {
 
 	private final Reader reader;
 	private final ObjectMapper mapper;
+	private boolean isClosed = false;
 
 	public JsonStatementReader(String content, StatementSpecifications specifications) {
 
@@ -49,11 +50,20 @@ public class JsonStatementReader extends AbstractJsonStatementReader {
 	@Override
 	public List<Statement> readStatements() throws IOException {
 
+		if (isClosed) {
+			throw new IOException("Stream closed");
+		}
+
 		List<Statement> statements = mapper.readValue(reader, new TypeReference<List<Statement>>() { });
-		return statements.stream()
+		List<Statement> list = statements.stream()
 				.map(statement -> new StatementBuilder(statement).build())
 				.collect(Collectors.toList());
+
+		isClosed = true;
+
+		return list;
 	}
+
 
 	/**
 	 * Instanciate StatementField from key string
@@ -81,5 +91,11 @@ public class JsonStatementReader extends AbstractJsonStatementReader {
 		ObjectMapper mapper = new ObjectMapper();
 
 		return mapper.readValue(jsonContent, new TypeReference<Map<String, String>>() { });
+	}
+
+	@Override
+	public void close() throws IOException {
+
+		isClosed = true;
 	}
 }
