@@ -166,6 +166,7 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		return Optional.empty();
 	}
 
+	@Override
 	public String toString() {
 
 		StringBuilder sb = new StringBuilder();
@@ -183,5 +184,12 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 		sb.append("}\n*: fields contributing to the calculation of the ANNOTATION_ID key");
 
 		return sb.toString();
+	}
+
+	public String toJsonString() {
+
+		return "{" + keySet().stream()
+				.map(sf -> "\"" + sf.getName() + "\": \"" + get(sf).replace("\"", "''") + "\"")
+				.collect(Collectors.joining(",")) + "}";
 	}
 }

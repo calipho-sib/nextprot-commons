@@ -310,6 +310,7 @@ public class StatementBuilderTest {
 		Assert.assertEquals("YES", stmt.getOptionalValue("CANONICAL").get());
 		Assert.assertFalse(stmt.getOptionalValue("PROPERTIES").isPresent());
 		Assert.assertFalse(stmt.getOptionalValue("ROUDOUDOU").isPresent());
+		Assert.assertEquals("{\"ALLELE_COUNT\": \"1\",\"ALLELE_SAMPLED\": \"217610\",\"ANNOTATION_CATEGORY\": \"Variant\",\"ANNOTATION_ID\": \"319cec335932a0ed88dce408c0cd16b4\",\"ANNOTATION_NAME\": \"POTEH-p.Trp34Ter\",\"ASSIGNED_BY\": \"neXtProt\",\"CANONICAL\": \"YES\",\"DBSNP_ID\": \"rs745905374\",\"EVIDENCE_CODE\": \"ECO:0000269\",\"EVIDENCE_QUALITY\": \"GOLD\",\"GENE_NAME\": \"POTEH\",\"LOCATION_BEGIN\": \"34\",\"LOCATION_END\": \"34\",\"NEXTPROT_ACCESSION\": \"NX_Q6S545\",\"SOURCE\": \"gnomAD\",\"STATEMENT_ID\": \"5bd84501f8cf47bf6eddbfb722fa471c\",\"VARIANT_ORIGINAL_AMINO_ACID\": \"W\",\"VARIANT_VARIATION_AMINO_ACID\": \"*\"}", stmt.toJsonString());
 	}
 
 	@Test
