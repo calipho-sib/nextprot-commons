@@ -192,4 +192,11 @@ public class Statement extends TreeMap<StatementField, String> implements Map<St
 				.map(sf -> "\"" + sf.getName() + "\": \"" + get(sf).replace("\"", "''") + "\"")
 				.collect(Collectors.joining(",")) + "}";
 	}
+
+	public static String toJsonString(List<Statement> statements) {
+
+		return "[" + statements.stream()
+				.map(Statement::toJsonString)
+				.collect(Collectors.joining(",")) + "]";
+	}
 }

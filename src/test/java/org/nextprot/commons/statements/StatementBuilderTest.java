@@ -174,7 +174,6 @@ public class StatementBuilderTest {
 				.addCompulsoryFields("DDD", "BBB", "CCC", defaultQuality)
 				.build());
 		assertEquals(set1.size(), 2);
-
 	}
 
 	@Test
@@ -310,7 +309,6 @@ public class StatementBuilderTest {
 		Assert.assertEquals("YES", stmt.getOptionalValue("CANONICAL").get());
 		Assert.assertFalse(stmt.getOptionalValue("PROPERTIES").isPresent());
 		Assert.assertFalse(stmt.getOptionalValue("ROUDOUDOU").isPresent());
-		Assert.assertEquals("{\"ALLELE_COUNT\": \"1\",\"ALLELE_SAMPLED\": \"217610\",\"ANNOTATION_CATEGORY\": \"Variant\",\"ANNOTATION_ID\": \"319cec335932a0ed88dce408c0cd16b4\",\"ANNOTATION_NAME\": \"POTEH-p.Trp34Ter\",\"ASSIGNED_BY\": \"neXtProt\",\"CANONICAL\": \"YES\",\"DBSNP_ID\": \"rs745905374\",\"EVIDENCE_CODE\": \"ECO:0000269\",\"EVIDENCE_QUALITY\": \"GOLD\",\"GENE_NAME\": \"POTEH\",\"LOCATION_BEGIN\": \"34\",\"LOCATION_END\": \"34\",\"NEXTPROT_ACCESSION\": \"NX_Q6S545\",\"SOURCE\": \"gnomAD\",\"STATEMENT_ID\": \"5bd84501f8cf47bf6eddbfb722fa471c\",\"VARIANT_ORIGINAL_AMINO_ACID\": \"W\",\"VARIANT_VARIATION_AMINO_ACID\": \"*\"}", stmt.toJsonString());
 	}
 
 	@Test
@@ -463,6 +461,32 @@ public class StatementBuilderTest {
 		Assert.assertTrue(copySpecs.hasField(LOCATION_BEGIN.getName()));
 		Assert.assertTrue(copySpecs.hasField(STATEMENT_ID.getName()));
 		Assert.assertTrue(copySpecs.hasField(ENTRY_ACCESSION.getName()));
+	}
+
+	@Test
+	public void testToJsonString() {
+
+		Statement stmt = new StatementBuilder()
+				.addField(NEXTPROT_ACCESSION, "NX_Q6S545-2")
+				.addField(LOCATION_BEGIN, "2")
+				.build();
+
+		Assert.assertEquals("{\"LOCATION_BEGIN\": \"2\",\"NEXTPROT_ACCESSION\": \"NX_Q6S545-2\",\"STATEMENT_ID\": \"424a11008e28b7cf044bd01cd5ac8e53\"}", stmt.toJsonString());
+	}
+
+	@Test
+	public void testToJsonStringFromList() {
+
+		Statement stmt = new StatementBuilder()
+				.addField(NEXTPROT_ACCESSION, "NX_Q6S545-2")
+				.addField(LOCATION_BEGIN, "2")
+				.build();
+
+		Statement copy = new StatementBuilder(stmt)
+				.addField(ENTRY_ACCESSION, "NX_Q6S545")
+				.build();
+
+		Assert.assertEquals("[{\"LOCATION_BEGIN\": \"2\",\"NEXTPROT_ACCESSION\": \"NX_Q6S545-2\",\"STATEMENT_ID\": \"424a11008e28b7cf044bd01cd5ac8e53\"},{\"ENTRY_ACCESSION\": \"NX_Q6S545\",\"LOCATION_BEGIN\": \"2\",\"NEXTPROT_ACCESSION\": \"NX_Q6S545-2\",\"STATEMENT_ID\": \"386a83d2f78106516b688f8f39e11f11\"}]", Statement.toJsonString(Arrays.asList(stmt, copy)));
 	}
 
 	private String getGnomADStatementAsJSON() {
