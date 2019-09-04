@@ -1,6 +1,11 @@
-package org.nextprot.commons.statements;
+package org.nextprot.commons.statements.specs;
 
-public enum StatementField {
+import org.nextprot.commons.utils.EnumConstantDictionary;
+import org.nextprot.commons.utils.EnumDictionarySupplier;
+
+import java.util.Map;
+
+public enum CoreStatementField implements StatementField, EnumDictionarySupplier<CoreStatementField> {
 
 	//Generated automatically from the builder when all fields are set	
 	STATEMENT_ID, 
@@ -80,32 +85,58 @@ public enum StatementField {
 	
 	//EVIDENCE
 	ASSIGNED_BY,
+	//TODO: TYPO TO FIX: ADD A name() method for backward compatibility
 	ASSIGMENT_METHOD,
 	RESOURCE_TYPE,
-	
-	RAW_STATEMENT_ID, //Keep a reference to the Raw statement
-
 
 	//DEBUG_INFO
-	DEBUG_INFO;
-	
+	DEBUG_INFO,
+	RAW_STATEMENT_ID //Keep a reference to the Raw statement
+	;
 
-	private boolean entryUnicity = false;
+	private static EnumConstantDictionary<CoreStatementField> dictionaryOfConstants =
+			new EnumConstantDictionary<CoreStatementField>(CoreStatementField.class, values()) {
+				@Override
+				protected void updateDictionaryOfConstants(Map<String, CoreStatementField> dictionary) {
 
-	StatementField(boolean entryUnicity){
-		this.entryUnicity = entryUnicity;
+					for (CoreStatementField db : values()) {
+						dictionary.put(db.getName(), db);
+					}
+				}
+			};
+
+	private final boolean isUnicityField;
+
+	CoreStatementField(boolean isUnicityField) {
+
+		this.isUnicityField = isUnicityField;
 	}
 	
-	StatementField(){
-		this.entryUnicity = false;
+	CoreStatementField() {
 
+		this(false);
 	}
 
-	public boolean isEntryUnicity() {
-		return entryUnicity;
+	@Override
+	public String getName() {
+
+		return name();
 	}
 
-	public void setEntryUnicity(boolean entryUnicity) {
-		this.entryUnicity = entryUnicity;
+	@Override
+	public boolean isPartOfAnnotationUnicityKey() {
+
+		return isUnicityField;
+	}
+
+	public static boolean hasKey(String name) {
+
+		return dictionaryOfConstants.haskey(name);
+	}
+
+	@Override
+	public EnumConstantDictionary<CoreStatementField> getEnumConstantDictionary() {
+
+		return dictionaryOfConstants;
 	}
 }

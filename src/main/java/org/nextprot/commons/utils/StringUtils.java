@@ -1,10 +1,16 @@
 package org.nextprot.commons.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class StringUtils {
+
+	private static Logger LOGGER = Logger.getLogger(StringUtils.class.getName());
 
 	public static String mkString(Iterable<?> values, String sep) {
 		return mkString(values, "", sep, "");
@@ -51,5 +57,16 @@ public class StringUtils {
 	public static String mkString(Object[] values, String start, String sep,
 			String end) {
 		return mkString(Arrays.asList(values), start, sep, end);
+	}
+
+	public static String serializeAsJsonStringOrNull(Object content) {
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			return objectMapper.writeValueAsString(content);
+		} catch (JsonProcessingException e) {
+			LOGGER.warning("cannot serialize content in json (content="+content+":"+ e.getMessage());
+			return null;
+		}
 	}
 }
