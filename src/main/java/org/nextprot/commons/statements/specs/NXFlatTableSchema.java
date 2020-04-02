@@ -16,8 +16,7 @@ public class NXFlatTableSchema {
 
 	public NXFlatTableSchema() {
 
-		statementSpecifications = new Specifications.Builder()
-				.withUndefinedExtraFields().build();
+		statementSpecifications = new Specifications.Builder().build();
 	}
 
 	public StatementSpecifications getSpecifications() {
@@ -40,6 +39,8 @@ public class NXFlatTableSchema {
 				.map(field -> "\t" + field.getName() + " VARCHAR(10000)")
 				.collect(Collectors.joining(",\n")));
 
+		sb.append(",\n\tEXTRA_FIELDS VARCHAR(10000)\n");
+		
 		sb.append(");\n");
 
 		sb.append("CREATE INDEX ").append(tableName, 0, 10)

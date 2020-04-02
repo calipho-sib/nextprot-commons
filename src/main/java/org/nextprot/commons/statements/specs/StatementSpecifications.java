@@ -17,10 +17,10 @@ public interface StatementSpecifications {
 
 	/** @return the collection of statement fields */
 	Collection<StatementField> getFields();
+	Collection<StatementField> getCoreFields();
+	Collection<StatementField> getCustomFields();
 
 	/** @return the number of fields */
 	int size();
 
-	/** @return the composite field that contain the given field or null if absent */
-	CompositeField searchCompositeFieldOrNull(StatementField field);
 }
