@@ -50,7 +50,7 @@ public class StatementBuilder {
 	private boolean withAnnotationHash;
 
 	static {
-		System.out.println("StatementBuilder version 1.1");
+		System.out.println("StatementBuilder version 1.2");
 	}
 	
 	public StatementBuilder() {
