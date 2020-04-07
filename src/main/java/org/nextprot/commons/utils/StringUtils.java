@@ -1,11 +1,14 @@
 package org.nextprot.commons.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class StringUtils {
@@ -59,6 +62,17 @@ public class StringUtils {
 		return mkString(Arrays.asList(values), start, sep, end);
 	}
 
+	
+	public static Map<String,String> deserializeAsMapOrNull(String str) {
+
+		Map<String,String> result = null;
+		TypeReference<HashMap<String,String>> typeRef = new TypeReference<HashMap<String, String>>() {};
+		try { 
+			result = new ObjectMapper().readValue(str, typeRef);
+		} catch (Exception e) {}
+		return result;
+	}
+	
 	public static String serializeAsJsonStringOrNull(Object content) {
 
 		ObjectMapper objectMapper = new ObjectMapper();
