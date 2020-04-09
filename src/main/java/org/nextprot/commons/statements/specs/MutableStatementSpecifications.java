@@ -14,16 +14,12 @@ public class MutableStatementSpecifications implements StatementSpecifications {
 	public MutableStatementSpecifications() {}
 
 	public final MutableStatementSpecifications specifyField(StatementField field) {
-
 		statementFields.put(field.getName(), field);
 		return this;
 	}
 
 	public final MutableStatementSpecifications specifyFields(StatementField... fields) {
-
-		for (StatementField field : fields) {
-			specifyField(field);
-		}
+		for (StatementField field : fields) specifyField(field);
 		return this;
 	}
 
@@ -34,7 +30,6 @@ public class MutableStatementSpecifications implements StatementSpecifications {
 
 	@Override
 	public final boolean hasField(String field) {
-
 		return statementFields.containsKey(field);
 	}
 
@@ -44,23 +39,17 @@ public class MutableStatementSpecifications implements StatementSpecifications {
 	}
 
 	@Override
-	public CompositeField searchCompositeFieldOrNull(StatementField field) {
-
-		List<CompositeField> fields = statementFields.values().stream()
-				.filter(statementField -> statementField instanceof CompositeField)
-				.map(statementField -> (CompositeField) statementField)
-				.filter(statementField -> statementField.getFields().contains(field))
-				.collect(Collectors.toList());
-
-		if (fields.isEmpty()) {
-			return null;
-		}
-		else if (fields.size() == 1) {
-			return fields.get(0);
-		}
-		throw new IllegalStateException("invalid schema: the field "+field.getName()+ " belongs to multiple composite fields "+fields);
+	public Collection<StatementField> getCoreFields() {
+		return statementFields.values().stream()
+				.filter(f -> f instanceof CoreStatementField).collect(Collectors.toList());
 	}
 
+	@Override
+	public Collection<StatementField> getCustomFields() {
+		return statementFields.values().stream()
+				.filter(f -> f instanceof CustomStatementField).collect(Collectors.toList());
+	}
+	
 	@Override
 	public StatementField getField(String field) {
 
@@ -69,4 +58,5 @@ public class MutableStatementSpecifications implements StatementSpecifications {
 		}
 		throw new IllegalStateException("field "+ field + " is not valid (schema="+statementFields+")");
 	}
+
 }

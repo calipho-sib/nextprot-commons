@@ -44,43 +44,13 @@ public class StatementSpecificationsTest {
 	public void testSearchCompositeField() {
 
 		StatementField f1 = mockField("f1");
-		StatementField f2 = mockField("f2");
-		StatementField f3 = new CompositeField("f3", Arrays.asList(f1, f2));
+		StatementField f2 = new CustomStatementField("f2");
+		StatementField f3 = new CustomStatementField("f3");
 
 		MutableStatementSpecifications schema = new MutableStatementSpecifications();
 		schema.specifyFields(f1, f2, f3);
 
-		CompositeField cf = schema.searchCompositeFieldOrNull(f1);
-		Assert.assertNotNull(cf);
-		Assert.assertEquals("f3", cf.getName());
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void testSearchCompositeField2() {
-
-		StatementField f1 = mockField("f1");
-		StatementField f2 = mockField("f2");
-		StatementField f3 = mockField("f3");
-		StatementField f4 = new CompositeField("f4", Arrays.asList(f1, f2));
-		StatementField f5 = new CompositeField("f5", Arrays.asList(f3, f1));
-
-		MutableStatementSpecifications schema = new MutableStatementSpecifications();
-		schema.specifyFields(f1, f2, f3, f4, f5);
-
-		schema.searchCompositeFieldOrNull(f1);
-	}
-
-	@Test
-	public void testSearchCompositeFieldAndDoNotFind() {
-
-		StatementField f1 = mockField("f1");
-		StatementField f2 = mockField("f2");
-
-		MutableStatementSpecifications schema = new MutableStatementSpecifications();
-		schema.specifyFields(f1, f2);
-
-		CompositeField cf = schema.searchCompositeFieldOrNull(f1);
-		Assert.assertNull(cf);
+		Assert.assertEquals("f3", schema.getField("f3").getName());
 	}
 
 	private StatementField mockField(String name) {
@@ -89,4 +59,5 @@ public class StatementSpecificationsTest {
 		Mockito.when(field.getName()).thenReturn(name);
 		return field;
 	}
+	
 }

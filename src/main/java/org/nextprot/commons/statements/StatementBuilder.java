@@ -1,6 +1,24 @@
 package org.nextprot.commons.statements;
 
-import java.io.IOException;
+import static org.nextprot.commons.statements.specs.CoreStatementField.ANNOTATION_CATEGORY;
+import static org.nextprot.commons.statements.specs.CoreStatementField.ANNOTATION_ID;
+import static org.nextprot.commons.statements.specs.CoreStatementField.ANNOT_CV_TERM_ACCESSION;
+import static org.nextprot.commons.statements.specs.CoreStatementField.ANNOT_CV_TERM_NAME;
+import static org.nextprot.commons.statements.specs.CoreStatementField.ANNOT_CV_TERM_TERMINOLOGY;
+import static org.nextprot.commons.statements.specs.CoreStatementField.ANNOT_SOURCE_ACCESSION;
+import static org.nextprot.commons.statements.specs.CoreStatementField.DEBUG_INFO;
+import static org.nextprot.commons.statements.specs.CoreStatementField.ENTRY_ACCESSION;
+import static org.nextprot.commons.statements.specs.CoreStatementField.LOCATION_BEGIN;
+import static org.nextprot.commons.statements.specs.CoreStatementField.LOCATION_END;
+import static org.nextprot.commons.statements.specs.CoreStatementField.OBJECT_ANNOTATION_IDS;
+import static org.nextprot.commons.statements.specs.CoreStatementField.OBJECT_STATEMENT_IDS;
+import static org.nextprot.commons.statements.specs.CoreStatementField.SOURCE;
+import static org.nextprot.commons.statements.specs.CoreStatementField.STATEMENT_ID;
+import static org.nextprot.commons.statements.specs.CoreStatementField.SUBJECT_STATEMENT_IDS;
+import static org.nextprot.commons.statements.specs.CoreStatementField.TARGET_ISOFORMS;
+import static org.nextprot.commons.statements.specs.CoreStatementField.VARIANT_ORIGINAL_AMINO_ACID;
+import static org.nextprot.commons.statements.specs.CoreStatementField.VARIANT_VARIATION_AMINO_ACID;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -16,15 +34,11 @@ import java.util.stream.Collectors;
 import org.nextprot.commons.algo.MD5Algo;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.constants.UniqueKey;
-import org.nextprot.commons.statements.reader.JsonStatementReader;
-import org.nextprot.commons.statements.specs.CompositeField;
 import org.nextprot.commons.statements.specs.CoreStatementField;
+import org.nextprot.commons.statements.specs.MutableStatementSpecifications;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
-import org.nextprot.commons.statements.specs.MutableStatementSpecifications;
 import org.nextprot.commons.utils.StringUtils;
-
-import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 /**
  * A StatementID is computed based on the fields when build() is invoked
@@ -35,15 +49,20 @@ public class StatementBuilder {
 	private final Map<StatementField, String> keyValues;
 	private boolean withAnnotationHash;
 
+	static {
+		System.out.println("StatementBuilder version 1.2");
+	}
+	
 	public StatementBuilder() {
 
 		keyValues = new TreeMap<>(Comparator.comparing(StatementField::getName));
 	}
 
 	public StatementBuilder(Statement statement) {
-
 		this();
 		keyValues.putAll(statement);
+		//System.out.println("StatementBuilder() statement specifications:" + statement.getSpecifications());
+
 	}
 
 	public StatementBuilder withAnnotationHash() {
@@ -112,8 +131,8 @@ public class StatementBuilder {
 		return this;
 	}
 
-	// TODO: it is only used in tests
-	//     : I guess we should impose their definition by adding them in the constructor of StatementBuilder
+	// only used in tests
+	// Fred: I guess we should impose their definition by adding them in the constructor of StatementBuilder
 	public StatementBuilder addCompulsoryFields(String entryAccession, String isoformAccession, String annotationCategory, QualityQualifier quality) {
 		addField(ENTRY_ACCESSION, entryAccession);
 		addField(ANNOTATION_CATEGORY, annotationCategory);
@@ -166,69 +185,46 @@ public class StatementBuilder {
 	public Statement build() {
 
 		Statement statement = new Statement(keyValues);
-
-		if (keyValues.isEmpty()) {
-			throw new IllegalStateException("cannot build empty statement");
-		}
+		
+		// tag StatementExtractionTest
+		// uncomment line below for StatementExtractionTest
+		// String initialSmtId = statement.getStatementId();
+		
+		if (keyValues.isEmpty()) throw new IllegalStateException("cannot build empty statement");
 
 		statement.setSpecifications((specifications == null) ? buildSpecifications(statement) : specifications);
-
 		statement.putValue(CoreStatementField.STATEMENT_ID, MD5Algo.computeMD5(extractUniqueFieldValues(statement, UniqueKey.STATEMENT)));
-
-		for (StatementField field : keyValues.keySet()) {
-
-			// add composite field values from json
-			if (field instanceof CompositeField && keyValues.get(field) != null) {
-
-				addCompositeFields(statement, (CompositeField)field);
-			}
-		}
-
 		if (withAnnotationHash) {
 			statement.putValue(CoreStatementField.ANNOTATION_ID,
 					MD5Algo.computeMD5(extractUniqueFieldValues(statement, UniqueKey.ENTRY)));
 		}
 
+		// tag StatementExtractionTest
+		// uncomment line below for StatementExtractionTest
+		//if (!statement.getStatementId().equals(initialSmtId)) System.out.println("ERROR stmt id " + initialSmtId + " has changed" );
+		
 		return statement;
 	}
 
-	private void addCompositeFields(Statement statement, CompositeField field) {
-
-		try {
-			Map<StatementField, String> fields = new JsonStatementReader(keyValues.get(field), statement.getSpecifications())
-					.readStatements().get(0);
-			fields.keySet().forEach(f -> statement.putValue(f, fields.get(f)));
-		} catch (IOException e) {
-			throw new IllegalStateException("could not build statement", e);
-		}
-	}
 
 	/** Build the schema based on the statement content */
 	private StatementSpecifications buildSpecifications(Map<StatementField, String> keyValues) {
 
+		//System.out.println("Building specifications from statement key values");
+		
 		MutableStatementSpecifications specs = new MutableStatementSpecifications();
 
 		for (StatementField field : keyValues.keySet()) {
-
-			if (field instanceof CompositeField) {
-
-				CompositeField cf = (CompositeField) field;
-				cf.getFields().forEach(specs::specifyField);
-			}
-
 			if (!specs.hasField(field.getName())) {
 				specs.specifyField(field);
 			}
 		}
-
 		if (!specs.hasField(STATEMENT_ID.getName())) {
 			specs.specifyField(STATEMENT_ID);
 		}
-
 		if (!specs.hasField(ANNOTATION_ID.getName()) && withAnnotationHash) {
 			specs.specifyField(ANNOTATION_ID);
 		}
-
 		return specs;
 	}
 
@@ -244,36 +240,48 @@ public class StatementBuilder {
 
 		// Filter fields which are used to compute unicity key
 		List<StatementField> unicityFields = new ArrayList<>();
-
-		//TODO: revert it
+				
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		// start with core statement fields because they are returned in a controlled order
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		for (StatementField field : CoreStatementField.values()) {
+			if (field.equals(DEBUG_INFO)) continue;
 
-			if (field.equals(DEBUG_INFO)) {
-				continue;
-			}
-
-			// ENTRY TYPE: only fields that are part of unicity key are considered
+			// ENTRY TYPE: only fields that are part of uniqueness key are considered
 			if (uniqueKey.equals(UniqueKey.ENTRY)) {
-				if (field.isPartOfAnnotationUnicityKey()) {
-					unicityFields.add(field);
-				}
+				if (field.isPartOfAnnotationUnicityKey()) unicityFields.add(field);
 			}
-			// STATEMENT TYPE: all fields are considered to build the unique key
-			else if (uniqueKey.equals(UniqueKey.STATEMENT)) { // All fields for the statement
-				if (field.getClass() != CompositeField.class && !field.equals(STATEMENT_ID)) {
-					unicityFields.add(field);
-				}
+			// STATEMENT TYPE: (almost) all fields are considered to build the unique key
+			else if (uniqueKey.equals(UniqueKey.STATEMENT)) { 
+				if (! field.equals(STATEMENT_ID)) unicityFields.add(field);
 			}
 		}
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		// add now custom statement fields in sorted order
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+		statement.getSpecifications().getCustomFields()
+				.stream().sorted(StatementFieldComparator.getInstance())
+				.filter(f -> uniqueKey.equals(UniqueKey.STATEMENT) || f.isPartOfAnnotationUnicityKey())
+				.forEach(f -> unicityFields.add(f));
+
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 		if (unicityFields.isEmpty()) {
 			throw new IllegalStateException("missing fields used to compute a unique key for statement "+statement + " (type="+ uniqueKey +")");
 		}
 
-		//TODO: revert it
-		return unicityFields.stream()
-				.map(statement::getValue)
+		//System.out.print("field  names in unique key " + uniqueKey + ": ");
+		//unicityFields.stream().filter(f -> statement.get(f) != null).forEach(f -> System.out.print(f.getName() + "=" + statement.get(f) + " | " ));
+		//System.out.println(".");
+		
+		String uk = unicityFields.stream().map(statement::getValue)
 				.filter(Objects::nonNull)
 				.collect(Collectors.joining(""));
+
+		//System.out.println("field values in unique key " + uniqueKey + ": " + uk);
+		
+		return uk;
 	}
+
 }

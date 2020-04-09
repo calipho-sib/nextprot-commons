@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import static org.nextprot.commons.graph.IntGraph.arrayContainsElement;
 
-abstract class BaseIntGraphTest {
+public abstract class BaseIntGraphTest {
 
     private DirectedGraph graph;
     protected abstract DirectedGraph createGraph();

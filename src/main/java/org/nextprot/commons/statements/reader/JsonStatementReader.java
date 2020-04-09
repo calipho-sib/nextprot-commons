@@ -37,6 +37,17 @@ public class JsonStatementReader extends AbstractJsonStatementReader {
 
 		super(specifications);
 
+		/*
+		System.out.println("JsonStatementReader() specifications");
+		if (specifications == null) {
+			System.out.println("NO SPECS in reader");
+		} else {
+			specifications.getFields().stream()
+			.forEach(f->System.out.println("Specs in reader: " + f.getClass() + " - " + f.getName()));
+			System.out.println();
+		}
+		*/		
+		
 		SimpleModule module = new SimpleModule();
 		module.addKeyDeserializer(StatementField.class, new StatementFieldDeserializer(specifications));
 
@@ -55,10 +66,16 @@ public class JsonStatementReader extends AbstractJsonStatementReader {
 		}
 
 		List<Statement> statements = mapper.readValue(reader, new TypeReference<List<Statement>>() { });
+		//System.out.println("JsonStatementReader.readStatements() STEP-1");
+		//statements.get(0).keySet()
+		//	.forEach(k -> System.out.println("statement key: " + k.getClass() + " - " + k.getName()));
 		List<Statement> list = statements.stream()
 				.map(statement -> new StatementBuilder(statement).build())
 				.collect(Collectors.toList());
 
+		//System.out.println("JsonStatementReader.readStatements() STEP-2");
+		//list.get(0).keySet()
+		//	.forEach(k -> System.out.println("statement key: " + k.getClass() + " - " + k.getName()));
 		isClosed = true;
 
 		return list;
