@@ -89,8 +89,6 @@ public enum CoreStatementField implements StatementField, EnumDictionarySupplier
 	ASSIGMENT_METHOD,
 	RESOURCE_TYPE,
 
-	//Experimental methodology
-	PSIMI_ID,
 
 	//DEBUG_INFO
 	DEBUG_INFO,
