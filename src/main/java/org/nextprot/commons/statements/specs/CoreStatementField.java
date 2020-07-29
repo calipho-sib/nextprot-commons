@@ -89,6 +89,7 @@ public enum CoreStatementField implements StatementField, EnumDictionarySupplier
 	ASSIGMENT_METHOD,
 	RESOURCE_TYPE,
 
+
 	//DEBUG_INFO
 	DEBUG_INFO,
 	RAW_STATEMENT_ID //Keep a reference to the Raw statement
