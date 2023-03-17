@@ -11,9 +11,9 @@ public enum CoreStatementField implements StatementField, EnumDictionarySupplier
 	STATEMENT_ID, 
 	
 	// According with https://calipho.isb-sib.ch/wiki/display/cal/Raw+statements+specifications
-	NEXTPROT_ACCESSION, //Used for raw statements
+	NEXTPROT_ACCESSION(true), //Used for raw statements
 	
-	ENTRY_ACCESSION(true), //Used for mapped statement
+	ENTRY_ACCESSION, //Used for mapped statement
 	GENE_NAME,//TODO should be a list of gene names
 
 	LOCATION_BEGIN_MASTER (true),
